@@ -1,86 +1,95 @@
+require 'roadworker/dsl-converter'
+require 'ostruct'
+
 module Roadworker
   class DSL
-    attr_reader :hosted_zones
+
+    class << self
+      def define(source)
+        self.new do
+          eval(source, binding)
+        end
+      end
+
+      def convert(hosted_zones)
+        Converter.convert(hosted_zones)
+      end
+    end # of class method
+
+    attr_reader :result
 
     def initialize(&block)
-      @hosted_zones = []
+      @result = OpenStruct.new({:hosted_zones => []})
       instance_eval(&block)
     end
 
     private
 
     def hosted_zone(name, &block)
-      @hosted_zones << HostedZone.new(name, &block)
+      @result.hosted_zones << HostedZone.new(name, &block).result
     end
 
     class HostedZone
-      attr_reader :name
-      attr_reader :comment
-      attr_reader :caller_reference
-      attr_reader :resource_record_sets
+      attr_reader :result
 
       def initialize(name, &block)
-        @name = name
-        @resource_record_sets = []
+        @result = OpenStruct.new({
+          :naem => name,
+          :resource_record_sets => [],
+        })
+
         instance_eval(&block)
       end
 
       private
 
-      def comment(value)
-        @comment = value
-      end
-
-      def caller_reference(value)
-        @caller_reference = value
-      end
-
       def resource_record_set(name, type, &block)
-        @resource_record_sets << ResourceRecordSet.new(name, type, &block)
+        @result.resource_record_sets << ResourceRecordSet.new(name, type, &block).result
       end
       alias rrset resource_record_set
 
       class ResourceRecordSet
-        attr_reader :set_identifier
-        attr_reader :weight
-        attr_reader :ttl
-        attr_reader :region
-        attr_reader :alias
-        attr_reader :resource_records
+        attr_reader :result
 
         def initialize(name, type, &block)
-          @name = name
-          @type = type
+          @result = OpenStruct.new({
+            :name => name,
+            :type => type,
+          })
+
           instance_eval(&block)
         end
 
         private
 
-        def set_identifier(value)
-          @set_identifier = value
+        def set_identifier(value = nil)
+          @result.set_identifier = value
         end
         alias identifier set_identifier
 
         def weight(value)
-          @weight = value
+          @result.weight = value
         end
 
         def ttl(value)
-          @ttl = ttl
+          @result.ttl = value
         end
 
         def region(value)
-          @region = value
+          @result.region = value
         end
 
-        def alias(dns_name)
-          @alias = dns_name
+        def dns_name(value)
+          @result.dns_name = value
         end
 
         def resource_records(*values)
-          @resource_records = [values].flatten
+          @result.resource_records = [values].flatten
         end
+
       end # ResourceRecordSet
+
     end # HostedZone
+
   end # DSL
 end # RoadWorker
