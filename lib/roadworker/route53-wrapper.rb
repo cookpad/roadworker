@@ -12,7 +12,7 @@ module Roadworker
       result = []
 
       batch(@route53.hosted_zones) do |zone|
-        zone_h = item_to_hash(zone, :name, :caller_reference)
+        zone_h = item_to_hash(zone, :name)
         result << zone_h
 
         rrsets = []
