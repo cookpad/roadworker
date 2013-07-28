@@ -1,25 +1,11 @@
 $: << File.expand_path("#{File.dirname __FILE__}/../lib")
+$: << File.expand_path("#{File.dirname __FILE__}/../spec")
+
 require 'rubygems'
 require 'roadworker'
+require 'spec_helper'
 require 'fileutils'
 require 'logger'
-
-def routefile(options = {})
-  tempfile = `mktemp /tmp/#{File.basename(__FILE__)}.XXXXXX`.strip
-
-  begin
-    open(tempfile, 'wb') {|f| f.puts(yield) }
-    options = {:logger => Logger.new('/dev/null')}.merge(options)
-    client = Roadworker::Client.new(options)
-    client.apply(tempfile)
-  ensure
-    FileUtils.rm_f(tempfile)
-  end
-end
-
-def rrs_list(rrs)
-  rrs.map {|i| i[:value] }.sort
-end
 
 describe Roadworker::Client do
   before(:each) {
@@ -31,6 +17,10 @@ describe Roadworker::Client do
     routefile(:force => true) { '' }
     @route53 = AWS::Route53.new
   }
+
+  after(:all) do
+    routefile(:force => true) { '' }
+  end
 
   context 'empty' do
     it  {
@@ -290,6 +280,76 @@ EOS
       expect(mx.name).to eq("www.winebarre.jp.")
       expect(mx.ttl).to eq(123)
       expect(rrs_list(mx.resource_records)).to eq(["10 mail.winebarre.jp", "20 mail2.winebarre.jp"])
+    }
+  end
+
+  context 'Create PTR record' do
+    before {
+      routefile do
+<<EOS
+hosted_zone "333.222.111.in-addr.arpa" do
+  rrset "444.333.222.111.in-addr.arpa", "PTR" do
+    ttl 123
+    resource_records("www.winebarre.jp")
+  end
+end
+EOS
+      end
+    }
+
+    it {
+      zones = @route53.hosted_zones.to_a
+      expect(zones.length).to eq(1)
+
+      zone = zones[0]
+      expect(zone.name).to eq("333.222.111.in-addr.arpa.")
+      expect(zone.resource_record_set_count).to eq(3)
+
+      expect(zone.rrsets['333.222.111.in-addr.arpa.', 'NS'].ttl).to eq(172800)
+      expect(zone.rrsets['333.222.111.in-addr.arpa.', 'SOA'].ttl).to eq(900)
+
+      ptr = zone.rrsets['444.333.222.111.in-addr.arpa.', 'PTR']
+      expect(ptr.name).to eq("444.333.222.111.in-addr.arpa.")
+      expect(ptr.ttl).to eq(123)
+      expect(rrs_list(ptr.resource_records)).to eq(["www.winebarre.jp"])
+    }
+  end
+
+  context 'Create SRV record' do
+    before {
+      routefile do
+<<EOS
+hosted_zone "winebarre.jp" do
+  rrset "ftp.winebarre.jp", "SRV" do
+    ttl 123
+    resource_records(
+      "1   0   21  server01.example.jp",
+      "2   0   21  server02.example.jp"
+    )
+  end
+end
+EOS
+      end
+    }
+
+    it {
+      zones = @route53.hosted_zones.to_a
+      expect(zones.length).to eq(1)
+
+      zone = zones[0]
+      expect(zone.name).to eq("winebarre.jp.")
+      expect(zone.resource_record_set_count).to eq(3)
+
+      expect(zone.rrsets['winebarre.jp.', 'NS'].ttl).to eq(172800)
+      expect(zone.rrsets['winebarre.jp.', 'SOA'].ttl).to eq(900)
+
+      srv = zone.rrsets['ftp.winebarre.jp.', 'SRV']
+      expect(srv.name).to eq("ftp.winebarre.jp.")
+      expect(srv.ttl).to eq(123)
+      expect(rrs_list(srv.resource_records)).to eq([
+        "1   0   21  server01.example.jp",
+        "2   0   21  server02.example.jp"
+      ])
     }
   end
 end
