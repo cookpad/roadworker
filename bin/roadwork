@@ -55,10 +55,6 @@ if options[:debug]
 end
 
 begin
-  unless File.exist?(file)
-    raise "No Routefile found (looking for: #{file})"
-  end
-
   client = Roadworker::Client.new(options)
 
   if export_mode
@@ -72,6 +68,10 @@ begin
       open(output_file, 'wb') {|f| f.puts client.export }
     end
   else
+    unless File.exist?(file)
+      raise "No Routefile found (looking for: #{file})"
+    end
+
     msg = "Apply `#{file}` to Route53"
     msg << ' (dry-run)' if options[:dry_run]
     logger.info(msg)
