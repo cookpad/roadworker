@@ -44,7 +44,7 @@ module Roadworker
       end
 
       def create(name, opts = {})
-        log(:info, 'Create HostedZon', :cyan, name)
+        log(:info, 'Create HostedZone', :cyan, name)
 
         if @options.dry_run
           zone = OpenStruct.new({:name => name, :rrsets => []}.merge(opts))
@@ -70,8 +70,12 @@ module Roadworker
       alias rrsets resource_record_sets
 
       def delete
-        log(:info, 'Delete HostedZone', :yellow, @hosted_zone.name)
-        @hosted_zone.delete unless @options.dry_run
+        if @options.force
+          log(:info, 'Delete HostedZone', :red, @hosted_zone.name)
+          @hosted_zone.delete unless @options.dry_run
+        else
+          log(:info, 'Undefined HostedZone (pass `--force` if you want to remove)', :yellow, @hosted_zone.name)
+        end
       end
 
       private
@@ -201,13 +205,14 @@ module Roadworker
         @resource_record_set.update unless @options.dry_run
       end
 
-      def delete
+      def delete(opts = {})
         return if type =~ /\A(SOA|NS)\Z/i
-
-        log(:info, 'Delete ResourceRecordSet', :yellow) do
-          log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
-          rrset_setid = @resource_record_set.set_identifier
-          rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
+        if not opts[:cascaded] or @options.force
+          log(:info, 'Delete ResourceRecordSet', :red) do
+            log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
+            rrset_setid = @resource_record_set.set_identifier
+            rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
+          end
         end
 
         @resource_record_set.delete unless @options.dry_run

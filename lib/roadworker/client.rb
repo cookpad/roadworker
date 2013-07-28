@@ -44,7 +44,7 @@ module Roadworker
 
       actual.each do |keys, zone|
         zone.rrsets.each do |record|
-          record.delete
+          record.delete(:cascaded => true)
         end
 
         zone.delete

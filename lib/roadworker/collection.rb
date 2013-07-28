@@ -3,8 +3,14 @@ module Roadworker
 
     class << self
       def batch(collection)
-        collection.each_batch do |batch|
-          batch.each do |item|
+        if collection.respond_to?(:each_batch)
+          collection.each_batch do |batch|
+            batch.each do |item|
+              yield(item)
+            end
+          end
+        else
+          collection.each do |item|
             yield(item)
           end
         end
