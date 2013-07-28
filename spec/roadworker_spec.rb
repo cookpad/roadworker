@@ -257,4 +257,39 @@ EOS
       expect(rrs_list(cname.resource_records)).to eq(["www2.winebarre.jp"])
     }
   end
+
+  context 'Create MX record' do
+    before {
+      routefile do
+<<EOS
+hosted_zone "winebarre.jp" do
+  rrset "www.winebarre.jp", "MX" do
+    ttl 123
+    resource_records(
+      "10 mail.winebarre.jp",
+      "20 mail2.winebarre.jp"
+    )
+  end
+end
+EOS
+      end
+    }
+
+    it {
+      zones = @route53.hosted_zones.to_a
+      expect(zones.length).to eq(1)
+
+      zone = zones[0]
+      expect(zone.name).to eq("winebarre.jp.")
+      expect(zone.resource_record_set_count).to eq(3)
+
+      expect(zone.rrsets['winebarre.jp.', 'NS'].ttl).to eq(172800)
+      expect(zone.rrsets['winebarre.jp.', 'SOA'].ttl).to eq(900)
+
+      mx = zone.rrsets['www.winebarre.jp.', 'CNAME']
+      expect(mx.name).to eq("www.winebarre.jp.")
+      expect(mx.ttl).to eq(123)
+      expect(rrs_list(mx.resource_records)).to eq(["10 mail.winebarre.jp", "20 mail2.winebarre.jp"])
+    }
+  end
 end
