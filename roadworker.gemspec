@@ -6,18 +6,21 @@ require 'roadworker/version'
 Gem::Specification.new do |spec|
   spec.name          = "roadworker"
   spec.version       = Roadworker::VERSION
-  spec.authors       = ["Genki Sugawara"]
-  spec.email         = ["sugawara@cookpad.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.authors       = "winebarrel"
+  spec.email         = "sgwr_dts@yahoo.co.jp"
+  spec.description   = "Roadworker is a tool to manage Route53. It defines the state of Route53 using DSL, and updates Route53 according to DSL."
+  spec.summary       = "Roadworker is a tool to manage Route53."
+  spec.homepage      = "https://bitbucket.org/winebarrel/roadworker"
   spec.license       = "MIT"
+  spec.files         = %w(README.md) + Dir.glob('bin/**/*') + Dir.glob('lib/**/*')
 
-  spec.files         = `git ls-files`.split($/)
+  #spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  #spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "aws-sdk"
+  spec.add_dependency "term-ansicolor"
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
 end
