@@ -32,6 +32,8 @@ module Roadworker
 
       if File.exist?(routefile)
         instance_eval(File.read(routefile))
+      elsif File.exist?(routefile + '.rb')
+        instance_eval(File.read(routefile + '.rb'))
       else
         Kernel.require(file)
       end
