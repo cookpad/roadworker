@@ -96,6 +96,40 @@ EOS
     }
   end
 
+  context 'Create A(Alias) record' do
+    before {
+      routefile do
+<<EOS
+hosted_zone "winebarre.jp" do
+  rrset "www.winebarre.jp", "A" do
+    dns_name "roadworker-1957159880.ap-northeast-1.elb.amazonaws.com"
+  end
+end
+EOS
+      end
+    }
+
+    it {
+      zones = @route53.hosted_zones.to_a
+      expect(zones.length).to eq(1)
+
+      zone = zones[0]
+      expect(zone.name).to eq("winebarre.jp.")
+      expect(zone.resource_record_set_count).to eq(3)
+
+      expect(zone.rrsets['winebarre.jp.', 'NS'].ttl).to eq(172800)
+      expect(zone.rrsets['winebarre.jp.', 'SOA'].ttl).to eq(900)
+
+      a = zone.rrsets['www.winebarre.jp.', 'A']
+      expect(a.name).to eq("www.winebarre.jp.")
+      expect(a.alias_target).to eq({
+        :hosted_zone_id => "Z2YN17T5R711GT",
+        :dns_name => "roadworker-1957159880.ap-northeast-1.elb.amazonaws.com.",
+        :evaluate_target_health => false,
+      })
+    }
+  end
+
   context 'Create A1 A2' do
     before {
       routefile do
