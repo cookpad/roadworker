@@ -1,6 +1,6 @@
 require 'roadworker/collection'
+require 'roadworker/log'
 require 'roadworker/route53-exporter'
-require 'roadworker/route53-wrapper-log'
 require 'roadworker/route53-ext'
 
 require 'ostruct'
@@ -30,7 +30,7 @@ module Roadworker
     end
 
     class HostedZoneCollectionWrapper
-      include Log
+      include Roadworker::Log
 
       def initialize(hosted_zones, options)
         @hosted_zones = hosted_zones
@@ -57,7 +57,7 @@ module Roadworker
     end # HostedZoneCollection
  
     class HostedZoneWrapper
-      include Log
+      include Roadworker::Log
 
       def initialize(hosted_zone, options)
         @hosted_zone = hosted_zone
@@ -86,7 +86,7 @@ module Roadworker
     end # HostedZoneWrapper
 
     class ResourceRecordSetCollectionWrapper
-      include Log
+      include Roadworker::Log
 
       def initialize(resource_record_sets, options)
         @resource_record_sets = resource_record_sets
@@ -132,7 +132,7 @@ module Roadworker
     end # ResourceRecordSetCollectionWrapper
 
     class ResourceRecordSetWrapper
-      include Log
+      include Roadworker::Log
 
       def initialize(resource_record_set, options)
         @resource_record_set = resource_record_set
@@ -176,7 +176,7 @@ module Roadworker
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if (expected and !actual) or (!expected and actual)
-            log(:info, "Set #{attr}=#{expected.inspect}" , :green) do
+            log(:info, "  set #{attr}=#{expected.inspect}" , :green) do
               log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
               rrset_setid = @resource_record_set.set_identifier
               rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
@@ -191,7 +191,7 @@ module Roadworker
             end
 
             if expected != actual
-              log(:info, "Set #{attr}=#{expected.inspect}" , :green) do
+              log(:info, "  set #{attr}=#{expected.inspect}" , :green) do
                 log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
                 rrset_setid = @resource_record_set.set_identifier
                 rrset_setid ? (log_id + " (#{rrset_setid})") : log_id

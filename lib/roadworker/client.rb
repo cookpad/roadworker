@@ -1,5 +1,6 @@
 require 'roadworker/string-ext'
 require 'roadworker/dsl'
+require 'roadworker/log'
 require 'roadworker/route53-wrapper'
 
 require 'logger'
@@ -7,6 +8,7 @@ require 'ostruct'
 
 module Roadworker
   class Client
+    include Roadworker::Log
 
     def initialize(options)
       @options = OpenStruct.new(options)
@@ -19,10 +21,17 @@ module Roadworker
     def apply(source)
       source = source.read if source.kind_of?(IO)
       dsl = DSL.define(source).result
+      updated = false
 
-      AWS.memoize {
-        walk_hosted_zones(dsl)
-      }
+      if dsl.hosted_zones.empty? and not @options.force
+        log(:warn, "Nothing is defined (pass `--force` if you want to remove)", :yellow)
+      else
+        AWS.memoize {
+          updated = walk_hosted_zones(dsl)
+        }
+      end
+
+      return updated
     end
 
     def export
