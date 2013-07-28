@@ -18,7 +18,16 @@ Or install it yourself as:
 
     $ gem install roadworker
 
-## Routefile
+## Usage
+
+```
+shell> roadwork -e -o Routefile
+shell> vi Routefile
+shell> roadwork --dry-run
+shell> roudwork
+```
+
+## Routefile esample
 
 ```ruby
 require 'other/routefile'
@@ -56,7 +65,3 @@ hosted_zone "info.winebarrel.jp." do
   end
 end
 ```
-
-## Usage
-
-TODO: Write usage instructions here
