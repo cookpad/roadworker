@@ -10,7 +10,7 @@ module Roadworker
   class Client
     include Roadworker::Log
 
-    def initialize(options)
+    def initialize(options = {})
       @options = OpenStruct.new(options)
       @options.logger ||= Logger.new($stdout)
       String.colorize = @options.color
