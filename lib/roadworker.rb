@@ -1,5 +1,2 @@
-require "roadworker/version"
-
-module Roadworker
-  # Your code goes here...
-end
+require 'roadworker/version'
+require 'roadworker/client'

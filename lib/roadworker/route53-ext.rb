@@ -11,12 +11,7 @@ module AWS
       end
 
       region = $1.downcase
-
-      elb = AWS::ELB.new({
-        :access_key_id     => self.config.access_key_id,
-        :secret_access_key => self.config.secret_access_key,
-        :region            => region,
-      })
+      elb = AWS::ELB.new(:region => region)
 
       load_balancer = elb.load_balancers.find do |lb|
         lb.dns_name == name

@@ -1,34 +1,33 @@
-require 'logger'
-require 'ostruct'
 require 'roadworker/string-ext'
 require 'roadworker/dsl'
 require 'roadworker/route53-wrapper'
+
+require 'logger'
+require 'ostruct'
 
 module Roadworker
   class Client
 
     def initialize(options)
       @options = OpenStruct.new(options)
-      @options.logger ||= Logger.new($stderr)
-      #String.colorize = @options.colorize
-      String.colorize = true
-
-      @options.route53 = AWS::Route53.new({
-        :access_key_id     => @options.access_key_id,
-        :secret_access_key => @options.secret_access_key,
-      })
-
+      @options.logger ||= Logger.new($stdout)
+      String.colorize = @options.color
+      @options.route53 = AWS::Route53.new
       @route53 = Route53Wrapper.new(@options)
     end
 
     def apply(source)
       source = source.read if source.kind_of?(IO)
       dsl = DSL.define(source).result
-      walk_hosted_zones(dsl)
+
+      AWS.memoize {
+        walk_hosted_zones(dsl)
+      }
     end
 
     def export
-      DSL.convert(@route53.export)
+      exported = AWS.memoize { @route53.export }
+      DSL.convert(exported)
     end
 
     private

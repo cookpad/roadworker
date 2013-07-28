@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+$: << File.expand_path("#{File.dirname __FILE__}/../lib")
+require 'rubygems'
+require 'roadworker'
+require 'optparse'
+require 'logger'
+
+file = 'Routefile'
+output_file = '-'
+export_mode = false
+
+options = {
+  :color  => true,
+  :logger => Logger.new($stdout),
+  :debug  => false,
+}
+
+ARGV.options do |opt|
+  access_key = nil
+  secret_key = nil
+
+  opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key = v }
+  opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key = v }
+  opt.on('-f', '--file FILE') {|v| file = v }
+  opt.on('-e', '--export') {|v| export_mode = true }
+  opt.on('-o', '--output FILE') {|v| output_file = v }
+  opt.on(''  , '--no-color') { options[:color] = false }
+  opt.on(''  , '--debug') { options[:debug] = true }
+  opt.parse!
+
+  if access_key and secret_key
+    AWS.config({
+      :access_key_id     => access_key,
+      :secret_access_key => secret_key,
+    })
+  elsif (access_key and !secret_key) or (!access_key and secret_key)
+    puts opt.help
+    exit 1
+  end
+end
+
+if options[:debug]
+  AWS.config(
+    :http_wire_trace => true,
+    :logger => options[:logger]
+  )
+end
+
+begin
+  unless File.exist?(file)
+    raise "No Routefile found (looking for: #{file})"
+  end
+
+  client = Roadworker::Client.new(options)
+
+  if export_mode
+    exported = client.export
+
+    if output_file == '-'
+      puts exported
+    else
+      open(file, 'wb') {|f| f.puts exported }
+    end
+  else
+    open(file) {|f| client.apply(f) }
+  end
+rescue => e
+  if options[:debug]
+    raise e
+  else
+    $stderr.puts e
+  end
+end
