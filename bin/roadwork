@@ -8,24 +8,27 @@ require 'logger'
 file = 'Routefile'
 output_file = '-'
 export_mode = false
+logger = Logger.new($stdout)
 
 options = {
-  :color  => true,
-  :logger => Logger.new($stdout),
-  :debug  => false,
+  :logger  => logger,
+  :dry_run => false,
+  :color   => true,
+  :debug   => false,
 }
 
 ARGV.options do |opt|
   access_key = nil
   secret_key = nil
 
-  opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key = v }
-  opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key = v }
-  opt.on('-f', '--file FILE') {|v| file = v }
-  opt.on('-e', '--export') {|v| export_mode = true }
-  opt.on('-o', '--output FILE') {|v| output_file = v }
-  opt.on(''  , '--no-color') { options[:color] = false }
-  opt.on(''  , '--debug') { options[:debug] = true }
+  opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key        = v    }
+  opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key        = v    }
+  opt.on('-f', '--file FILE')             {|v| file              = v    }
+  opt.on('-e', '--export')                {|v| export_mode       = true }
+  opt.on('-o', '--output FILE')           {|v| output_file       = v    }
+  opt.on('',   '--dry-run')               {|v| options[:dry_run] = true }
+  opt.on(''  , '--no-color')              {    options[:color]   = false }
+  opt.on(''  , '--debug')                 {    options[:debug]   = true }
   opt.parse!
 
   if access_key and secret_key
@@ -57,11 +60,16 @@ begin
     exported = client.export
 
     if output_file == '-'
-      puts exported
+      logger.info('Export Route53')
+      puts client.export
     else
-      open(file, 'wb') {|f| f.puts exported }
+      logger.info("Export Route53 to #{output_file}")
+      open(output_file, 'wb') {|f| f.puts  client.export }
     end
   else
+    msg = "Apply #{file} to Route53"
+    msg << ' (dry-run)' if options[:dry_run]
+    logger.info(msg)
     open(file) {|f| client.apply(f) }
   end
 rescue => e
