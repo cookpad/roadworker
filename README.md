@@ -29,7 +29,7 @@ shell> roadwork --dry-run
 shell> roudwork
 ```
 
-## Routefile esample
+## Routefile example
 
 ```ruby
 require 'other/routefile'
