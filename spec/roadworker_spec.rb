@@ -286,7 +286,7 @@ EOS
       expect(zone.rrsets['winebarre.jp.', 'NS'].ttl).to eq(172800)
       expect(zone.rrsets['winebarre.jp.', 'SOA'].ttl).to eq(900)
 
-      mx = zone.rrsets['www.winebarre.jp.', 'CNAME']
+      mx = zone.rrsets['www.winebarre.jp.', 'MX']
       expect(mx.name).to eq("www.winebarre.jp.")
       expect(mx.ttl).to eq(123)
       expect(rrs_list(mx.resource_records)).to eq(["10 mail.winebarre.jp", "20 mail2.winebarre.jp"])
