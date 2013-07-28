@@ -27,7 +27,8 @@ module Roadworker
         log(:warn, "Nothing is defined (pass `--force` if you want to remove)", :yellow)
       else
         AWS.memoize {
-          updated = walk_hosted_zones(dsl)
+          walk_hosted_zones(dsl)
+          updated = @options.updated
         }
       end
 

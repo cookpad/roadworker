@@ -50,6 +50,7 @@ module Roadworker
           zone = OpenStruct.new({:name => name, :rrsets => []}.merge(opts))
         else
           zone = @hosted_zones.create(name, opts)
+          @options.updated = true
         end
 
         HostedZoneWrapper.new(zone, @options)
@@ -72,7 +73,11 @@ module Roadworker
       def delete
         if @options.force
           log(:info, 'Delete HostedZone', :red, @hosted_zone.name)
-          @hosted_zone.delete unless @options.dry_run
+
+          unless @options.dry_run
+            @hosted_zone.delete
+            @options.updated = true
+          end
         else
           log(:info, 'Undefined HostedZone (pass `--force` if you want to remove)', :yellow, @hosted_zone.name)
         end
@@ -125,6 +130,7 @@ module Roadworker
           end
 
           record = @resource_record_sets.create(name, type, opts)
+          @options.updated = true
         end
 
         ResourceRecordSetWrapper.new(record, @options)
@@ -202,7 +208,10 @@ module Roadworker
           end
         end
 
-        @resource_record_set.update unless @options.dry_run
+        unless @options.dry_run
+          @resource_record_set.update
+          @options.updated = true
+        end
       end
 
       def delete(opts = {})
@@ -215,7 +224,10 @@ module Roadworker
           end
         end
 
-        @resource_record_set.delete unless @options.dry_run
+        unless @options.dry_run
+          @resource_record_set.delete
+          @options.updated = true
+        end
       end
 
       def dns_name=(name)

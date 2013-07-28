@@ -69,13 +69,17 @@ begin
       puts client.export
     else
       logger.info("Export Route53 to `#{output_file}`")
-      open(output_file, 'wb') {|f| f.puts  client.export }
+      open(output_file, 'wb') {|f| f.puts client.export }
     end
   else
     msg = "Apply `#{file}` to Route53"
     msg << ' (dry-run)' if options[:dry_run]
     logger.info(msg)
-    open(file) {|f| client.apply(f) }
+
+    updated = false
+    open(file) {|f| updated = client.apply(f) }
+
+    logger.info('There is no update') unless updated
   end
 rescue => e
   if options[:debug]
