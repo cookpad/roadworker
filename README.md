@@ -46,17 +46,17 @@ hosted_zone "winebarrel.jp." do
   rrset "winebarrel.jp.", "NS" do
     ttl 86400
     resource_records(
-      "ns-463.awsdns-57.com.",
-      "ns-1382.awsdns-44.org.",
-      "ns-752.awsdns-30.net.",
-      "ns-1621.awsdns-10.co.uk."
+      "ns-XXX.awsdns-XX.com.",
+      "ns-XXX.awsdns-XX.org.",
+      "ns-XXX.awsdns-XX.net.",
+      "ns-XXX.awsdns-XX.co.uk."
     )
   end
 
   rrset "winebarrel.jp.", "SOA" do
     ttl 86400
     resource_records(
-      "ns-463.awsdns-57.com. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
+      "ns-XXX.awsdns-XX.com. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
     )
   end
 end
