@@ -48,7 +48,7 @@ module Roadworker
       end
 
       def resource_record_sets
-        ResourceRecordSetCollectionWrapper.new(hosted_zone.rrsets, @options)
+        ResourceRecordSetCollectionWrapper.new(@hosted_zone.rrsets, @options)
       end
       alias rrsets resource_record_sets
 
@@ -90,7 +90,7 @@ module Roadworker
       end
     end # ResourceRecordSetCollectionWrapper
 
-    def ResourceRecordSetWrapper
+    class ResourceRecordSetWrapper
       def initialize(resource_record_set, options)
         @resource_record_set = resource_record_set
         @options = options

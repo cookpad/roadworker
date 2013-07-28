@@ -33,9 +33,12 @@ module Roadworker
       attr_reader :result
 
       def initialize(name, &block)
+        rrsets = []
+
         @result = OpenStruct.new({
           :name => name,
-          :resource_record_sets => [],
+          :resource_record_sets => rrsets,
+          :rrsets => rrsets,
         })
 
         instance_eval(&block)

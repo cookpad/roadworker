@@ -1,3 +1,5 @@
+require 'logger'
+require 'ostruct'
 require 'roadworker/dsl'
 require 'roadworker/route53-wrapper'
 
@@ -5,19 +7,20 @@ module Roadworker
   class Client
 
     def initialize(options)
+      @options = OpenStruct.new(options)
+      @options.logger ||= Logger.new($stderr)
+
       route53 = AWS::Route53.new({
-        :access_key_id     => options[:access_key_id],
-        :secret_access_key => options[:secret_access_key],
+        :access_key_id     => @options.access_key_id,
+        :secret_access_key => @options.secret_access_key,
       })
 
-      @route53 = Route53Wrapper.new(route53, options)
+      @route53 = Route53Wrapper.new(route53, @options)
     end
 
     def apply(source)
       source = source.read if source.kind_of?(IO)
       dsl = DSL.define(source).result
-
-      # XXX: ...
       walk_hosted_zones(dsl)
     end
 
@@ -28,7 +31,7 @@ module Roadworker
     private
 
     def walk_hosted_zones(dsl)
-      expected = collection_to_hash(dsl, :name)
+      expected = collection_to_hash(dsl.hosted_zones, :name)
       actual   = collection_to_hash(@route53.hosted_zones, :name)
 
       expected.each do |keys, expected_zone|
@@ -40,6 +43,7 @@ module Roadworker
       expected.each do |keys, zone|
         name = keys[0]
         # XXX: delete
+        # XXX: NS, SOAは特殊
       end
     end
 
