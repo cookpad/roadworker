@@ -1,5 +1,6 @@
-require 'ostruct'
 require 'roadworker/collection'
+
+require 'ostruct'
 
 module Roadworker
   class Exporter

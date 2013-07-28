@@ -1,4 +1,5 @@
 require 'roadworker/dsl-converter'
+
 require 'ostruct'
 
 module Roadworker
