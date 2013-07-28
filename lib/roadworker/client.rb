@@ -18,7 +18,7 @@ module Roadworker
       dsl = DSL.define(source).result
 
       # XXX: ...
-      # walk_hosted_zones(dsl)
+      walk_hosted_zones(dsl)
     end
 
     def export

@@ -1,4 +1,6 @@
 require 'ostruct'
+require 'roadworker/collection'
+require 'roadworker/route53-exporter'
 
 module Roadworker
   class Route53Wrapper
@@ -9,56 +11,11 @@ module Roadworker
     end
 
     def export
-      result = []
-
-      batch(@route53.hosted_zones) do |zone|
-        zone_h = item_to_hash(zone, :name)
-        result << zone_h
-
-        rrsets = []
-        zone_h[:rrsets] = rrsets
-
-        batch(zone.rrsets) do |record|
-          attrs = [
-            :name,
-            :type,
-            :set_identifier,
-            :weight,
-            :ttl,
-            :resource_records,
-            :alias_target,
-            :region,
-          ]
-
-          record_h = item_to_hash(record, *attrs)
-          rrsets << record_h
-
-          rrs = record_h.delete(:resource_records)
-          record_h[:resource_records] = rrs.map {|i| i[:value] }
-
-          if (alias_target = record_h.delete(:alias_target))
-            record_h[:dns_name] = alias_target[:dns_name]
-          end
-        end
-      end
-
-      return result
-    end # export
-
-    def item_to_hash(item, *attrs)
-      h = {}
-
-      attrs.each do |attr|
-        value = item.send(attr)
-        h[attr] = value if value
-      end
-
-      return h
+      Exporter.export(@route53)
     end
-    private :item_to_hash
 
     def hosted_zones
-      HostedZoneCollectionWrapper(@route53.hosted_zones, @options)
+      HostedZoneCollectionWrapper.new(@route53.hosted_zones, @options)
     end
 
     class HostedZoneCollectionWrapper
@@ -68,7 +25,7 @@ module Roadworker
       end
 
       def each
-        batch(@hosted_zones) do |zone|
+        Collection.batch(@hosted_zones) do |zone|
           yield(HostedZoneWrapper.new(zone, @options))
         end
       end
@@ -106,7 +63,7 @@ module Roadworker
       private
 
       def method_missing(method_name, *args)
-        @resource_record_set.send(method_name, *args)
+        @hosted_zone.send(method_name, *args)
       end
     end # HostedZoneWrapper
 
@@ -117,7 +74,7 @@ module Roadworker
       end
 
       def each
-        batch(@resource_record_sets) do |record|
+        Collection.batch(@resource_record_sets) do |record|
           yield(ResourceRecordSetWrapper.new(record, @options))
         end
       end
@@ -194,18 +151,7 @@ module Roadworker
       def method_missing(method_name, *args)
         @resource_record_set.send(method_name, *args)
       end
+
     end # ResourceRecordSetWrapper
-
-    private
-    def batch(collection)
-      AWS.memoize {
-        collection.each_batch do |batch|
-          batch.each do |item|
-            yield(item)
-          end
-        end
-      }
-    end
-
   end # Route53Wrapper
 end # Roadworker
