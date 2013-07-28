@@ -76,8 +76,7 @@ begin
     msg << ' (dry-run)' if options[:dry_run]
     logger.info(msg)
 
-    updated = false
-    open(file) {|f| updated = client.apply(f) }
+    updated = client.apply(file)
 
     logger.info('There is no update') unless updated
   end

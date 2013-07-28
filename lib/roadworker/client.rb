@@ -18,9 +18,17 @@ module Roadworker
       @route53 = Route53Wrapper.new(@options)
     end
 
-    def apply(source)
-      source = source.read if source.kind_of?(IO)
-      dsl = DSL.define(source).result
+    def apply(file)
+      dsl = nil
+
+      if file.kind_of?(String)
+        open(file) do |f|
+          dsl = DSL.define(f.read, file).result
+        end
+      else
+        dsl = DSL.define(file.read, file.path).result
+      end
+
       updated = false
 
       if dsl.hosted_zones.empty? and not @options.force

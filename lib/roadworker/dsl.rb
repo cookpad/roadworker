@@ -6,8 +6,8 @@ module Roadworker
   class DSL
 
     class << self
-      def define(source)
-        self.new do
+      def define(source, path)
+        self.new(path) do
           eval(source, binding)
         end
       end
@@ -19,12 +19,23 @@ module Roadworker
 
     attr_reader :result
 
-    def initialize(&block)
+    def initialize(path, &block)
+      @path = path
       @result = OpenStruct.new({:hosted_zones => []})
       instance_eval(&block)
     end
 
     private
+
+    def require(file)
+      routefile = File.expand_path(File.join(File.dirname(@path), file))
+
+      if File.exist?(routefile)
+        instance_eval(File.read(routefile))
+      else
+        Kernel.require(file)
+      end
+    end
 
     def hosted_zone(name, &block)
       @result.hosted_zones << HostedZone.new(name, &block).result
