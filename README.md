@@ -1,6 +1,6 @@
 # Roadworker
 
-roadworker is a tool to manage Route53.
+Roadworker is a tool to manage Route53.
 
 It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 
