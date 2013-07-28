@@ -34,7 +34,7 @@ module Roadworker
 
       def initialize(name, &block)
         @result = OpenStruct.new({
-          :naem => name,
+          :name => name,
           :resource_record_sets => [],
         })
 
