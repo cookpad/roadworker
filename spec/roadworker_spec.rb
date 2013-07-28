@@ -83,4 +83,65 @@ end
     expect(a.ttl).to eq(123)
     expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
   }
+  it {
+    routefile {
+      <<-EOS
+hosted_zone "winebarre.jp" do
+end
+      EOS
+    }
+
+    zones = @route53.hosted_zones.to_a
+    expect(zones.length).to eq(1)
+
+    zone = zones[0]
+    expect(zone.name).to eq("winebarre.jp.")
+    expect(zone.resource_record_set_count).to eq(2)
+
+    expect(zone.rrsets['winebarre.jp.', 'NS'].ttl).to eq(172800)
+    expect(zone.rrsets['winebarre.jp.', 'SOA'].ttl).to eq(900)
+  }
+
+  it {
+    routefile {
+      <<-EOS
+hosted_zone "winebarre.jp" do
+  rrset "www.winebarre.jp", "A" do
+    set_identifier "web server 1"
+    weight 100
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "www.winebarre.jp", "A" do
+    set_identifier "web server 2"
+    weight 50
+    ttl 456
+    resource_records(
+      "127.0.0.3",
+      "127.0.0.4"
+    )
+  end
+end
+      EOS
+    }
+
+    zones = @route53.hosted_zones.to_a
+    expect(zones.length).to eq(1)
+
+    zone = zones[0]
+    expect(zone.name).to eq("winebarre.jp.")
+    expect(zone.resource_record_set_count).to eq(4)
+
+    expect(zone.rrsets['winebarre.jp.', 'NS'].ttl).to eq(172800)
+    expect(zone.rrsets['winebarre.jp.', 'SOA'].ttl).to eq(900)
+
+    #a = zone.rrsets['www.winebarre.jp.', 'A']
+    #expect(a.name).to eq("www.winebarre.jp.")
+    #expect(a.ttl).to eq(123)
+    #expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+  }
 end
