@@ -78,7 +78,7 @@ begin
 
     updated = client.apply(file)
 
-    logger.info('There is no update') unless updated
+    logger.info('No change'.intense_blue) unless updated
   end
 rescue => e
   if options[:debug]
