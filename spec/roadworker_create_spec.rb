@@ -30,16 +30,14 @@ describe Roadworker::Client do
 
   context 'Create' do
     context 'HostedZone' do
-      before do
+      it {
         routefile do
 <<EOS
 hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      end
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -53,7 +51,7 @@ EOS
     end
 
     context 'A record' do
-      before {
+      it {
         routefile do
 <<EOS
 hosted_zone "winebarre.jp" do
@@ -67,9 +65,7 @@ hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -88,7 +84,7 @@ EOS
     end
 
     context 'A(Alias) record' do
-      before {
+      it {
         routefile do
 <<EOS
 hosted_zone "winebarre.jp" do
@@ -98,9 +94,7 @@ hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -122,7 +116,7 @@ EOS
     end
 
     context 'A1 A2' do
-      before {
+      it {
         routefile do
 <<-EOS
 hosted_zone "winebarre.jp" do
@@ -148,9 +142,7 @@ hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -178,7 +170,7 @@ EOS
     end
 
     context 'TXT record' do
-      before {
+      it {
         routefile do
 <<EOS
 hosted_zone "winebarre.jp" do
@@ -193,9 +185,7 @@ hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -218,7 +208,7 @@ EOS
     end
 
     context 'CNAME record' do
-      before {
+      it {
         routefile do
 <<EOS
 hosted_zone "winebarre.jp" do
@@ -229,9 +219,7 @@ hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -250,7 +238,7 @@ EOS
     end
 
     context 'MX record' do
-      before {
+      it {
         routefile do
 <<EOS
 hosted_zone "winebarre.jp" do
@@ -264,9 +252,7 @@ hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -285,7 +271,7 @@ EOS
     end
 
     context 'PTR record' do
-      before {
+      it {
         routefile do
 <<EOS
 hosted_zone "333.222.111.in-addr.arpa" do
@@ -296,9 +282,7 @@ hosted_zone "333.222.111.in-addr.arpa" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -317,7 +301,7 @@ EOS
     end
 
     context 'SRV record' do
-      before {
+      it {
         routefile do
 <<EOS
 hosted_zone "winebarre.jp" do
@@ -331,9 +315,7 @@ hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
@@ -355,7 +337,7 @@ EOS
     end
 
     context 'AAAA record' do
-      before {
+      it {
         routefile do
 <<EOS
 hosted_zone "winebarre.jp" do
@@ -366,9 +348,7 @@ hosted_zone "winebarre.jp" do
 end
 EOS
         end
-      }
 
-      it {
         zones = @route53.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
