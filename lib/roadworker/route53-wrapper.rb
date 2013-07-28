@@ -2,21 +2,30 @@ require 'ostruct'
 require 'roadworker/collection'
 require 'roadworker/route53-exporter'
 require 'roadworker/route53-wrapper-log'
+require 'roadworker/route53-ext'
 
 module Roadworker
   class Route53Wrapper
 
-    def initialize(route53, options)
-      @route53 = route53
+    RRSET_ATTRS = [
+      :set_identifier,
+      :weight,
+      :ttl,
+      :resource_records,
+      :dns_name,
+      :region
+    ]
+
+    def initialize(options)
       @options = options
     end
 
     def export
-      Exporter.export(@route53)
+      Exporter.export(@options.route53)
     end
 
     def hosted_zones
-      HostedZoneCollectionWrapper.new(@route53.hosted_zones, @options)
+      HostedZoneCollectionWrapper.new(@options.route53.hosted_zones, @options)
     end
 
     class HostedZoneCollectionWrapper
@@ -34,7 +43,7 @@ module Roadworker
       end
 
       def create(name, opts = {})
-        log(:info, 'Create HostedZon', :green, name)
+        log(:info, 'Create HostedZon', :cyan, name)
 
         if @options.dry_run
           zone = OpenStruct.new({:name => name, :rrsets => []}.merge(opts))
@@ -61,7 +70,7 @@ module Roadworker
 
       def delete
         log(:info, 'Delete HostedZone', :yellow, @hosted_zone.name)
-        @hosted_zone.delete if @options.dry_run
+        @hosted_zone.delete unless @options.dry_run
       end
 
       private
@@ -85,16 +94,31 @@ module Roadworker
         end
       end
 
-      def create(name, type, opts = {})
-        log(:info, "Create ResourceRecordSet: #{rrset_id}", :green) do 
+      def create(name, type, expected_record)
+        log(:info, 'Create ResourceRecordSet', :cyan) do 
           log_id = [name, type].join(' ')
-          rrset_setid = opts[:set_identifier] || opts[:identifier]
+          rrset_setid = expected_record.set_identifier
           rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
         end
 
         if @options.dry_run
-          record = OpenStruct.new({:name => name, :type => type}.merge(opts))
+          record = expected_record
         else
+          opts = {}
+
+          Route53Wrapper::RRSET_ATTRS.each do |attr|
+            value = expected_record.send(attr)
+            next unless value
+
+            case attr
+            when :dns_name
+              attr = :alias_target
+              value = @options.route53.dns_name_to_alias_target(value)
+            end
+
+            opts[attr] = value
+          end
+
           record = @resource_record_sets.create(name, type, opts)
         end
 
@@ -110,12 +134,70 @@ module Roadworker
         @options = options
       end
 
-      def update
-        if @options.dry_run
-          # ...
-        else
-          @resource_record_set.update
+      def eql?(expected_record)
+        Route53Wrapper::RRSET_ATTRS.all? do |attr|
+          expected = expected_record.send(attr)
+          expected = nil if expected.kind_of?(Array) && expected.empty?
+          actual = self.send(attr)
+          actual = nil if actual.kind_of?(Array) && actual.empty?
+
+          if !expected and !actual
+            true
+          elsif expected and actual
+            case attr
+            when :resource_records
+              expected = expected.sort_by {|i| i[:value] }
+              actual = actual.sort_by {|i| i[:value] }
+            end
+
+            (expected == actual)
+          else
+            false
+          end
         end
+      end
+
+      def update(expected_record)
+        log(:info, 'Update ResourceRecordSet', :green) do
+          log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
+          rrset_setid = @resource_record_set.set_identifier
+          rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
+        end
+
+        Route53Wrapper::RRSET_ATTRS.each do |attr|
+          expected = expected_record.send(attr)
+          expected = nil if expected.kind_of?(Array) && expected.empty?
+          actual = self.send(attr)
+          actual = nil if actual.kind_of?(Array) && actual.empty?
+
+          if (expected and !actual) or (!expected and actual)
+            log(:info, "Set #{attr}=#{expected.inspect}" , :green) do
+              log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
+              rrset_setid = @resource_record_set.set_identifier
+              rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
+            end
+
+            self.send(:"#{attr}=", expected) unless @options.dry_run
+          elsif expected and actual
+            case attr
+            when :resource_records
+              expected = expected.sort_by {|i| i[:value] }
+              actual = actual.sort_by {|i| i[:value] }
+            end
+
+            if expected != actual
+              log(:info, "Set #{attr}=#{expected.inspect}" , :green) do
+                log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
+                rrset_setid = @resource_record_set.set_identifier
+                rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
+              end
+
+              self.send(:"#{attr}=", expected) unless @options.dry_run
+            end
+          end
+        end
+
+        @resource_record_set.update unless @options.dry_run
       end
 
       def delete
@@ -127,45 +209,19 @@ module Roadworker
           rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
         end
 
-        if @options.dry_run
-          # ...
+        @resource_record_set.delete unless @options.dry_run
+      end
+
+      def dns_name=(name)
+        if name
+          @resource_record_set.alias_target = @options.route53.dns_name_to_alias_target(name)
         else
-          @resource_record_set.delete
+          @resource_record_set.alias_target = nil
         end
       end
 
-      def resource_records(*value)
-        @resource_record_set.resource_records = values.map {|i| {:value => i} }
-      end
-
-      def dns_name(name)
-        name += '.' unless name =~ /\.\Z/
-
-        unless name =~ /([^.]+)\.elb\.amazonaws.com\.\Z/i
-          raise "Invalid DNS Name: #{name}"
-        end
-
-        region = $1.downcase
-
-        elb = AWS::ELB.new({
-          :access_key_id     => @options.access_key_id,
-          :secret_access_key => @options.secret_access_key,
-          :region            => region,
-        })
-
-        load_balancer = elb.load_balancers.find do |lb|
-          lb.dns_name =~ /\A#{Regexp.escape(name)}\Z/i
-        end
-
-        unless load_balancers
-          raise "Cannot find ELB: #{name}"
-        end
-
-        @resource_record_set.alias_target = {
-          :hosted_zone_id         => load_balancers.canonical_hosted_zone_name_id,
-          :dns_name               => load_balancers.dns_name,
-          :evaluate_target_health => false, # XXX:
-        }
+      def dns_name
+        (@resource_record_set.alias_target || {})[:dns_name]
       end
 
       private

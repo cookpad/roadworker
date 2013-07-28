@@ -13,12 +13,12 @@ module Roadworker
       #String.colorize = @options.colorize
       String.colorize = true
 
-      route53 = AWS::Route53.new({
+      @options.route53 = AWS::Route53.new({
         :access_key_id     => @options.access_key_id,
         :secret_access_key => @options.secret_access_key,
       })
 
-      @route53 = Route53Wrapper.new(route53, @options)
+      @route53 = Route53Wrapper.new(@options)
     end
 
     def apply(source)
@@ -44,8 +44,6 @@ module Roadworker
       end
 
       actual.each do |keys, zone|
-        name = keys[0]
-
         zone.rrsets.each do |record|
           record.delete
         end
@@ -63,17 +61,19 @@ module Roadworker
         type = keys[1]
         set_identifier = keys[2]
 
-        opts = set_identifier ? {:set_identifier => set_identifier} : {}
-        actual_record = actual.delete(keys) || actual_zone.rrsets.create(name, type, opts)
+        actual_record = actual.delete(keys)
 
-        # XXX: update or create
+        if actual_record
+          unless actual_record.eql?(expected_record)
+            actual_record.update(expected_record)
+          end
+        else
+          actual_record = actual_zone.rrsets.create(name, type, expected_record)
+        end
       end
 
       actual.each do |keys, record|
-        name = keys[0]
-        type = keys[1]
-        set_identifier = keys[2]
-        # XXX: delete
+        record.delete
       end
     end
 

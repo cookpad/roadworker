@@ -4,10 +4,10 @@ module Roadworker
 
       def log(level, message, color, log_id = nil)
         if log_id
-          message = "#{message}: #{log_id}"
+          message = "#{log_id}: #{message}"
         elsif block_given?
           log_id = yield
-          message = "#{message}: #{log_id}"
+          message = "#{log_id}: #{message}"
         end
 
         message << ' (dry-run)' if @options.dry_run

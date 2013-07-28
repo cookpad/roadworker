@@ -33,6 +33,7 @@ module Roadworker
       attr_reader :result
 
       def initialize(name, &block)
+        @name = name
         rrsets = []
 
         @result = OpenStruct.new({
@@ -46,8 +47,12 @@ module Roadworker
 
       private
 
-      def resource_record_set(name, type, &block)
-        @result.resource_record_sets << ResourceRecordSet.new(name, type, &block).result
+      def resource_record_set(rrset_name, type, &block)
+        if rrset_name.gsub(/\.\Z/, '') !~ /#{Regexp.escape(@name.gsub(/\.\Z/, ''))}\Z/i
+          raise "Invalid ResourceRecordSet Name: #{rrset_name}"
+        end
+
+        @result.resource_record_sets << ResourceRecordSet.new(rrset_name, type, &block).result
       end
       alias rrset resource_record_set
 
@@ -87,7 +92,11 @@ module Roadworker
         end
 
         def resource_records(*values)
-          @result.resource_records = [values].flatten
+          if values.uniq.length != values.length
+            raise "Duplicate ResourceRecords: #{values.join(', ')}"
+          end
+
+          @result.resource_records = [values].flatten.map {|i| {:value => i} }
         end
 
       end # ResourceRecordSet
