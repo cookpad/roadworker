@@ -352,4 +352,36 @@ EOS
       ])
     }
   end
+
+  context 'Create AAAA record' do
+    before {
+      routefile do
+<<EOS
+hosted_zone "winebarre.jp" do
+  rrset "www.winebarre.jp", "AAAA" do
+    ttl 123
+    resource_records("::1")
+  end
+end
+EOS
+      end
+    }
+
+    it {
+      zones = @route53.hosted_zones.to_a
+      expect(zones.length).to eq(1)
+
+      zone = zones[0]
+      expect(zone.name).to eq("winebarre.jp.")
+      expect(zone.resource_record_set_count).to eq(3)
+
+      expect(zone.rrsets['winebarre.jp.', 'NS'].ttl).to eq(172800)
+      expect(zone.rrsets['winebarre.jp.', 'SOA'].ttl).to eq(900)
+
+      aaaa = zone.rrsets['www.winebarre.jp.', 'AAAA']
+      expect(aaaa.name).to eq("www.winebarre.jp.")
+      expect(aaaa.ttl).to eq(123)
+      expect(rrs_list(aaaa.resource_records)).to eq(["::1"])
+    }
+  end
 end
