@@ -1,5 +1,7 @@
 # Roadworker
 
+**notice: still unstable**
+
 Roadworker is a tool to manage Route53.
 
 It defines the state of Route53 using DSL, and updates Route53 according to DSL.
@@ -29,7 +31,7 @@ shell> roadwork --dry-run
 shell> roudwork
 ```
 
-## Routefile esample
+## Routefile example
 
 ```ruby
 require 'other/routefile'
