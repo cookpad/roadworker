@@ -1,5 +1,6 @@
 require 'logger'
 require 'ostruct'
+require 'roadworker/string-ext'
 require 'roadworker/dsl'
 require 'roadworker/route53-wrapper'
 
@@ -9,6 +10,8 @@ module Roadworker
     def initialize(options)
       @options = OpenStruct.new(options)
       @options.logger ||= Logger.new($stderr)
+      #String.colorize = @options.colorize
+      String.colorize = true
 
       route53 = AWS::Route53.new({
         :access_key_id     => @options.access_key_id,
@@ -40,10 +43,14 @@ module Roadworker
         walk_rrsets(expected_zone, actual_zone)
       end
 
-      expected.each do |keys, zone|
+      actual.each do |keys, zone|
         name = keys[0]
-        # XXX: delete
-        # XXX: NS, SOAは特殊
+
+        zone.rrsets.each do |record|
+          record.delete
+        end
+
+        zone.delete
       end
     end
 
@@ -62,7 +69,7 @@ module Roadworker
         # XXX: update or create
       end
 
-      expected.each do |keys, record|
+      actual.each do |keys, record|
         name = keys[0]
         type = keys[1]
         set_identifier = keys[2]

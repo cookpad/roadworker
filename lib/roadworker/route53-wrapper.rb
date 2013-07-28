@@ -1,6 +1,7 @@
 require 'ostruct'
 require 'roadworker/collection'
 require 'roadworker/route53-exporter'
+require 'roadworker/route53-wrapper-log'
 
 module Roadworker
   class Route53Wrapper
@@ -19,6 +20,8 @@ module Roadworker
     end
 
     class HostedZoneCollectionWrapper
+      include Log
+
       def initialize(hosted_zones, options)
         @hosted_zones = hosted_zones
         @options = options
@@ -31,7 +34,9 @@ module Roadworker
       end
 
       def create(name, opts = {})
-        if @options[:dry_run]
+        log(:info, 'Create HostedZon', :green, name)
+
+        if @options.dry_run
           zone = OpenStruct.new({:name => name, :rrsets => []}.merge(opts))
         else
           zone = @hosted_zones.create(name, opts)
@@ -42,6 +47,8 @@ module Roadworker
     end # HostedZoneCollection
  
     class HostedZoneWrapper
+      include Log
+
       def initialize(hosted_zone, options)
         @hosted_zone = hosted_zone
         @options = options
@@ -53,11 +60,8 @@ module Roadworker
       alias rrsets resource_record_sets
 
       def delete
-        if @options[:dry_run]
-          # ...
-        else
-          @hosted_zone.delete
-        end
+        log(:info, 'Delete HostedZone', :yellow, @hosted_zone.name)
+        @hosted_zone.delete if @options.dry_run
       end
 
       private
@@ -68,6 +72,8 @@ module Roadworker
     end # HostedZoneWrapper
 
     class ResourceRecordSetCollectionWrapper
+      include Log
+
       def initialize(resource_record_sets, options)
         @resource_record_sets = resource_record_sets
         @options = options
@@ -80,7 +86,13 @@ module Roadworker
       end
 
       def create(name, type, opts = {})
-        if @options[:dry_run]
+        log(:info, "Create ResourceRecordSet: #{rrset_id}", :green) do 
+          log_id = [name, type].join(' ')
+          rrset_setid = opts[:set_identifier] || opts[:identifier]
+          rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
+        end
+
+        if @options.dry_run
           record = OpenStruct.new({:name => name, :type => type}.merge(opts))
         else
           record = @resource_record_sets.create(name, type, opts)
@@ -91,13 +103,15 @@ module Roadworker
     end # ResourceRecordSetCollectionWrapper
 
     class ResourceRecordSetWrapper
+      include Log
+
       def initialize(resource_record_set, options)
         @resource_record_set = resource_record_set
         @options = options
       end
 
       def update
-        if @options[:dry_run]
+        if @options.dry_run
           # ...
         else
           @resource_record_set.update
@@ -105,7 +119,15 @@ module Roadworker
       end
 
       def delete
-        if @options[:dry_run]
+        return if type =~ /\A(SOA|NS)\Z/i
+
+        log(:info, 'Delete ResourceRecordSet', :yellow) do
+          log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
+          rrset_setid = @resource_record_set.set_identifier
+          rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
+        end
+
+        if @options.dry_run
           # ...
         else
           @resource_record_set.delete
@@ -126,8 +148,8 @@ module Roadworker
         region = $1.downcase
 
         elb = AWS::ELB.new({
-          :access_key_id     => @options[:access_key_id],
-          :secret_access_key => @options[:secret_access_key],
+          :access_key_id     => @options.access_key_id,
+          :secret_access_key => @options.secret_access_key,
           :region            => region,
         })
 
@@ -151,7 +173,7 @@ module Roadworker
       def method_missing(method_name, *args)
         @resource_record_set.send(method_name, *args)
       end
-
     end # ResourceRecordSetWrapper
+
   end # Route53Wrapper
 end # Roadworker
