@@ -160,9 +160,6 @@ module Roadworker
             true
           elsif expected and actual
             case attr
-            when :resource_records
-              expected = expected.sort_by {|i| i[:value] }
-              actual = actual.sort_by {|i| i[:value] }
             when :dns_name
               expected = expected.downcase.gsub(/\.\Z/, '')
               actual = actual.downcase.gsub(/\.\Z/, '')
