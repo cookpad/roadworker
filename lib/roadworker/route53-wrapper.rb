@@ -169,11 +169,13 @@ module Roadworker
       end
 
       def update(expected_record)
-        log(:info, 'Update ResourceRecordSet', :green) do
-          log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
-          rrset_setid = @resource_record_set.set_identifier
+        log_id_proc = proc do
+          log_id = [self.name, self.type].join(' ')
+          rrset_setid = self.set_identifier
           rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
         end
+
+        log(:info, 'Update ResourceRecordSet', :green, &log_id_proc)
 
         Route53Wrapper::RRSET_ATTRS.each do |attr|
           expected = expected_record.send(attr)
@@ -182,12 +184,7 @@ module Roadworker
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if (expected and !actual) or (!expected and actual)
-            log(:info, "  set #{attr}=#{expected.inspect}" , :green) do
-              log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
-              rrset_setid = @resource_record_set.set_identifier
-              rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
-            end
-
+            log(:info, "  set #{attr}=#{expected.inspect}" , :green, &log_id_proc)
             self.send(:"#{attr}=", expected) unless @options.dry_run
           elsif expected and actual
             case attr
@@ -197,12 +194,7 @@ module Roadworker
             end
 
             if expected != actual
-              log(:info, "  set #{attr}=#{expected.inspect}" , :green) do
-                log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
-                rrset_setid = @resource_record_set.set_identifier
-                rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
-              end
-
+              log(:info, "  set #{attr}=#{expected.inspect}" , :green, &log_id_proc)
               self.send(:"#{attr}=", expected) unless @options.dry_run
             end
           end
@@ -218,8 +210,8 @@ module Roadworker
         return if type =~ /\A(SOA|NS)\Z/i
         if not opts[:cascaded] or @options.force
           log(:info, 'Delete ResourceRecordSet', :red) do
-            log_id = [@resource_record_set.name, @resource_record_set.type].join(' ')
-            rrset_setid = @resource_record_set.set_identifier
+            log_id = [self.name, self.type].join(' ')
+            rrset_setid = self.set_identifier
             rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
           end
         end
