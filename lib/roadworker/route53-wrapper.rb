@@ -230,6 +230,11 @@ module Roadworker
         end
       end
 
+      def name
+        value = @resource_record_set.name
+        value ? value.gsub("\\052", '*') : value
+      end
+
       def dns_name=(name)
         if name
           @resource_record_set.alias_target = @options.route53.dns_name_to_alias_target(name)
