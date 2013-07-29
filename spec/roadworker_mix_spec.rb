@@ -158,9 +158,9 @@ EOS
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(123)
         expect(rrs_list(txt.resource_records)).to eq([
-          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
           "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\""
         ])
 
         mx = zone.rrsets['www.winebarrel.jp.', 'MX']
@@ -258,9 +258,9 @@ EOS
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(123)
         expect(rrs_list(txt.resource_records)).to eq([
-          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
           "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\""
         ])
 
         mx = zone.rrsets['www.winebarrel.jp.', 'MX']
@@ -371,9 +371,9 @@ EOS
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(456)
         expect(rrs_list(txt.resource_records)).to eq([
-          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
           "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\""
         ])
 
         srv = zone.rrsets['ftp.winebarrel.jp.', 'SRV']
@@ -480,9 +480,9 @@ EOS
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(456)
         expect(rrs_list(txt.resource_records)).to eq([
-          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
           "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\""
         ])
 
         srv = zone.rrsets['ftp.winebarrel.jp.', 'SRV']

@@ -15,5 +15,5 @@ def routefile(options = {})
 end
 
 def rrs_list(rrs)
-  rrs.map {|i| i[:value] }.sort
+  rrs.map {|i| i[:value] }
 end

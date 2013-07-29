@@ -194,12 +194,6 @@ module Roadworker
             log(:info, "  set #{attr}=#{expected.inspect}" , :green, &log_id_proc)
             self.send(:"#{attr}=", expected) unless @options.dry_run
           elsif expected and actual
-            case attr
-            when :resource_records
-              expected = expected.sort_by {|i| i[:value] }
-              actual = actual.sort_by {|i| i[:value] }
-            end
-
             if expected != actual
               log(:info, "  set #{attr}=#{expected.inspect}" , :green, &log_id_proc)
               self.send(:"#{attr}=", expected) unless @options.dry_run
