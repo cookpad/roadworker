@@ -74,6 +74,10 @@ module Roadworker
         if @options.force
           log(:info, 'Delete HostedZone', :red, @hosted_zone.name)
 
+          self.rrsets.each do |record|
+            record.delete
+          end
+
           unless @options.dry_run
             @hosted_zone.delete
             @options.updated = true
@@ -209,14 +213,13 @@ module Roadworker
         end
       end
 
-      def delete(opts = {})
+      def delete
         return if type =~ /\A(SOA|NS)\Z/i
-        if not opts[:cascaded] or @options.force
-          log(:info, 'Delete ResourceRecordSet', :red) do
-            log_id = [self.name, self.type].join(' ')
-            rrset_setid = self.set_identifier
-            rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
-          end
+
+        log(:info, 'Delete ResourceRecordSet', :red) do
+          log_id = [self.name, self.type].join(' ')
+          rrset_setid = self.set_identifier
+          rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
         end
 
         unless @options.dry_run
