@@ -38,6 +38,7 @@ module Roadworker
           ]
 
           record_h = item_to_hash(record, *attrs)
+          record_h[:name].gsub!("\\052", '*') if record_h[:name]
           rrsets << record_h
 
           rrs = record_h.delete(:resource_records)
