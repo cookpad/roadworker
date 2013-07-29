@@ -19,16 +19,7 @@ module Roadworker
     end
 
     def apply(file)
-      dsl = nil
-
-      if file.kind_of?(String)
-        open(file) do |f|
-          dsl = DSL.define(f.read, file).result
-        end
-      else
-        dsl = DSL.define(file.read, file.path).result
-      end
-
+      dsl = load_file(file)
       updated = false
 
       if dsl.hosted_zones.empty? and not @options.force
@@ -48,7 +39,26 @@ module Roadworker
       DSL.convert(exported)
     end
 
+    def test(file)
+      dsl = load_file(file)
+      DSL.test(dsl)
+    end
+
     private
+
+    def load_file(file)
+      dsl = nil
+
+      if file.kind_of?(String)
+        open(file) do |f|
+          dsl = DSL.define(f.read, file).result
+        end
+      else
+        dsl = DSL.define(file.read, file.path).result
+      end
+
+      return dsl
+    end
 
     def walk_hosted_zones(dsl)
       expected = collection_to_hash(dsl.hosted_zones, :name)

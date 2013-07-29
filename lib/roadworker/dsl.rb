@@ -1,4 +1,5 @@
 require 'roadworker/dsl-converter'
+require 'roadworker/dsl-tester'
 
 require 'ostruct'
 
@@ -14,6 +15,11 @@ module Roadworker
 
       def convert(hosted_zones)
         Converter.convert(hosted_zones)
+      end
+
+
+      def test(hosted_zones)
+        Tester.test(hosted_zones)
       end
     end # of class method
 

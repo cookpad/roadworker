@@ -7,7 +7,7 @@ require 'logger'
 
 file = 'Routefile'
 output_file = '-'
-export_mode = false
+mode = nil
 logger = Logger.new($stdout)
 
 logger.formatter = proc {|severity, datetime, progname, msg|
@@ -25,15 +25,16 @@ ARGV.options do |opt|
   access_key = nil
   secret_key = nil
 
-  opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key        = v     }
-  opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key        = v     }
-  opt.on('-f', '--file FILE')             {|v| file              = v     }
-  opt.on('-e', '--export')                {|v| export_mode       = true  }
-  opt.on('-o', '--output FILE')           {|v| output_file       = v     }
-  opt.on('',   '--dry-run')               {|v| options[:dry_run] = true  }
-  opt.on(''  , '--force')                 {    options[:force]   = true  }
-  opt.on(''  , '--no-color')              {    options[:color]   = false }
-  opt.on(''  , '--debug')                 {    options[:debug]   = true  }
+  opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key        = v       }
+  opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key        = v       }
+  opt.on('-f', '--file FILE')             {|v| file              = v       }
+  opt.on('-e', '--export')                {|v| mode              = :export }
+  opt.on('-o', '--output FILE')           {|v| output_file       = v       }
+  opt.on('-t', '--test')                  {|v| mode              = :test   }
+  opt.on('',   '--dry-run')               {|v| options[:dry_run] = true    }
+  opt.on(''  , '--force')                 {    options[:force]   = true    }
+  opt.on(''  , '--no-color')              {    options[:color]   = false   }
+  opt.on(''  , '--debug')                 {    options[:debug]   = true    }
   opt.parse!
 
   if access_key and secret_key
@@ -57,7 +58,8 @@ end
 begin
   client = Roadworker::Client.new(options)
 
-  if export_mode
+  case mode
+  when :export
     exported = client.export
 
     if output_file == '-'
@@ -67,6 +69,13 @@ begin
       logger.info("Export Route53 to `#{output_file}`")
       open(output_file, 'wb') {|f| f.puts client.export }
     end
+  when :test
+    # XXX:
+    unless File.exist?(file)
+      raise "No Routefile found (looking for: #{file})"
+    end
+
+    p client.test(file)
   else
     unless File.exist?(file)
       raise "No Routefile found (looking for: #{file})"
