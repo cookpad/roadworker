@@ -30,8 +30,8 @@ shell> export AWS_ACCESS_KEY_ID='...'
 shell> export AWS_SECRET_ACCESS_KEY='...'
 shell> roadwork -e -o Routefile
 shell> vi Routefile
-shell> roadwork --dry-run
-shell> roudwork
+shell> roadwork -a --dry-run
+shell> roudwork -a
 ```
 
 ## Routefile example
@@ -71,4 +71,17 @@ hosted_zone "info.winebarrel.jp." do
     dns_name "elb-dns-name.elb.amazonaws.com"
   end
 end
+```
+
+## Test
+
+Routefile compares the results of a query to the DNS and DLS in the test mode.
+
+```
+shell> roadwork -t
+..F..
+info.winebarrel.jp. A:
+  expected=127.0.0.1(300),127.0.0.3(300)
+  actual=127.0.0.1(300),127.0.0.2(300)
+5 examples, 1 failure
 ```
