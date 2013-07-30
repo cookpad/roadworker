@@ -5,9 +5,11 @@ require 'roadworker'
 require 'optparse'
 require 'logger'
 
+mode = nil
 file = 'Routefile'
 output_file = '-'
-mode = nil
+split = false
+
 logger = Logger.new($stdout)
 
 logger.formatter = proc {|severity, datetime, progname, msg|
@@ -36,6 +38,7 @@ ARGV.options do |opt|
   opt.on('-e', '--export')                {|v| mode                  = :export }
   opt.on('-o', '--output FILE')           {|v| output_file           = v       }
   opt.on('',   '--with-soa-ns')           {|v| options[:with_soa_ns] = true    }
+  opt.on('',   '--split')                 {|v| split                 = true    }
   opt.on('-t', '--test')                  {|v| mode                  = :test   }
   opt.on(''  , '--no-color')              {    options[:color]       = false   }
   opt.on(''  , '--debug')                 {    options[:debug]       = true    }
@@ -67,14 +70,39 @@ begin
 
   case mode
   when :export
-    exported = client.export
+    if split
+      logger.info('Export Route53')
 
-    if output_file == '-'
-      logger.info('# Export Route53')
-      puts client.export
+      output_file = 'Routefile' if output_file == '-'
+      requires = []
+
+      client.export do |hosted_zones, converter|
+        hosted_zones.each do |zone|
+          route_file = File.join(File.dirname(output_file), "#{zone[:name].sub(/\.\Z/, '')}.route")
+          requires << route_file
+
+          logger.info("  write #{route_file}")
+          open(route_file, 'wb') {|f| f.puts converter.call([zone]) }
+        end
+      end
+
+      logger.info("  write #{output_file}")
+
+      open(output_file, 'wb') do |f|
+        requires.each do |route_file|
+          f.puts "require '#{File.basename route_file}'"
+        end
+      end
     else
-      logger.info("Export Route53 to `#{output_file}`")
-      open(output_file, 'wb') {|f| f.puts client.export }
+      exported = client.export
+
+      if output_file == '-'
+        logger.info('# Export Route53')
+        puts client.export
+      else
+        logger.info("Export Route53 to `#{output_file}`")
+        open(output_file, 'wb') {|f| f.puts client.export }
+      end
     end
   when :test
     # XXX:

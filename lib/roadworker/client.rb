@@ -36,7 +36,12 @@ module Roadworker
 
     def export
       exported = AWS.memoize { @route53.export }
-      DSL.convert(exported)
+
+      if block_given?
+        yield(exported, DSL.method(:convert))
+      else
+        DSL.convert(exported)
+      end
     end
 
     def test(file)
