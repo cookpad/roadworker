@@ -15,28 +15,30 @@ logger.formatter = proc {|severity, datetime, progname, msg|
 }
 
 options = {
-  :logger  => logger,
-  :dry_run => false,
-  :debug   => false,
-  :force   => false,
-  :color   => true,
+  :logger      => logger,
+  :dry_run     => false,
+  :force       => false,
+  :with_soa_ns => false,
+  :color       => true,
+  :debug       => false,
 }
 
 ARGV.options do |opt|
   access_key = nil
   secret_key = nil
 
-  opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key        = v       }
-  opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key        = v       }
-  opt.on('-f', '--file FILE')             {|v| file              = v       }
-  opt.on('-a', '--apply')                 {|v| mode              = :apply  }
-  opt.on('-e', '--export')                {|v| mode              = :export }
-  opt.on('-o', '--output FILE')           {|v| output_file       = v       }
-  opt.on('-t', '--test')                  {|v| mode              = :test   }
-  opt.on('',   '--dry-run')               {|v| options[:dry_run] = true    }
-  opt.on(''  , '--force')                 {    options[:force]   = true    }
-  opt.on(''  , '--no-color')              {    options[:color]   = false   }
-  opt.on(''  , '--debug')                 {    options[:debug]   = true    }
+  opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key            = v       }
+  opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key            = v       }
+  opt.on('-a', '--apply')                 {|v| mode                  = :apply  }
+  opt.on('-f', '--file FILE')             {|v| fil                   = v       }
+  opt.on('',   '--dry-run')               {|v| options[:dry_run]     = true    }
+  opt.on(''  , '--force')                 {    options[:force]       = true    }
+  opt.on('-e', '--export')                {|v| mode                  = :export }
+  opt.on('-o', '--output FILE')           {|v| output_file           = v       }
+  opt.on('',   '--with-soa-ns')           {|v| options[:with_soa_ns] = true    }
+  opt.on('-t', '--test')                  {|v| mode                  = :test   }
+  opt.on(''  , '--no-color')              {    options[:color]       = false   }
+  opt.on(''  , '--debug')                 {    options[:debug]       = true    }
   opt.parse!
 
   if access_key and secret_key

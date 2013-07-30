@@ -40,28 +40,19 @@ shell> roudwork -a
 require 'other/routefile'
 
 hosted_zone "winebarrel.jp." do
+  rrset "winebarrel.jp.", "A" do
+    ttl 300
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
   rrset "winebarrel.jp.", "MX" do
     ttl 300
     resource_records(
       "10 mx.winebarrel.jp",
       "10 mx2.winebarrel.jp"
-    )
-  end
-
-  rrset "winebarrel.jp.", "NS" do
-    ttl 86400
-    resource_records(
-      "ns-XXX.awsdns-XX.com.",
-      "ns-XXX.awsdns-XX.org.",
-      "ns-XXX.awsdns-XX.net.",
-      "ns-XXX.awsdns-XX.co.uk."
-    )
-  end
-
-  rrset "winebarrel.jp.", "SOA" do
-    ttl 86400
-    resource_records(
-      "ns-XXX.awsdns-XX.com. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
     )
   end
 end

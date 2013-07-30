@@ -11,14 +11,14 @@ module Roadworker
       end
     end # of class method
 
-    def initialize(route53)
-      @route53 = route53
+    def initialize(options)
+      @options = options
     end
 
     def export
       result = []
 
-      Collection.batch(@route53.hosted_zones) do |zone|
+      Collection.batch(@options.route53.hosted_zones) do |zone|
         zone_h = item_to_hash(zone, :name)
         result << zone_h
 
@@ -26,6 +26,10 @@ module Roadworker
         zone_h[:rrsets] = rrsets
 
         Collection.batch(zone.rrsets) do |record|
+          if record.name == zone.name and %w(SOA NS).include?(record.type) and not @options.with_soa_ns
+            next
+          end
+
           attrs = [
             :name,
             :type,

@@ -22,7 +22,7 @@ module Roadworker
     end
 
     def export
-      Exporter.export(@options.route53)
+      Exporter.export(@options)
     end
 
     def hosted_zones
