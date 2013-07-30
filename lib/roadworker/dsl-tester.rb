@@ -50,10 +50,10 @@ module Roadworker
           end
 
           is_valid = rrs.any? {|record|
-            expected_value = (record.resource_records || []).map {|i| i[:value] }.sort
+            expected_value = (record.resource_records || []).map {|i| i[:value].strip }.sort
             expected_ttl = record.dns_name ? 60 : record.ttl
 
-            actual_value = response.answer.map {|i| (type == 'TXT') ? i.txt : i.value }.sort
+            actual_value = response.answer.map {|i| (type == 'TXT' ? i.txt : i.value).strip }.sort
             actual_ttls = response.answer.map {|i| i.ttl }
 
             case type
