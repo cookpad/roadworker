@@ -29,6 +29,7 @@ ARGV.options do |opt|
   opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key        = v       }
   opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key        = v       }
   opt.on('-f', '--file FILE')             {|v| file              = v       }
+  opt.on('-a', '--apply')                 {|v| mode              = :apply  }
   opt.on('-e', '--export')                {|v| mode              = :export }
   opt.on('-o', '--output FILE')           {|v| output_file       = v       }
   opt.on('-t', '--test')                  {|v| mode              = :test   }
@@ -43,7 +44,7 @@ ARGV.options do |opt|
       :access_key_id     => access_key,
       :secret_access_key => secret_key,
     })
-  elsif (access_key and !secret_key) or (!access_key and secret_key)
+  elsif (access_key and !secret_key) or (!access_key and secret_key) or mode.nil?
     puts opt.help
     exit 1
   end
@@ -90,7 +91,7 @@ begin
       logger.info(result_message.red)
       exit 1
     end
-  else
+  when :apply
     unless File.exist?(file)
       raise "No Routefile found (looking for: #{file})"
     end
@@ -102,11 +103,14 @@ begin
     updated = client.apply(file)
 
     logger.info('No change'.intense_blue) unless updated
+  else
+    raise 'must not happen'
   end
 rescue => e
   if options[:debug]
     raise e
   else
     $stderr.puts e
+    exit 1
   end
 end
