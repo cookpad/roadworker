@@ -75,7 +75,7 @@ end
 
 ## Test
 
-Routefile compares the results of a query to the DNS and DLS in the test mode.
+Routefile compares the results of a query to the DNS and DSL in the test mode.
 
 ```
 shell> roadwork -t
