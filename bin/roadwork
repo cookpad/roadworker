@@ -81,12 +81,12 @@ begin
           route_file = File.join(File.dirname(output_file), "#{zone[:name].sub(/\.\Z/, '')}.route")
           requires << route_file
 
-          logger.info("  write #{route_file}")
+          logger.info("  write `#{route_file}`")
           open(route_file, 'wb') {|f| f.puts converter.call([zone]) }
         end
       end
 
-      logger.info("  write #{output_file}")
+      logger.info("  write `#{output_file}`")
 
       open(output_file, 'wb') do |f|
         requires.each do |route_file|
