@@ -33,6 +33,7 @@ module Roadworker
         records = fetch_records(dsl)
         failures = 0
         error_messages = []
+        warning_messages = []
 
         records.each do |key, rrs|
           errors = []
@@ -42,7 +43,7 @@ module Roadworker
 
           log(:debug, 'Check DNS', :white, "#{name} #{type}")
 
-          response = query(name, type)
+          response = query(name, type, warning_messages)
 
           unless response
             failures += 1
@@ -77,7 +78,7 @@ module Roadworker
             if record.dns_name
               # A(Alias)
               is_same = response.answer.all? {|a|
-                query(a.value, 'PTR').answer.all? do |ptr|
+                query(a.value, 'PTR', warning_messages).answer.all? do |ptr|
                   ptr.value =~ /\.compute\.amazonaws\.com\.\Z/
                 end
               }
@@ -113,6 +114,10 @@ module Roadworker
 
         error_messages.each do |msg|
           log(:warn, msg, :intense_red)
+        end
+
+        warning_messages.each do |msg|
+          log(:warn, "WARNING #{msg}", :intense_yellow)
         end
 
         [records.length, failures]
@@ -151,14 +156,14 @@ module Roadworker
         name.gsub('*', "#{ASTERISK_PREFIX}-#{rand_str}")
       end
 
-      def query(name, type)
+      def query(name, type, warning_messages)
         ctype = Net::DNS.const_get(type)
         response = nil
 
         begin
           response = @resolver.query(name, ctype)
         rescue => e
-          log(:warn, "WARNING #{e.message}", :yellow, "#{name} #{type}")
+          warning_messages << "#{name} #{type}: #{e.message}"
         end
 
         return response
