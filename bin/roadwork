@@ -79,12 +79,15 @@ begin
       raise "No Routefile found (looking for: #{file})"
     end
 
-    is_same = client.test(file)
+    examples, failures = client.test(file)
+    examples_message = (examples > 1 ? "%d examples" : "%d example") % examples
+    failures_message = (failures > 1 ? "%d failures" : "%d failure") % failures
+    result_message = [examples_message, failures_message].join(', ')
 
-    if is_same
-      logger.info('Test was successful'.cyan)
+    if failures.zero?
+      logger.info(result_message.green)
     else
-      logger.info('Test failed'.red)
+      logger.info(result_message.red)
       exit 1
     end
   else

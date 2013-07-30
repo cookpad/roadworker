@@ -31,8 +31,8 @@ module Roadworker
 
       def test(dsl)
         records = fetch_records(dsl)
-        result = true
-        no_response = false
+        failures = 0
+        error_messages = []
 
         records.each do |key, rrs|
           errors = []
@@ -45,7 +45,8 @@ module Roadworker
           response = query(name, type)
 
           unless response
-            no_response = true
+            failures += 1
+            print_failure
             next
           end
 
@@ -65,10 +66,11 @@ module Roadworker
               actual_value = actual_value.map {|i| i.strip.gsub(/\s+/, ' ') }
             end
 
-            expected_message = record.resource_records ? expected_value.join(',') : record.dns_name
+            expected_message = record.resource_records ? expected_value.map {|i| "#{i}(#{expected_ttl})" }.join(',') : "#{record.dns_name}(#{expected_ttl})"
             actual_message = actual_value.zip(actual_ttls).map {|v, t| "#{v}(#{t})" }.join(',')
-            logmsg = "expected=#{expected_message}(#{expected_ttl}) actual=#{actual_message}"
-            log(:debug, "  #{logmsg}", :white, "#{name} #{type}")
+            logmsg_expected = "expected=#{expected_message}"
+            logmsg_actual = "actual=#{actual_message}"
+            log(:debug, "  #{logmsg_expected}\n  #{logmsg_actual}", :white, "#{name} #{type}")
 
             is_same = false
 
@@ -86,25 +88,34 @@ module Roadworker
             if is_same
               unless actual_ttls.all? {|i| i <= expected_ttl }
                 is_same = false
-                errors << logmsg
               end
-            else
-              errors << logmsg
             end
 
+            errors << [logmsg_expected, logmsg_actual] unless is_same
             is_same
           }
 
-          unless is_valid
-            errors.each do |logmsg|
-              log(:warn, "FAILED #{logmsg}", :intense_red, "#{name} #{type}")
+          if is_valid
+            print_success
+          else
+            failures += 1
+            print_failure
+
+            errors.each do |logmsg_expected, logmsg_actual|
+              error_messages << "#{name} #{type}:\n  #{logmsg_expected}\n  #{logmsg_actual}"
             end
           end
 
           result &&= is_valid
         end
 
-        return (not no_response and result)
+        puts unless @options.debug
+
+        error_messages.each do |msg|
+          log(:warn, msg, :intense_red)
+        end
+
+        [records.length, failures]
       end
 
       private
@@ -151,6 +162,14 @@ module Roadworker
         end
 
         return response
+      end
+
+      def print_success
+        print '.'.intense_green unless @options.debug
+      end
+
+      def print_failure
+        print 'F'.intense_red unless @options.debug
       end
 
     end # Tester
