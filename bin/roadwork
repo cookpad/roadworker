@@ -37,8 +37,8 @@ ARGV.options do |opt|
   opt.on(''  , '--force')                 {    options[:force]       = true    }
   opt.on('-e', '--export')                {|v| mode                  = :export }
   opt.on('-o', '--output FILE')           {|v| output_file           = v       }
-  opt.on('',   '--with-soa-ns')           {|v| options[:with_soa_ns] = true    }
   opt.on('',   '--split')                 {|v| split                 = true    }
+  opt.on('',   '--with-soa-ns')           {|v| options[:with_soa_ns] = true    }
   opt.on('-t', '--test')                  {|v| mode                  = :test   }
   opt.on(''  , '--no-color')              {    options[:color]       = false   }
   opt.on(''  , '--debug')                 {    options[:debug]       = true    }
