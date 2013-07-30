@@ -65,8 +65,9 @@ module Roadworker
               actual_value = actual_value.map {|i| i.strip.gsub(/\s+/, ' ') }
             end
 
-            expected_value_message = record.resource_records ? expected_value.join(',') : record.dns_name
-            logmsg = "expected=#{expected_value_message}(#{expected_ttl}) actual=#{actual_value.join(',')}(#{actual_ttls.join(',')})"
+            expected_message = record.resource_records ? expected_value.join(',') : record.dns_name
+            actual_message = actual_value.zip(actual_ttls).map {|v, t| "#{v}(#{t})" }.join(',')
+            logmsg = "expected=#{expected_message}(#{expected_ttl}) actual=#{actual_message}"
             log(:debug, "  #{logmsg}", :white, "#{name} #{type}")
 
             is_same = false
