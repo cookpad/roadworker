@@ -67,7 +67,7 @@ begin
     exported = client.export
 
     if output_file == '-'
-      logger.info('Export Route53')
+      logger.info('# Export Route53')
       puts client.export
     else
       logger.info("Export Route53 to `#{output_file}`")
