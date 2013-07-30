@@ -13,6 +13,7 @@ logger = Logger.new($stdout)
 logger.formatter = proc {|severity, datetime, progname, msg|
   "#{msg}\n"
 }
+
 options = {
   :logger  => logger,
   :dry_run => false,
@@ -56,6 +57,9 @@ if options[:debug]
 end
 
 begin
+  logger = options[:logger]
+  logger.level = options[:debug] ? Logger::DEBUG : Logger::INFO
+
   client = Roadworker::Client.new(options)
 
   case mode
@@ -75,7 +79,14 @@ begin
       raise "No Routefile found (looking for: #{file})"
     end
 
-    p client.test(file)
+    is_same = client.test(file)
+
+    if is_same
+      logger.info('Test was successful'.cyan)
+    else
+      logger.info('Test failed'.red)
+      exit 1
+    end
   else
     unless File.exist?(file)
       raise "No Routefile found (looking for: #{file})"

@@ -1,6 +1,5 @@
 require 'roadworker/string-ext'
 require 'roadworker/dsl'
-require 'roadworker/log'
 require 'roadworker/route53-wrapper'
 
 require 'logger'
@@ -8,8 +7,6 @@ require 'ostruct'
 
 module Roadworker
   class Client
-    include Roadworker::Log
-
     def initialize(options = {})
       @options = OpenStruct.new(options)
       @options.logger ||= Logger.new($stdout)
@@ -41,7 +38,7 @@ module Roadworker
 
     def test(file)
       dsl = load_file(file)
-      DSL.test(dsl)
+      DSL.test(dsl, @options)
     end
 
     private

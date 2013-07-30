@@ -18,8 +18,8 @@ module Roadworker
       end
 
 
-      def test(hosted_zones)
-        Tester.test(hosted_zones)
+      def test(dsl, options)
+        Tester.test(dsl, options)
       end
     end # of class method
 
