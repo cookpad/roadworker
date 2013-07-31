@@ -50,7 +50,6 @@ module Roadworker
           zone = OpenStruct.new({:name => name, :rrsets => []}.merge(opts))
         else
           zone = @hosted_zones.create(name, opts)
-          zone.name ||= name
           @options.updated = true
         end
 
