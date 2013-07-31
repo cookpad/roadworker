@@ -211,10 +211,11 @@ module Roadworker
         #  return
         #end
         if type =~ /\A(SOA|NS)\Z/i
-
-        return if type =~ /\A(SOA|NS)\Z/i
           p @resource_record_set.name
           p @hosted_zone.name
+          $stderr.puts @resource_record_set.name
+          $stderr.puts @hosted_zone.name
+          return
         end
 
         log(:info, 'Delete ResourceRecordSet', :red) do
