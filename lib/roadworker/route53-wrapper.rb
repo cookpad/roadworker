@@ -210,7 +210,12 @@ module Roadworker
         #if @resource_record_set.name == @hosted_zone.name and type =~ /\A(SOA|NS)\Z/i
         #  return
         #end
+        if type =~ /\A(SOA|NS)\Z/i
+
         return if type =~ /\A(SOA|NS)\Z/i
+          p @resource_record_set.name
+          p @hosted_zone.name
+        end
 
         log(:info, 'Delete ResourceRecordSet', :red) do
           log_id = [self.name, self.type].join(' ')
