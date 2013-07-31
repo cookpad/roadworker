@@ -78,6 +78,7 @@ info.winebarrel.jp. A:
 ```
 ## CI
 [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker)
+
 [![Build Status](https://drone.io/bitbucket.org/winebarrel/roadworker/status.png)](https://drone.io/bitbucket.org/winebarrel/roadworker/latest)
 
 ## Link
