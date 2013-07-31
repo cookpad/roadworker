@@ -213,8 +213,8 @@ module Roadworker
         if type =~ /\A(SOA|NS)\Z/i
           p @resource_record_set.name
           p @hosted_zone.name
+          @ @hosted_zone.class
           p(@resource_record_set.name == @hosted_zone.name)
-          p caller
           return
         end
 
