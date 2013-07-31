@@ -426,6 +426,5 @@ EOS
         expect(rrs_list(ns.resource_records)).to eq(["ns.winebarrel.jp", "ns2.winebarrel.jp"])
       }
     end
-
   end
 end
