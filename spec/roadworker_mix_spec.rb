@@ -8,6 +8,7 @@ require 'fileutils'
 require 'logger'
 
 describe Roadworker::Client do
+  before(:each) {
     routefile(:force => true) { '' }
     @route53 = AWS::Route53.new
   }
