@@ -76,3 +76,7 @@ info.winebarrel.jp. A:
   actual=127.0.0.1(300),127.0.0.2(300)
 5 examples, 1 failure
 ```
+
+## Link
+* [RubyGems.org site](http://rubygems.org/gems/roadworker)
+* [drone.io(CI)](https://drone.io/bitbucket.org/winebarrel/roadworker)
