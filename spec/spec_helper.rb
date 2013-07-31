@@ -1,3 +1,8 @@
+AWS.config({
+  :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
+  :secret_access_key => (ENV['TEST_AWS_SECRET_ACCESS_KEY'] || 'tiger'),
+})
+
 def routefile(options = {})
   updated = false
   tempfile = `mktemp /tmp/#{File.basename(__FILE__)}.XXXXXX`.strip

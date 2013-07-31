@@ -9,11 +9,6 @@ require 'logger'
 
 describe Roadworker::Client do
   before(:each) {
-    AWS.config({
-      :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
-      :secret_access_key => (ENV['TEST_AWS_SECRET_ACCESS_KEY'] || 'tiger'),
-    })
-
     routefile(:force => true) { '' }
     @route53 = AWS::Route53.new
   }
