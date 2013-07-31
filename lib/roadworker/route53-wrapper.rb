@@ -50,7 +50,7 @@ module Roadworker
           zone = OpenStruct.new({:name => name, :rrsets => []}.merge(opts))
         else
           zone = @hosted_zones.create(name, opts)
-          p zone.name
+          zone.name ||= name
           @options.updated = true
         end
 
@@ -208,15 +208,10 @@ module Roadworker
       end
 
       def delete
-        #if @resource_record_set.name == @hosted_zone.name and type =~ /\A(SOA|NS)\Z/i
-        #  return
-        #end
         if type =~ /\A(SOA|NS)\Z/i
-          #p @resource_record_set.name
-          #p @hosted_zone.name
-          #p @hosted_zone.class
-          #p(@resource_record_set.name == @hosted_zone.name)
-          return
+          hz_name = @hosted_zone.name.downcase.sub(/\.\Z/, '')
+          rrs_name = @resource_record_set.name.downcase.sub(/\.\Z/, '')
+          return if hz_name == rrs_name
         end
 
         log(:info, 'Delete ResourceRecordSet', :red) do
