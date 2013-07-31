@@ -50,6 +50,7 @@ module Roadworker
           zone = OpenStruct.new({:name => name, :rrsets => []}.merge(opts))
         else
           zone = @hosted_zones.create(name, opts)
+          @options.hosted_zone_name = name
           @options.updated = true
         end
 
@@ -66,7 +67,7 @@ module Roadworker
       end
 
       def resource_record_sets
-        ResourceRecordSetCollectionWrapper.new(@hosted_zone.rrsets, @hosted_zone.name, @options)
+        ResourceRecordSetCollectionWrapper.new(@hosted_zone.rrsets, @hosted_zone, @options)
       end
       alias rrsets resource_record_sets
 
@@ -97,15 +98,15 @@ module Roadworker
     class ResourceRecordSetCollectionWrapper
       include Roadworker::Log
 
-      def initialize(resource_record_sets, hosted_zone_name, options)
+      def initialize(resource_record_sets, hosted_zone, options)
         @resource_record_sets = resource_record_sets
-        @hosted_zone_name = hosted_zone_name
+        @hosted_zone = hosted_zone
         @options = options
       end
 
       def each
         Collection.batch(@resource_record_sets) do |record|
-          yield(ResourceRecordSetWrapper.new(record, @hosted_zone_name, @options))
+          yield(ResourceRecordSetWrapper.new(record, @hosted_zone, @options))
         end
       end
 
@@ -138,16 +139,16 @@ module Roadworker
           @options.updated = true
         end
 
-        ResourceRecordSetWrapper.new(record, name, @options)
+        ResourceRecordSetWrapper.new(record, @hosted_zone, @options)
       end
     end # ResourceRecordSetCollectionWrapper
 
     class ResourceRecordSetWrapper
       include Roadworker::Log
 
-      def initialize(resource_record_set, hosted_zone_name, options)
+      def initialize(resource_record_set, hosted_zone, options)
         @resource_record_set = resource_record_set
-        @hosted_zone_name = hosted_zone_name
+        @hosted_zone = hosted_zone
         @options = options
       end
 
@@ -208,8 +209,8 @@ module Roadworker
 
       def delete
         if self.type =~ /\A(SOA|NS)\Z/i
-          hz_name = @hosted_zone_name.downcase.sub(/\.\Z/, '')
-          rrs_name = self.name.downcase.sub(/\.\Z/, '')
+          hz_name = (@hosted_zone.name || @options.hosted_zone_name).downcase.sub(/\.\Z/, '')
+          rrs_name = @resource_record_set.name.downcase.sub(/\.\Z/, '')
           return if hz_name == rrs_name
         end
 
