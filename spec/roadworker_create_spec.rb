@@ -246,7 +246,7 @@ EOS
         expect(a2.name).to eq("www.winebarrel.jp.")
         expect(a2.set_identifier).to eq('web server 2')
         expect(a2.ttl).to eq(456)
-        expect(a1.region).to eq("us-west-2")
+        expect(a2.region).to eq("us-west-2")
         expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
       }
     end
