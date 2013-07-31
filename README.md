@@ -79,4 +79,5 @@ info.winebarrel.jp. A:
 
 ## Link
 * [RubyGems.org site](http://rubygems.org/gems/roadworker)
-* [drone.io(CI)](https://drone.io/bitbucket.org/winebarrel/roadworker) [![Build Status](https://drone.io/bitbucket.org/winebarrel/roadworker/status.png)](https://drone.io/bitbucket.org/winebarrel/roadworker/latest)
+* [drone.io(CI)](https://drone.io/bitbucket.org/winebarrel/roadworker)
+  [![Build Status](https://drone.io/bitbucket.org/winebarrel/roadworker/status.png)](https://drone.io/bitbucket.org/winebarrel/roadworker/latest)
