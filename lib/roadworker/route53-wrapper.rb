@@ -214,6 +214,7 @@ module Roadworker
           p @resource_record_set.name
           p @hosted_zone.name
           p(@resource_record_set.name == @hosted_zone.name)
+          p caller
           return
         end
 
