@@ -342,7 +342,7 @@ EOS
 
     context 'A1 A2 (Latency)' do
       before {
-        routefile do
+        routefile(:logger => Logger.new($stderr)) do
 <<-EOS
 hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
@@ -372,7 +372,7 @@ EOS
       }
 
       it {
-        routefile do
+        routefile(:logger => Logger.new($stderr)) do
 <<-EOS
 hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
