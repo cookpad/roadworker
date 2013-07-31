@@ -342,7 +342,7 @@ EOS
 
     context 'A1 A2 (Latency)' do
       before {
-        routefile(:logger => Logger.new($stderr)) do
+        routefile do
 <<-EOS
 hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
@@ -372,7 +372,7 @@ EOS
       }
 
       it {
-        routefile(:logger => Logger.new($stderr)) do
+        routefile do
 <<-EOS
 hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
@@ -400,7 +400,8 @@ EOS
 
         sleep 3
 
-        zones = @route53.hosted_zones.to_a
+        #zones = @route53.hosted_zones.to_a
+        zones = AWS::Route53.new.hosted_zones.to_a
         expect(zones.length).to eq(1)
 
         zone = zones[0]
