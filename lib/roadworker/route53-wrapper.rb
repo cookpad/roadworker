@@ -66,7 +66,7 @@ module Roadworker
       end
 
       def resource_record_sets
-        ResourceRecordSetCollectionWrapper.new(@hosted_zone.rrsets, @options)
+        ResourceRecordSetCollectionWrapper.new(@hosted_zone.rrsets, @hosted_zone, @options)
       end
       alias rrsets resource_record_sets
 
@@ -97,14 +97,15 @@ module Roadworker
     class ResourceRecordSetCollectionWrapper
       include Roadworker::Log
 
-      def initialize(resource_record_sets, options)
+      def initialize(resource_record_sets, hosted_zone, options)
         @resource_record_sets = resource_record_sets
+        @hosted_zone = hosted_zone
         @options = options
       end
 
       def each
         Collection.batch(@resource_record_sets) do |record|
-          yield(ResourceRecordSetWrapper.new(record, @options))
+          yield(ResourceRecordSetWrapper.new(record, @hosted_zone, @options))
         end
       end
 
@@ -137,15 +138,16 @@ module Roadworker
           @options.updated = true
         end
 
-        ResourceRecordSetWrapper.new(record, @options)
+        ResourceRecordSetWrapper.new(record, @hosted_zone, @options)
       end
     end # ResourceRecordSetCollectionWrapper
 
     class ResourceRecordSetWrapper
       include Roadworker::Log
 
-      def initialize(resource_record_set, options)
+      def initialize(resource_record_set, hosted_zone, options)
         @resource_record_set = resource_record_set
+        @hosted_zone = hosted_zone
         @options = options
       end
 
@@ -205,7 +207,9 @@ module Roadworker
       end
 
       def delete
-        return if type =~ /\A(SOA|NS)\Z/i
+        if @resource_record_set.name == @hosted_zone.name and type =~ /\A(SOA|NS)\Z/i
+          return
+        end
 
         log(:info, 'Delete ResourceRecordSet', :red) do
           log_id = [self.name, self.type].join(' ')
