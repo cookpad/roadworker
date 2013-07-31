@@ -117,7 +117,7 @@ EOS
 <<EOS
 hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
-    dns_name "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com"
+    dns_name TEST_ELB
   end
 end
 EOS
@@ -137,7 +137,7 @@ EOS
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.alias_target).to eq({
           :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com.",
+          :dns_name => TEST_ELB,
           :evaluate_target_health => false,
         })
       }

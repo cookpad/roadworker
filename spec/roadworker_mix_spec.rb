@@ -41,7 +41,7 @@ hosted_zone "winebarrel.jp" do
   end
 
   rrset "elb.winebarrel.jp", "A" do
-    dns_name "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com"
+    dns_name TEST_ELB
   end
 
   rrset "www.winebarrel.jp", "TXT" do
@@ -89,7 +89,7 @@ hosted_zone "winebarrel.jp" do
   end
 
   rrset "elb.winebarrel.jp", "A" do
-    dns_name "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com"
+    dns_name TEST_ELB
   end
 
   rrset "www.winebarrel.jp", "TXT" do
@@ -145,7 +145,7 @@ EOS
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
         expect(a_alias.alias_target).to eq({
           :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com.",
+          :dns_name => TEST_ELB,
           :evaluate_target_health => false,
         })
 
@@ -189,7 +189,7 @@ hosted_zone "WINEBARREL.JP" do
   end
 
   rrset "ELB.WINEBARREL.JP.", "A" do
-    dns_name "ROADWORKER-1619064454.AP-NORTHEAST-1.ELB.AMAZONAWS.COM."
+    dns_name TEST_ELB
   end
 
   rrset "www.winebarrel.jp.", "TXT" do
@@ -245,7 +245,7 @@ EOS
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
         expect(a_alias.alias_target).to eq({
           :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com.",
+          :dns_name => TEST_ELB,
           :evaluate_target_health => false,
         })
 
@@ -278,7 +278,7 @@ hosted_zone "winebarrel.jp" do
   end
 
   rrset "elb.winebarrel.jp", "A" do
-    dns_name "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com"
+    dns_name TEST_ELB
   end
 
   rrset "www.winebarrel.jp", "TXT" do
@@ -358,7 +358,7 @@ EOS
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
         expect(a_alias.alias_target).to eq({
           :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com.",
+          :dns_name => TEST_ELB,
           :evaluate_target_health => false,
         })
 
@@ -399,7 +399,7 @@ hosted_zone "winebarrel.jp" do
   end
 
   rrset "elb.winebarrel.jp", "A" do
-    dns_name "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com"
+    dns_name TEST_ELB
   end
 
   rrset "www.winebarrel.jp", "TXT" do
@@ -467,7 +467,7 @@ EOS
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
         expect(a_alias.alias_target).to eq({
           :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => "roadworker-1619064454.ap-northeast-1.elb.amazonaws.com.",
+          :dns_name => TEST_ELB,
           :evaluate_target_health => false,
         })
 
