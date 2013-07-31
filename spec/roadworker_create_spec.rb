@@ -197,6 +197,60 @@ EOS
       }
     end
 
+    context 'A1 A2 (Latency)' do
+      it {
+        routefile do
+<<-EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "web server 1"
+    ttl 456
+    region "us-west-1"
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "web server 2"
+    ttl 456
+    region "us-west-2"
+    resource_records(
+      "127.0.0.3",
+      "127.0.0.4"
+    )
+  end
+end
+EOS
+        end
+
+        zones = @route53.hosted_zones.to_a
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(4)
+
+        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        a1 = zone.rrsets['www.winebarrel.jp.', 'A', "web server 1"]
+        expect(a1.name).to eq("www.winebarrel.jp.")
+        expect(a1.set_identifier).to eq('web server 1')
+        expect(a1.ttl).to eq(456)
+        expect(a1.region).to eq("us-west-1")
+        expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+
+        a2 = zone.rrsets['www.winebarrel.jp.', 'A', "web server 2"]
+        expect(a2.name).to eq("www.winebarrel.jp.")
+        expect(a2.set_identifier).to eq('web server 2')
+        expect(a2.ttl).to eq(456)
+        expect(a1.region).to eq("us-west-2")
+        expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+      }
+    end
+
     context 'TXT record' do
       it {
         routefile do
