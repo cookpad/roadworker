@@ -111,7 +111,7 @@ module Roadworker
       collection.each do |item|
         key_list = keys.map do |k|
           value = item.send(k)
-          (k == :name && value) ? value.downcase.gsub(/\.\Z/, '') : value
+          (k == :name && value) ? value.downcase.sub(/\.\Z/, '') : value
         end
 
         hash[key_list] = item

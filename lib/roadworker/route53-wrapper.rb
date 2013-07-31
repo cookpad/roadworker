@@ -164,8 +164,8 @@ module Roadworker
           elsif expected and actual
             case attr
             when :dns_name
-              expected = expected.downcase.gsub(/\.\Z/, '')
-              actual = actual.downcase.gsub(/\.\Z/, '')
+              expected = expected.downcase.sub(/\.\Z/, '')
+              actual = actual.downcase.sub(/\.\Z/, '')
             end
 
             (expected == actual)

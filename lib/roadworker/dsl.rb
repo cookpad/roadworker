@@ -68,7 +68,7 @@ module Roadworker
       private
 
       def resource_record_set(rrset_name, type, &block)
-        if rrset_name.gsub(/\.\Z/, '') !~ /#{Regexp.escape(@name.gsub(/\.\Z/, ''))}\Z/i
+        if rrset_name.sub(/\.\Z/, '') !~ /#{Regexp.escape(@name.sub(/\.\Z/, ''))}\Z/i
           raise "Invalid ResourceRecordSet Name: #{rrset_name}"
         end
 

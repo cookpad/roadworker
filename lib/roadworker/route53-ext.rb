@@ -4,7 +4,7 @@ module AWS
   class Route53
 
     def dns_name_to_alias_target(name)
-      name = name.gsub(/\.\Z/, '')
+      name = name.sub(/\.\Z/, '')
 
       unless name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
         raise "Invalid DNS Name: #{name}"
