@@ -393,5 +393,39 @@ EOS
         expect(rrs_list(aaaa.resource_records)).to eq(["::1"])
       }
     end
+
+    context 'NS record' do
+      it {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "NS" do
+    ttl 123
+    resource_records(
+      "ns.winebarrel.jp",
+      "ns2.winebarrel.jp"
+    )
+  end
+end
+EOS
+        end
+
+        zones = @route53.hosted_zones.to_a
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(3)
+
+        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        ns = zone.rrsets['www.winebarrel.jp.', 'NS']
+        expect(ns.name).to eq("www.winebarrel.jp.")
+        expect(ns.ttl).to eq(123)
+        expect(rrs_list(ns.resource_records)).to eq(["ns.winebarrel.jp", "ns.winebarrel.jp"])
+      }
+    end
+
   end
 end

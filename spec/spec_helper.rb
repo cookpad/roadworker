@@ -12,7 +12,7 @@ def routefile(options = {})
     options = {:logger => Logger.new('/dev/null')}.merge(options)
     client = Roadworker::Client.new(options)
     updated = client.apply(tempfile)
-    sleep 3
+    sleep 0.5
   ensure
     FileUtils.rm_f(tempfile)
   end
