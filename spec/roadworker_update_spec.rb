@@ -411,7 +411,7 @@ EOS
         expect(a1.set_identifier).to eq('web server 1')
         expect(a1.ttl).to eq(456)
         expect(a1.region).to eq("us-east-1")
-        expect(rrs_list(a1.resource_records)).to eq(["127.0.0.6", "127.0.0.5"])
+        expect(rrs_list(a1.resource_records)).to eq(["127.0.0.5", "127.0.0.6"])
 
         a2 = zone.rrsets['www.winebarrel.jp.', 'A', "web server 2"]
         expect(a2.name).to eq("www.winebarrel.jp.")
