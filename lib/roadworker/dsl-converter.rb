@@ -36,7 +36,7 @@ module Roadworker
               config = @health_checks[value]
               ipaddr = config[:ip_address]
               port   = config[:port]
-              type   = config[:type]
+              type   = config[:type].downcase
               path   = config[:resource_path]
               fqdn   = config[:fully_qualified_domain_name]
 
