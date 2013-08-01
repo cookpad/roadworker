@@ -3,24 +3,50 @@ module Roadworker
     class Converter
 
       class << self
-        def convert(hosted_zones)
-          hosted_zones.map {|i| output_zone(i) }.join("\n")
+        def convert(exported)
+          self.new(exported).convert
         end
+      end # of class method
 
-        private
+      def initialize(exported)
+        @health_checks = exported[:health_checks]
+        @hosted_zones = exported[:hosted_zones]
+      end
+
+      def convert
+        @hosted_zones.map {|i| output_zone(i) }.join("\n")
+      end
+
+      private
 
         def output_rrset(recrod)
           name = recrod.delete(:name).inspect
           type = recrod.delete(:type).inspect
 
           attrs = recrod.map {|key, value|
-            if value.kind_of?(Array)
+            case key
+            when :resource_records
               if value.empty?
                 nil
               else
                 value = value.map {|i| i.inspect }.join(",\n      ")
                 "#{key}(\n      #{value}\n    )"
               end
+            when :health_check_id
+              config = @health_checks[value]
+              ipaddr = config[:ip_address]
+              port   = config[:port]
+              type   = config[:type]
+              path   = config[:resource_path]
+              fqdn   = config[:fully_qualified_domain_name]
+
+              url = "#{type}://#{ipaddr}:#{port}"
+              url << path if path && path != '/'
+
+              hc_args = url.inspect
+              hc_args << ", #{fqdn.inspect}" if fqdn
+
+              "health_check #{hc_args}"
             else
               "#{key} #{value.inspect}"
             end
@@ -43,7 +69,6 @@ hosted_zone #{name} do
 end
           EOS
         end
-      end # of class method
 
     end # Converter
   end # DSL

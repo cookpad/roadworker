@@ -2,6 +2,7 @@ require 'roadworker/dsl-converter'
 require 'roadworker/dsl-tester'
 
 require 'ostruct'
+require 'uri'
 
 module Roadworker
   class DSL
@@ -109,6 +110,17 @@ module Roadworker
 
         def dns_name(value)
           @result.dns_name = value
+        end
+
+        def failover(value)
+          @result.failover = value
+        end
+
+        def health_check(url, host_name = nil)
+          @result.health_check = {
+            :url => URI.parse(url),
+            :host_name => host_name,
+          }
         end
 
         def resource_records(*values)
