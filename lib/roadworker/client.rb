@@ -15,6 +15,8 @@ module Roadworker
       @options.logger ||= Logger.new($stdout)
       String.colorize = @options.color
       @options.route53 = AWS::Route53.new
+      @health_checks = HealthCheck.health_checks(@options.route53, :extended => true)
+      @options.health_checks = @health_checks
       @route53 = Route53Wrapper.new(@options)
     end
 

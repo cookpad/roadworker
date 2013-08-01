@@ -16,6 +16,7 @@ module Roadworker
       :dns_name,
       :region,
       :failover,
+      :health_check,
     ]
 
     def initialize(options)
@@ -232,6 +233,10 @@ module Roadworker
         value ? value.gsub("\\052", '*') : value
       end
 
+      def dns_name
+        (@resource_record_set.alias_target || {})[:dns_name]
+      end
+
       def dns_name=(name)
         if name
           @resource_record_set.alias_target = @options.route53.dns_name_to_alias_target(name)
@@ -240,8 +245,13 @@ module Roadworker
         end
       end
 
-      def dns_name
-        (@resource_record_set.alias_target || {})[:dns_name]
+      def health_check
+        @options.health_checks[@resource_record_set.health_check_id]
+      end
+
+      def health_check=(check)
+        health_check_id = @options.health_checks.find_or_create(check)
+        @resource_record_set.health_check_id = health_check_id
       end
 
       private

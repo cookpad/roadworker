@@ -1,5 +1,6 @@
 require 'roadworker/dsl-converter'
 require 'roadworker/dsl-tester'
+require 'roadworker/route53-health-check'
 
 require 'ostruct'
 require 'uri'
@@ -117,10 +118,9 @@ module Roadworker
         end
 
         def health_check(url, host_name = nil)
-          @result.health_check = {
-            :url => URI.parse(url),
-            :host_name => host_name,
-          }
+          config = HealthCheck.parse_url(url)
+          config[:fully_qualified_domain_name] = host_name if host_name
+          @result.health_check = config
         end
 
         def resource_records(*values)
