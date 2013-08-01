@@ -6,7 +6,6 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 
 **Notice**
 
-* HealthCheck is not supported.
 * Cannot update TTL of two or more same records (with different SetIdentifier) after creation.
 
 ## Installation
@@ -60,6 +59,28 @@ end
 hosted_zone "info.winebarrel.jp." do
   rrset "xxx.info.winebarrel.jp.", "A" do
     dns_name "elb-dns-name.elb.amazonaws.com"
+  end
+
+  rrset "zzz.info.winebarrel.jp", "A" do
+    set_identifier "Primary"
+    failover "PRIMARY"
+    health_check "http://192.0.43.10:80/path", "example.com"
+    ttl 456
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "zzz.info.winebarrel.jp", "A" do
+    set_identifier "Secondary"
+    failover "SECONDARY"
+    health_check "tcp://192.0.43.10:3306"
+    ttl 456
+    resource_records(
+      "127.0.0.3",
+      "127.0.0.4"
+    )
   end
 end
 ```
