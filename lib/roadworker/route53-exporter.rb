@@ -29,7 +29,7 @@ module Roadworker
     private
 
     def export_health_checks(health_checks)
-            is_truncated = true
+      is_truncated = true
       next_marker = nil
 
       while is_truncated
