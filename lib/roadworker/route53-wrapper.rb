@@ -253,7 +253,7 @@ module Roadworker
       end
 
       def health_check=(check)
-        health_check_id = @options.health_checks.find_or_create(check)
+        health_check_id = check ? @options.health_checks.find_or_create(check) : nil
         @resource_record_set.health_check_id = health_check_id
       end
 

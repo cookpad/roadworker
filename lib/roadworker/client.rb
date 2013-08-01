@@ -33,6 +33,10 @@ module Roadworker
         }
       end
 
+      if updated and not @options.no_health_check_gc
+        HealthCheck.gc(@options.route53, :logger => @options.logger)
+      end
+
       return updated
     end
 

@@ -9,6 +9,10 @@ module Roadworker
         self.new(route53).health_checks(options)
       end
 
+      def gc(route53, options = {})
+        self.new(route53).gc(options)
+      end
+
       def config_to_hash(config)
         ipaddr = config[:ip_address]
         port   = config[:port]
@@ -80,6 +84,8 @@ module Roadworker
             })
 
             health_check_id = response[:health_check][:id]
+            config = response[:health_check][:health_check_config]
+            self[health_check_id] = config
           end
 
           return health_check_id
@@ -87,6 +93,27 @@ module Roadworker
       end
 
       return check_list
+    end
+
+    def gc(options = {})
+      AWS.memoize {
+        check_list = health_checks
+        return if check_list.empty?
+
+        if (logger = options[:logger])
+          logger.info('Clean HealthChecks (pass `--no-health-check-gc` if you do not want to remove)')
+        end
+
+        @route53.hosted_zones.each do |zone|
+          zone.rrsets.each do |record|
+            check_list.delete(record.health_check_id)
+          end
+        end
+
+        check_list.each do |health_check_id, config|
+          @route53.client.delete_health_check(:health_check_id  => health_check_id)
+        end
+      }
     end
 
   end # HealthCheck
