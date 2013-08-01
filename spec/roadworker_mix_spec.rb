@@ -60,6 +60,28 @@ hosted_zone "winebarrel.jp" do
       "20 mail2.winebarrel.jp"
     )
   end
+
+  rrset "fo.winebarrel.jp", "A" do
+    set_identifier "Primary"
+    failover "PRIMARY"
+    health_check "tcp://192.0.43.10:3306"
+    ttl 456
+    resource_records(
+      "127.0.0.5",
+      "127.0.0.6"
+    )
+  end
+
+  rrset "fo.winebarrel.jp", "A" do
+    set_identifier "Secondary"
+    failover "SECONDARY"
+    ttl 456
+    health_check "http://192.0.43.10:80/path", 'example.com'
+    resource_records(
+      "127.0.0.7",
+      "127.0.0.8"
+    )
+  end
 end
 EOS
       end
@@ -108,6 +130,28 @@ hosted_zone "winebarrel.jp" do
       "20 mail2.winebarrel.jp"
     )
   end
+
+  rrset "fo.winebarrel.jp", "A" do
+    set_identifier "Primary"
+    failover "PRIMARY"
+    health_check "tcp://192.0.43.10:3306"
+    ttl 456
+    resource_records(
+      "127.0.0.5",
+      "127.0.0.6"
+    )
+  end
+
+  rrset "fo.winebarrel.jp", "A" do
+    set_identifier "Secondary"
+    failover "SECONDARY"
+    ttl 456
+    health_check "http://192.0.43.10:80/path", 'example.com'
+    resource_records(
+      "127.0.0.7",
+      "127.0.0.8"
+    )
+  end
 end
 EOS
         end
@@ -131,7 +175,7 @@ EOS
 
         zone = zones[1]
         expect(zone.name).to eq("winebarrel.jp.")
-        expect(zone.resource_record_set_count).to eq(6)
+        expect(zone.resource_record_set_count).to eq(8)
 
         expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
         expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
@@ -162,6 +206,35 @@ EOS
         expect(mx.name).to eq("www.winebarrel.jp.")
         expect(mx.ttl).to eq(123)
         expect(rrs_list(mx.resource_records)).to eq(["10 mail.winebarrel.jp", "20 mail2.winebarrel.jp"])
+
+        check_list = fetch_health_checks(@route53)
+        expect(check_list.length).to eq(2)
+
+        fo_p = zone.rrsets['fo.winebarrel.jp.', 'A', "Primary"]
+        expect(fo_p.name).to eq("fo.winebarrel.jp.")
+        expect(fo_p.set_identifier).to eq('Primary')
+        expect(fo_p.failover).to eq('PRIMARY')
+        expect(fo_p.ttl).to eq(456)
+        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.5", "127.0.0.6"])
+        expect(check_list[fo_p.health_check_id]).to eq({
+          :ip_address => '192.0.43.10',
+          :port => 3306,
+          :type => 'TCP',
+        })
+
+        fo_s = zone.rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
+        expect(fo_s.name).to eq("fo.winebarrel.jp.")
+        expect(fo_s.set_identifier).to eq('Secondary')
+        expect(fo_s.failover).to eq('SECONDARY')
+        expect(fo_s.ttl).to eq(456)
+        expect(rrs_list(fo_s.resource_records)).to eq(["127.0.0.7", "127.0.0.8"])
+        expect(check_list[fo_s.health_check_id]).to eq({
+          :ip_address => '192.0.43.10',
+          :port => 80,
+          :type => 'HTTP',
+          :resource_path => '/path',
+          :fully_qualified_domain_name => 'example.com',
+        })
       }
     end
 
@@ -208,6 +281,28 @@ hosted_zone "WINEBARREL.JP" do
       "20 mail2.winebarrel.jp"
     )
   end
+
+  rrset "fo.winebarrel.jp", "A" do
+    set_identifier "Primary"
+    failover "PRIMARY"
+    health_check "tcp://192.0.43.10:3306"
+    ttl 456
+    resource_records(
+      "127.0.0.5",
+      "127.0.0.6"
+    )
+  end
+
+  rrset "FO.WINEBARREL.JP", "A" do
+    set_identifier "Secondary"
+    failover "SECONDARY"
+    ttl 456
+    health_check "http://192.0.43.10:80/path", 'example.com'
+    resource_records(
+      "127.0.0.7",
+      "127.0.0.8"
+    )
+  end
 end
 EOS
         end
@@ -231,7 +326,7 @@ EOS
 
         zone = zones[1]
         expect(zone.name).to eq("winebarrel.jp.")
-        expect(zone.resource_record_set_count).to eq(6)
+        expect(zone.resource_record_set_count).to eq(8)
 
         expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
         expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
@@ -262,6 +357,35 @@ EOS
         expect(mx.name).to eq("www.winebarrel.jp.")
         expect(mx.ttl).to eq(123)
         expect(rrs_list(mx.resource_records)).to eq(["10 mail.winebarrel.jp", "20 mail2.winebarrel.jp"])
+
+        check_list = fetch_health_checks(@route53)
+        expect(check_list.length).to eq(2)
+
+        fo_p = zone.rrsets['fo.winebarrel.jp.', 'A', "Primary"]
+        expect(fo_p.name).to eq("fo.winebarrel.jp.")
+        expect(fo_p.set_identifier).to eq('Primary')
+        expect(fo_p.failover).to eq('PRIMARY')
+        expect(fo_p.ttl).to eq(456)
+        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.5", "127.0.0.6"])
+        expect(check_list[fo_p.health_check_id]).to eq({
+          :ip_address => '192.0.43.10',
+          :port => 3306,
+          :type => 'TCP',
+        })
+
+        fo_s = zone.rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
+        expect(fo_s.name).to eq("fo.winebarrel.jp.")
+        expect(fo_s.set_identifier).to eq('Secondary')
+        expect(fo_s.failover).to eq('SECONDARY')
+        expect(fo_s.ttl).to eq(456)
+        expect(rrs_list(fo_s.resource_records)).to eq(["127.0.0.7", "127.0.0.8"])
+        expect(check_list[fo_s.health_check_id]).to eq({
+          :ip_address => '192.0.43.10',
+          :port => 80,
+          :type => 'HTTP',
+          :resource_path => '/path',
+          :fully_qualified_domain_name => 'example.com',
+        })
       }
     end
 
@@ -301,6 +425,28 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "AAAA" do
     ttl 123
     resource_records("::1")
+  end
+
+  rrset "fo.winebarrel.jp", "A" do
+    set_identifier "Primary"
+    failover "PRIMARY"
+    health_check "http://192.0.43.10:80/path", 'example.com'
+    ttl 456
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "fo.winebarrel.jp", "A" do
+    set_identifier "Secondary"
+    failover "SECONDARY"
+    health_check "tcp://192.0.43.10:3306"
+    ttl 456
+    resource_records(
+      "127.0.0.3",
+      "127.0.0.4"
+    )
   end
 end
 
@@ -344,7 +490,7 @@ EOS
 
         zone = zones[2]
         expect(zone.name).to eq("winebarrel.jp.")
-        expect(zone.resource_record_set_count).to eq(7)
+        expect(zone.resource_record_set_count).to eq(9)
 
         expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
         expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
@@ -383,6 +529,34 @@ EOS
         expect(aaaa.name).to eq("www.winebarrel.jp.")
         expect(aaaa.ttl).to eq(123)
         expect(rrs_list(aaaa.resource_records)).to eq(["::1"])
+        check_list = fetch_health_checks(@route53)
+        expect(check_list.length).to eq(2)
+
+        fo_p = zone.rrsets['fo.winebarrel.jp.', 'A', "Primary"]
+        expect(fo_p.name).to eq("fo.winebarrel.jp.")
+        expect(fo_p.set_identifier).to eq('Primary')
+        expect(fo_p.failover).to eq('PRIMARY')
+        expect(fo_p.ttl).to eq(456)
+        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(check_list[fo_p.health_check_id]).to eq({
+          :ip_address => '192.0.43.10',
+          :port => 80,
+          :type => 'HTTP',
+          :resource_path => '/path',
+          :fully_qualified_domain_name => 'example.com',
+        })
+
+        fo_s = zone.rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
+        expect(fo_s.name).to eq("fo.winebarrel.jp.")
+        expect(fo_s.set_identifier).to eq('Secondary')
+        expect(fo_s.failover).to eq('SECONDARY')
+        expect(fo_s.ttl).to eq(456)
+        expect(rrs_list(fo_s.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(check_list[fo_s.health_check_id]).to eq({
+          :ip_address => '192.0.43.10',
+          :port => 3306,
+          :type => 'TCP',
+        })
       }
     end
 
