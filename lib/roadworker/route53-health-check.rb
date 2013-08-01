@@ -101,7 +101,7 @@ module Roadworker
         return if check_list.empty?
 
         if (logger = options[:logger])
-          logger.info('Clean HealthChecks (pass `--no-health-check-gc` if you do not want to remove)')
+          logger.info('Clean HealthChecks (pass `--no-health-check-gc` if you do not want to clean)')
         end
 
         @route53.hosted_zones.each do |zone|
