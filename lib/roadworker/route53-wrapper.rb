@@ -14,7 +14,8 @@ module Roadworker
       :ttl,
       :resource_records,
       :dns_name,
-      :region
+      :region,
+      :failover,
     ]
 
     def initialize(options)
