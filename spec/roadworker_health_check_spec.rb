@@ -435,6 +435,65 @@ EOS
           })
         }
       end
+
+      context 'Failover -> Weighted' do
+        before {
+          routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "Primary"
+    failover "PRIMARY"
+    health_check "tcp://192.0.43.10:3306"
+    ttl 456
+    resource_records(
+      "127.0.0.5",
+      "127.0.0.6"
+    )
+  end
+end
+          end
+        }
+
+        it {
+          routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "Primary"
+    weight 100
+    ttl 456
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+end
+EOS
+          end
+
+          zones = @route53.hosted_zones.to_a
+          expect(zones.length).to eq(1)
+
+          zone = zones[0]
+          expect(zone.name).to eq("winebarrel.jp.")
+          expect(zone.resource_record_set_count).to eq(3)
+
+          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+          check_list = fetch_health_checks(@route53)
+          expect(check_list.length).to eq(0)
+
+          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          expect(a1.name).to eq("www.winebarrel.jp.")
+          expect(a1.set_identifier).to eq('Primary')
+          expect(a1.failover).to be_nil
+          expect(a1.weight).to eq(100)
+          expect(a1.ttl).to eq(456)
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        }
+      end
     end
   end
 end
