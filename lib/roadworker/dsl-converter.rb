@@ -33,19 +33,9 @@ module Roadworker
                 "#{key}(\n      #{value}\n    )"
               end
             when :health_check_id
-              config = @health_checks[value]
-              ipaddr = config[:ip_address]
-              port   = config[:port]
-              type   = config[:type].downcase
-              path   = config[:resource_path]
-              fqdn   = config[:fully_qualified_domain_name]
-
-              url = "#{type}://#{ipaddr}:#{port}"
-              url << path if path && path != '/'
-
-              hc_args = url.inspect
-              hc_args << ", #{fqdn.inspect}" if fqdn
-
+              config = HealthCheck.config_to_hash(@health_checks[value])
+              hc_args = config[:url].inspect
+              hc_args << ", #{config[:host_name].inspect}" if config[:host_name]
               "health_check #{hc_args}"
             else
               "#{key} #{value.inspect}"
