@@ -159,7 +159,7 @@ EOS
         }
       end
 
-      context 'No Check' do
+      context 'No Secondary Check' do
         it {
           routefile do
 <<EOS
@@ -167,6 +167,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "Primary"
     failover "PRIMARY"
+    health_check "http://192.0.43.10:80"
     ttl 456
     resource_records(
       "127.0.0.1",
@@ -206,7 +207,11 @@ EOS
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(a1.health_check_id).to be_nil
+          expect(check_list[a1.health_check_id]).to eq({
+            :ip_address => '192.0.43.10',
+            :port => 80,
+            :type => 'HTTP',
+          })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
@@ -214,7 +219,7 @@ EOS
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(b1.health_check_id).to be_nil
+          expect(a2.health_check_id).to be_nil
         }
       end
     end
