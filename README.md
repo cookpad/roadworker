@@ -4,6 +4,8 @@ Roadworker is a tool to manage Route53.
 
 It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 
+[![Build Status](https://drone.io/bitbucket.org/winebarrel/roadworker/status.png)](https://drone.io/bitbucket.org/winebarrel/roadworker/latest)
+
 **Notice**
 
 * Cannot update TTL of two or more same weighted A records (with different SetIdentifier) after creation.
@@ -106,11 +108,6 @@ info.winebarrel.jp. A:
 
 * [Bitbucket](https://bitbucket.org/winebarrel/roadworker-example/src)
 * [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
-
-## CI
-[drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker)
-
-[![Build Status](https://drone.io/bitbucket.org/winebarrel/roadworker/status.png)](https://drone.io/bitbucket.org/winebarrel/roadworker/latest)
 
 ## Link
 * [RubyGems.org site](http://rubygems.org/gems/roadworker)
