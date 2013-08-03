@@ -102,19 +102,10 @@ info.winebarrel.jp. A:
 
 ![Automatic DNS update](https://cacoo.com/diagrams/geJfslZqd8qne90t-BC7C7.png)
 
-### Bitbucket example project
+### Example projects
 
-https://bitbucket.org/winebarrel/roadworker-example/src
-
-### CI script example
-
-```sh
-bundle install
-bundle exec roadwork -a
-```
-
-(ex: https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
-
+* [Bitbucket](https://bitbucket.org/winebarrel/roadworker-example)
+* [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
 
 ## CI
 [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker)
