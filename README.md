@@ -97,6 +97,25 @@ info.winebarrel.jp. A:
   actual=127.0.0.1(300),127.0.0.2(300)
 5 examples, 1 failure
 ```
+
+## Automatic DNS update
+
+![Automatic DNS update](https://cacoo.com/diagrams/geJfslZqd8qne90t-BC7C7.png)
+
+### Bitbucket example project
+
+https://bitbucket.org/winebarrel/roadworker-example/src
+
+### CI script example
+
+```sh
+bundle install
+bundle exec roadwork -a
+```
+
+(ex: https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
+
+
 ## CI
 [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker)
 
