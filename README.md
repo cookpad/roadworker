@@ -6,7 +6,7 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 
 **Notice**
 
-* Cannot update TTL of two or more same records (with different SetIdentifier) after creation.
+* Cannot update TTL of two or more same weighted A records (with different SetIdentifier) after creation.
 
 ## Installation
 
