@@ -102,10 +102,9 @@ info.winebarrel.jp. A:
 
 (Please note test of A(Alias) is not possible to perfection...)
 
+## DNS management using Git
 
-## Automatic DNS update
-
-![Automatic DNS update](https://cacoo.com/diagrams/geJfslZqd8qne90t-BC7C7.png)
+![DNS management using Git](https://cacoo.com/diagrams/geJfslZqd8qne90t-BC7C7.png)
 
 * [Bitbucket](https://bitbucket.org/winebarrel/roadworker-example/src)
 * [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
