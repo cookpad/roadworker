@@ -19,7 +19,6 @@ module Roadworker
         Converter.convert(hosted_zones)
       end
 
-
       def test(dsl, options)
         Tester.test(dsl, options)
       end

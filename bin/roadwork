@@ -112,7 +112,6 @@ begin
       end
     end
   when :test
-    # XXX:
     unless File.exist?(file)
       raise "No Routefile found (looking for: #{file})"
     end
