@@ -361,6 +361,154 @@ EOS
           expect(check_list.length).to eq(2)
         }
       end
+
+      context 'Weighted' do
+        before {
+          routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "info.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "w100"
+    weight 100
+    health_check "http://192.0.43.10:80/path"
+    ttl 456
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "w50"
+    weight 50
+    health_check "tcp://192.0.43.10:3306"
+    ttl 456
+    resource_records(
+      "127.0.0.3",
+      "127.0.0.4"
+    )
+  end
+end
+EOS
+          end
+        }
+
+        it {
+          routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "info.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+end
+EOS
+          end
+
+          zones = @route53.hosted_zones.to_a
+          expect(zones.length).to eq(1)
+
+          zone = zones[0]
+          expect(zone.name).to eq("winebarrel.jp.")
+          expect(zone.resource_record_set_count).to eq(3)
+
+          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+          info = zone.rrsets['info.winebarrel.jp.', 'A']
+          expect(info.name).to eq("info.winebarrel.jp.")
+          expect(info.ttl).to eq(123)
+          expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+
+          check_list = fetch_health_checks(@route53)
+          expect(check_list.length).to eq(0)
+        }
+      end
+
+      context 'Latency' do
+        before {
+          routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "info.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "jp"
+    region "ap-northeast-1"
+    health_check "http://192.0.43.10:80/path"
+    ttl 456
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "us"
+    region "us-east-1"
+    health_check "tcp://192.0.43.10:3306"
+    ttl 456
+    resource_records(
+      "127.0.0.3",
+      "127.0.0.4"
+    )
+  end
+end
+EOS
+          end
+        }
+
+        it {
+          routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "info.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+end
+EOS
+          end
+
+          zones = @route53.hosted_zones.to_a
+          expect(zones.length).to eq(1)
+
+          zone = zones[0]
+          expect(zone.name).to eq("winebarrel.jp.")
+          expect(zone.resource_record_set_count).to eq(3)
+
+          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+          info = zone.rrsets['info.winebarrel.jp.', 'A']
+          expect(info.name).to eq("info.winebarrel.jp.")
+          expect(info.ttl).to eq(123)
+          expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+
+          check_list = fetch_health_checks(@route53)
+          expect(check_list.length).to eq(0)
+        }
+      end
     end
   end
 end
