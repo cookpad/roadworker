@@ -106,8 +106,8 @@ info.winebarrel.jp. A:
 
 ![DNS management using Git](https://cacoo.com/diagrams/geJfslZqd8qne90t-BC7C7.png)
 
-* [Bitbucket](https://bitbucket.org/winebarrel/roadworker-example/src)
-* [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
+* [Bitbucket example repository](https://bitbucket.org/winebarrel/roadworker-example/src)
+* [drone.io example project](https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
 
 ## Link
 * [RubyGems.org site](http://rubygems.org/gems/roadworker)
