@@ -102,7 +102,7 @@ info.winebarrel.jp. A:
 
 (Please note test of A(Alias) is not possible to perfection...)
 
-## DNS management using Git
+## DNS management using GitHub/Bitbucket
 
 ![DNS management using Git](https://cacoo.com/diagrams/geJfslZqd8qne90t-BC7C7.png)
 
