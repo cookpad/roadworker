@@ -104,7 +104,7 @@ info.winebarrel.jp. A:
 
 ### ex)
 
-* [Bitbucket](https://bitbucket.org/winebarrel/roadworker-example)
+* [Bitbucket](https://bitbucket.org/winebarrel/roadworker-example/src)
 * [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
 
 ## CI
