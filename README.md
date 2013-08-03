@@ -91,6 +91,8 @@ end
 
 Routefile compares the results of a query to the DNS and DSL in the test mode.
 
+(Please note test of ELB is not possible to perfection...)
+
 ```
 shell> roadwork -t
 ..F..
