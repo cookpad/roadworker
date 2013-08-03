@@ -102,7 +102,7 @@ info.winebarrel.jp. A:
 
 ![Automatic DNS update](https://cacoo.com/diagrams/geJfslZqd8qne90t-BC7C7.png)
 
-### Example projects
+### ex)
 
 * [Bitbucket](https://bitbucket.org/winebarrel/roadworker-example)
 * [drone.io](https://drone.io/bitbucket.org/winebarrel/roadworker-example/latest)
