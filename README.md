@@ -91,8 +91,6 @@ end
 
 Routefile compares the results of a query to the DNS and DSL in the test mode.
 
-(Please note test of A(Alias) is not possible to perfection...)
-
 ```
 shell> roadwork -t
 ..F..
@@ -101,6 +99,9 @@ info.winebarrel.jp. A:
   actual=127.0.0.1(300),127.0.0.2(300)
 5 examples, 1 failure
 ```
+
+(Please note test of A(Alias) is not possible to perfection...)
+
 
 ## Automatic DNS update
 
