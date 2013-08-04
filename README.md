@@ -102,6 +102,10 @@ info.winebarrel.jp. A:
 
 (Please note test of A(Alias) is not possible to perfection...)
 
+## Demo
+
+![Roadworker Demo](https://bitbucket.org/winebarrel/roadworker/downloads/roadworker-demo.gif)
+
 ## DNS management using GitHub/Bitbucket
 
 ![DNS management using Git](https://cacoo.com/diagrams/geJfslZqd8qne90t-BC7C7.png)
