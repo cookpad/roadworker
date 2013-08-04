@@ -116,10 +116,18 @@ module Roadworker
           @result.failover = value
         end
 
-        def health_check(url, host_name = nil)
+        def health_check(url, options = nil)
           config = HealthCheck.parse_url(url)
-          config[:fully_qualified_domain_name] = host_name if host_name
-          @result.health_check = config
+
+          if options
+            if options.kind_of?(Hash)
+              config[:fully_qualified_domain_name] = options.fetch(:host)
+            else
+              config[:fully_qualified_domain_name] = options.to_s
+            end
+          end
+
+           @result.health_check = config
         end
 
         def resource_records(*values)

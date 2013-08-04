@@ -297,7 +297,7 @@ hosted_zone "WINEBARREL.JP" do
     set_identifier "Secondary"
     failover "SECONDARY"
     ttl 456
-    health_check "http://192.0.43.10:80/path", 'example.com'
+    health_check "http://192.0.43.10:80/path", :host => 'example.com'
     resource_records(
       "127.0.0.7",
       "127.0.0.8"
