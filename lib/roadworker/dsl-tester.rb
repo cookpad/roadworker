@@ -35,10 +35,11 @@ module Roadworker
         error_messages = []
         warning_messages = []
 
-        records.each do |key, rrs|
+        validate_record = lambda do |key, rrs, asterisk_answers|
           errors = []
 
-          name = asterisk_to_anyname(key[0])
+          original_name = key[0]
+          name = asterisk_to_anyname(original_name)
           type = key[1]
 
           log(:debug, 'Check DNS', :white, "#{name} #{type}")
@@ -93,6 +94,18 @@ module Roadworker
             end
 
             errors << [logmsg_expected, logmsg_actual] unless is_same
+
+            if asterisk_answers
+              asterisk_answers.each do |ast_key, answers|
+                ast_name = ast_key[0]
+                ast_regex = Regexp.new('\A' + ast_name.sub(/\.\Z/, '').gsub('.', '\.').gsub('*', '.+') + '\Z')
+
+                if ast_regex =~ name.sub(/\.\Z/, '') and actual_value.any? {|i| answers.include?(i) }
+                  warning_messages << "#{name} #{type}: It's same as `#{ast_name}`"
+                end
+              end
+            end
+
             is_same
           }
 
@@ -106,8 +119,33 @@ module Roadworker
               error_messages << "#{name} #{type}:\n  #{logmsg_expected}\n  #{logmsg_actual}"
             end
           end
+        end
 
-          result &&= is_valid
+        asterisk_records = {}
+        asterisk_answers = {}
+
+        records.keys.each do |key|
+          asterisk_records[key] = records.delete(key) if key[0]['*']
+        end
+
+        asterisk_records.map do |key, rrs|
+          original_name = key[0]
+          name = asterisk_to_anyname(original_name)
+          type = key[1]
+
+          response = query(name, type)
+
+          if response
+            asterisk_answers[key] = response.answer.map {|i| (type == 'TXT' ? i.txt : i.value).strip }
+          end
+        end
+
+        asterisk_records.each do |key, rrs|
+          validate_record.call(key, rrs, nil)
+        end
+
+        records.each do |key, rrs|
+          validate_record.call(key, rrs, asterisk_answers)
         end
 
         puts unless @options.debug
@@ -156,14 +194,14 @@ module Roadworker
         name.gsub('*', "#{ASTERISK_PREFIX}-#{rand_str}")
       end
 
-      def query(name, type, warning_messages)
+      def query(name, type, warning_messages = nil)
         ctype = Net::DNS.const_get(type)
         response = nil
 
         begin
           response = @resolver.query(name, ctype)
         rescue => e
-          warning_messages << "#{name} #{type}: #{e.message}"
+          warning_messages << "#{name} #{type}: #{e.message}" if warning_messages
         end
 
         return response
