@@ -101,7 +101,7 @@ module Roadworker
                 ast_regex = Regexp.new('\A' + ast_name.sub(/\.\Z/, '').gsub('.', '\.').gsub('*', '.+') + '\Z')
 
                 if ast_regex =~ name.sub(/\.\Z/, '') and actual_value.any? {|i| answers.include?(i) }
-                  warning_messages << "#{name} #{type}: It's same as `#{ast_name}`"
+                  warning_messages << "#{name} #{type}: same as `#{ast_name}`"
                 end
               end
             end
