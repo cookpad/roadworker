@@ -79,11 +79,37 @@ module Roadworker
 
             if record.dns_name
               # A(Alias)
-              is_same = response.answer.all? {|a|
-                query(a.value, 'PTR', warning_messages).answer.all? do |ptr|
-                  ptr.value =~ /\.compute\.amazonaws\.com\.\Z/
+              case record.dns_name.sub(/\.\Z/, '')
+              when /\.elb\.amazonaws\.com/i
+                is_same = response.answer.all? {|a|
+                  query(a.value, 'PTR', warning_messages).answer.all? do |ptr|
+                    ptr.value =~ /\.compute\.amazonaws\.com\.\Z/
+                  end
+                }
+              when /\As3-website-(?:[^.]+)\.amazonaws\.com\Z/
+                response_answer_ip_1_2 = response.answer.map {|a| a.value.split('.').slice(0, 2) }.uniq
+
+                # try 3 times
+                is_same = (0...3).any? do |n|
+                  unless n.zero?
+                    sleep 3
+                    log(:debug, 'Retry Check', :white, "#{name} #{type}")
+                  end
+
+                  dns_name_response = query(record.dns_name, 'A')
+
+                  if dns_name_response
+                    s3_website_endpoint_ips = dns_name_response.answer.map {|i| i.value }
+
+                    !s3_website_endpoint_ips.empty? && s3_website_endpoint_ips.any? {|ip|
+                      response_answer_ip_1_2.include?(ip.split('.').slice(0, 2))
+                    }
+                  end
                 end
-              }
+              else
+                is_same = true
+                warning_messages << "#{name} #{type}: Cannot check `#{record.dns_name}`"
+              end
             else
               is_same = (expected_value == actual_value)
             end
