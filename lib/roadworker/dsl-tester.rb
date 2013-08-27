@@ -15,7 +15,7 @@ module Roadworker
     class Tester
       include Roadworker::Log
 
-      DEFAULT_NAMESERVERS = '8.8.8.8'
+      DEFAULT_NAMESERVERS = ['8.8.8.8', '8.8.4.4']
       ASTERISK_PREFIX = 'asterisk-of-wildcard'
 
       class << self
