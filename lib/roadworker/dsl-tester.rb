@@ -96,7 +96,7 @@ module Roadworker
                     log(:debug, 'Retry Check', :white, "#{name} #{type}")
                   end
 
-                  dns_name_response = query(record.dns_name, 'A')
+                  dns_name_response = query(record.dns_name, 'A', warning_messages)
 
                   if dns_name_response
                     s3_website_endpoint_ips = dns_name_response.answer.map {|i| i.value }
@@ -106,9 +106,15 @@ module Roadworker
                     }
                   end
                 end
+              when /\.cloudfront\.net\Z/
+                is_same = response.answer.all? {|a|
+                  query(a.value, 'PTR', warning_messages).answer.all? do |ptr|
+                    ptr.value =~ /\.cloudfront\.net\.\Z/
+                  end
+                }
               else
-                is_same = true
                 warning_messages << "#{name} #{type}: Cannot check `#{record.dns_name}`"
+                is_same = true
               end
             else
               is_same = (expected_value == actual_value)
