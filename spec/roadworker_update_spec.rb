@@ -306,6 +306,54 @@ EOS
       }
     end
 
+    context 'A record -> A(Alias) record (CF)' do
+      before {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "cf.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+end
+EOS
+        end
+      }
+
+      it {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "cf.winebarrel.jp", "A" do
+    dns_name TEST_CF
+  end
+end
+EOS
+        end
+
+        zones = @route53.hosted_zones.to_a
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(3)
+
+        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        a = zone.rrsets['cf.winebarrel.jp.', 'A']
+        expect(a.name).to eq("cf.winebarrel.jp.")
+        expect(a.alias_target).to eq({
+          :hosted_zone_id => "Z2FDTNDATAQYW2",
+          :dns_name => TEST_CF,
+          :evaluate_target_health => false,
+        })
+      }
+    end
+
     context 'A1 A2' do
       before {
         routefile do
