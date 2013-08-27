@@ -1,4 +1,5 @@
 TEST_ELB = ENV['TEST_ELB']
+TEST_CF = ENV['TEST_CF']
 
 AWS.config({
   :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
