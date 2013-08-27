@@ -21,6 +21,7 @@ module AWS
 
     class << self
       def dns_name_to_alias_target(name, hosted_zone_id, hosted_zone_name)
+        hosted_zone_name = hosted_zone_name.sub(/\.\Z/, '')
         name = name.sub(/\.\Z/, '')
 
         if name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
@@ -31,6 +32,8 @@ module AWS
           s3_dns_name_to_alias_target(name, region, s3_hosted_zone_id)
         elsif name =~ /\.cloudfront\.net\Z/i
           cf_dns_name_to_alias_target(name)
+        elsif name =~ /\.#{Regexp.escape(hosted_zone_name)}\Z/i
+          this_dns_name_to_alias_target(name, hosted_zone_id)
         else
           raise "Invalid DNS Name: #{name}"
         end
@@ -67,6 +70,14 @@ module AWS
       def cf_dns_name_to_alias_target(name)
         {
           :hosted_zone_id         => CF_HOSTED_ZONE_ID,
+          :dns_name               => name,
+          :evaluate_target_health => false, # XXX:
+        }
+      end
+
+      def this_dns_name_to_alias_target(name, hosted_zone_id)
+        {
+          :hosted_zone_id         => hosted_zone_id,
           :dns_name               => name,
           :evaluate_target_health => false, # XXX:
         }
