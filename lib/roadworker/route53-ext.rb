@@ -7,11 +7,17 @@ module AWS
       def dns_name_to_alias_target(name)
         name = name.sub(/\.\Z/, '')
 
-        unless name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
+        if name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
+          region = $1.downcase
+          elb_dns_name_to_alias_target(name, region)
+        else
           raise "Invalid DNS Name: #{name}"
         end
+      end
 
-        region = $1.downcase
+      private
+
+      def elb_dns_name_to_alias_target(name, region)
         elb = AWS::ELB.new(:region => region)
 
         load_balancer = elb.load_balancers.find do |lb|
