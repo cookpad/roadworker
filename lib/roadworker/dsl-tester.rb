@@ -96,15 +96,12 @@ module Roadworker
                     log(:debug, 'Retry Check', :white, "#{name} #{type}")
                   end
 
-                  dns_name_response = query(record.dns_name, 'A', warning_messages)
+                  dns_name_a = query(record.dns_name, 'A', warning_messages)
+                  s3_website_endpoint_ips = dns_name_a.answer.map {|i| i.value }
 
-                  if dns_name_response
-                    s3_website_endpoint_ips = dns_name_response.answer.map {|i| i.value }
-
-                    !s3_website_endpoint_ips.empty? && s3_website_endpoint_ips.any? {|ip|
-                      response_answer_ip_1_2.include?(ip.split('.').slice(0, 2))
-                    }
-                  end
+                  !s3_website_endpoint_ips.empty? && s3_website_endpoint_ips.any? {|ip|
+                    response_answer_ip_1_2.include?(ip.split('.').slice(0, 2))
+                  }
                 end
               when /\.cloudfront\.net\Z/
                 is_same = response.answer.all? {|a|
