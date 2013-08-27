@@ -22,7 +22,7 @@ module AWS
 
         if (s3_hosted_zone_id = S3_WEBSITE_ENDPOINTS[name.downcase]) and name =~ /\As3-website-([^.]+).amazonaws.com\Z/i
           region = $1.downcase
-          s3_dns_name_to_alias_target(name, region, hosted_zone_id)
+          s3_dns_name_to_alias_target(name, region, s3_hosted_zone_id)
         elsif name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
           region = $1.downcase
           elb_dns_name_to_alias_target(name, region)
@@ -33,7 +33,7 @@ module AWS
 
       private
 
-      def s3_dns_name_to_alias_target(name, region, rehosted_zone_id)
+      def s3_dns_name_to_alias_target(name, region, hosted_zone_id)
         {
           :hosted_zone_id         => hosted_zone_id,
           :dns_name               => name,
