@@ -16,30 +16,27 @@ module AWS
       's3-website-us-gov-west-1.amazonaws.com'  => 'Z31GFT0UA1I2HV',
     }
 
+    # http://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html
+    CF_HOSTED_ZONE_ID = 'Z2FDTNDATAQYW2'
+
     class << self
       def dns_name_to_alias_target(name)
         name = name.sub(/\.\Z/, '')
 
-        if (s3_hosted_zone_id = S3_WEBSITE_ENDPOINTS[name.downcase]) and name =~ /\As3-website-([^.]+).amazonaws.com\Z/i
-          region = $1.downcase
-          s3_dns_name_to_alias_target(name, region, s3_hosted_zone_id)
-        elsif name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
+        if name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
           region = $1.downcase
           elb_dns_name_to_alias_target(name, region)
+        elsif (s3_hosted_zone_id = S3_WEBSITE_ENDPOINTS[name.downcase]) and name =~ /\As3-website-([^.]+)\.amazonaws\.com\Z/i
+          region = $1.downcase
+          s3_dns_name_to_alias_target(name, region, s3_hosted_zone_id)
+        elsif name =~ /\.cloudfront\.net\Z/i
+          cf_dns_name_to_alias_target(name)
         else
           raise "Invalid DNS Name: #{name}"
         end
       end
 
       private
-
-      def s3_dns_name_to_alias_target(name, region, hosted_zone_id)
-        {
-          :hosted_zone_id         => hosted_zone_id,
-          :dns_name               => name,
-          :evaluate_target_health => false, # XXX:
-        }
-      end
 
       def elb_dns_name_to_alias_target(name, region)
         elb = AWS::ELB.new(:region => region)
@@ -55,6 +52,22 @@ module AWS
         {
           :hosted_zone_id         => load_balancer.canonical_hosted_zone_name_id,
           :dns_name               => load_balancer.dns_name,
+          :evaluate_target_health => false, # XXX:
+        }
+      end
+
+      def s3_dns_name_to_alias_target(name, region, hosted_zone_id)
+        {
+          :hosted_zone_id         => hosted_zone_id,
+          :dns_name               => name,
+          :evaluate_target_health => false, # XXX:
+        }
+      end
+
+      def cf_dns_name_to_alias_target(name)
+        {
+          :hosted_zone_id         => CF_HOSTED_ZONE_ID,
+          :dns_name               => name,
           :evaluate_target_health => false, # XXX:
         }
       end
