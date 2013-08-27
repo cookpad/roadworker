@@ -20,7 +20,7 @@ module AWS
     CF_HOSTED_ZONE_ID = 'Z2FDTNDATAQYW2'
 
     class << self
-      def dns_name_to_alias_target(name)
+      def dns_name_to_alias_target(name, hosted_zone_id, hosted_zone_name)
         name = name.sub(/\.\Z/, '')
 
         if name =~ /([^.]+)\.elb\.amazonaws.com\Z/i

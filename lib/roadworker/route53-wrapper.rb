@@ -131,7 +131,7 @@ module Roadworker
             case attr
             when :dns_name
               attr = :alias_target
-              value = AWS::Route53.dns_name_to_alias_target(value)
+              value = AWS::Route53.dns_name_to_alias_target(value, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
             when :health_check
               attr = :health_check_id
               value = @options.health_checks.find_or_create(value)
@@ -242,7 +242,7 @@ module Roadworker
 
       def dns_name=(name)
         if name
-          @resource_record_set.alias_target = AWS::Route53.dns_name_to_alias_target(name)
+          @resource_record_set.alias_target = AWS::Route53.dns_name_to_alias_target(name, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
         else
           @resource_record_set.alias_target = nil
         end
