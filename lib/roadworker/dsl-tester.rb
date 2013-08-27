@@ -31,6 +31,7 @@ module Roadworker
 
       def test(dsl)
         records = fetch_records(dsl)
+        records_length = records.length
         failures = 0
         error_messages = []
         warning_messages = []
@@ -158,7 +159,7 @@ module Roadworker
           log(:warn, "WARNING #{msg}", :intense_yellow)
         end
 
-        [records.length, failures]
+        [records_length, failures]
       end
 
       private
