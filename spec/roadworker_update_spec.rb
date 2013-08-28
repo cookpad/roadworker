@@ -968,5 +968,53 @@ EOS
         expect(rrs_list(a.resource_records)).to eq(["info.winebarrel.jp"])
       }
     end
+
+    context 'CNAME record -> A record' do
+      before {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "CNAME" do
+    ttl 456
+    resource_records(
+      "info.winebarrel.jp"
+    )
+  end
+end
+EOS
+        end
+      }
+
+      it {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+end
+EOS
+        end
+
+        zones = @route53.hosted_zones.to_a
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(3)
+
+        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        a = zone.rrsets['www.winebarrel.jp.', 'A']
+        expect(a.name).to eq("www.winebarrel.jp.")
+        expect(a.ttl).to eq(123)
+        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+      }
+    end
   end
 end
