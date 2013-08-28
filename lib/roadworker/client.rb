@@ -97,6 +97,11 @@ module Roadworker
 
         actual_record = actual.delete(keys)
 
+        if not actual_record and %w(A CNAME).include?(type)
+          actual_type = (type == 'A' ? 'CNAME' : 'A')
+          actual_record = actual.delete([name, actual_type, set_identifier])
+        end
+
         if actual_record
           unless actual_record.eql?(expected_record)
             actual_record.update(expected_record)
