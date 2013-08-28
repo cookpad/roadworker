@@ -19,6 +19,8 @@ module Roadworker
       :health_check,
     ]
 
+    RRSET_ATTRS_WITH_TYPE = RRSET_ATTRS + [:type]
+
     def initialize(options)
       @options = options
     end
@@ -158,7 +160,7 @@ module Roadworker
       end
 
       def eql?(expected_record)
-        Route53Wrapper::RRSET_ATTRS.all? do |attr|
+        Route53Wrapper::RRSET_ATTRS_WITH_TYPE.all? do |attr|
           expected = expected_record.send(attr)
           expected = nil if expected.kind_of?(Array) && expected.empty?
           actual = self.send(attr)
@@ -189,7 +191,7 @@ module Roadworker
 
         log(:info, 'Update ResourceRecordSet', :green, &log_id_proc)
 
-        Route53Wrapper::RRSET_ATTRS.each do |attr|
+        Route53Wrapper::RRSET_ATTRS_WITH_TYPE.each do |attr|
           expected = expected_record.send(attr)
           expected = nil if expected.kind_of?(Array) && expected.empty?
           actual = self.send(attr)
