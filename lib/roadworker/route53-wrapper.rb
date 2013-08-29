@@ -19,7 +19,7 @@ module Roadworker
       :health_check,
     ]
 
-    RRSET_ATTRS_WITH_TYPE = RRSET_ATTRS + [:type]
+    RRSET_ATTRS_WITH_TYPE = [:type] + RRSET_ATTRS
 
     def initialize(options)
       @options = options
