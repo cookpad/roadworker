@@ -198,11 +198,11 @@ module Roadworker
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if (expected and !actual) or (!expected and actual)
-            log(:info, "  set #{attr}=#{expected.inspect}" , :green, &log_id_proc)
+            log(:info, "  set #{attr}=#{expected.inspect}" , :green)
             self.send(:"#{attr}=", expected) unless @options.dry_run
           elsif expected and actual
             if expected != actual
-              log(:info, "  set #{attr}=#{expected.inspect}" , :green, &log_id_proc)
+              log(:info, "  set #{attr}=#{expected.inspect}" , :green)
               self.send(:"#{attr}=", expected) unless @options.dry_run
             end
           end
