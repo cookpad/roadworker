@@ -9,6 +9,7 @@ unless Socket.const_defined?(:AF_INET6)
 end
 
 require 'net/dns'
+require 'roadworker/net-dns-ext'
 
 module Roadworker
   class DSL
@@ -57,14 +58,14 @@ module Roadworker
             expected_value = (record.resource_records || []).map {|i| i[:value].strip }.sort
             expected_ttl = record.dns_name ? 60 : record.ttl
 
-            actual_value = response.answer.map {|i| (type == 'TXT' ? i.txt : i.value).strip }.sort
+            actual_value = response.answer.map {|i| (%w(TXT SPF).include?(type) ? i.txt : i.value).strip }.sort
             actual_ttls = response.answer.map {|i| i.ttl }
 
             case type
             when 'NS', 'PTR', 'MX', 'CNAME'
               expected_value = expected_value.map {|i| i.downcase.sub(/\.\Z/, '') }
               actual_value = actual_value.map {|i| i.downcase.sub(/\.\Z/, '') }
-            when 'TXT'
+            when 'TXT', 'SPF'
               expected_value = expected_value.map {|i| i.scan(/"([^"]+)"/).join.strip.gsub(/\s+/, ' ') }
               actual_value = actual_value.map {|i| i.strip.gsub(/\s+/, ' ') }
             end
@@ -166,7 +167,7 @@ module Roadworker
           response = query(name, type)
 
           if response
-            asterisk_answers[key] = response.answer.map {|i| (type == 'TXT' ? i.txt : i.value).strip }
+            asterisk_answers[key] = response.answer.map {|i| (%w(TXT SPF).include?(type) ? i.txt : i.value).strip }
           end
         end
 
