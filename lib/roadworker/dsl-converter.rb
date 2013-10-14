@@ -1,7 +1,6 @@
 module Roadworker
   class DSL
     class Converter
-
       class << self
         def convert(exported)
           self.new(exported).convert
