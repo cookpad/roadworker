@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "aws-sdk", ">= 1.14.1"
   spec.add_dependency "term-ansicolor", ">= 1.2.2"
-  spec.add_dependency "net-dns", ">= 0.8.0"
+  spec.add_dependency "net-dns", "~> 0.8.0"
   spec.add_dependency "uuid", ">= 2.3.7"
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
