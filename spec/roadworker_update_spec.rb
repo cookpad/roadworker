@@ -872,6 +872,61 @@ EOS
       }
     end
 
+    context 'SPF record' do
+      before {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "SPF" do
+    ttl 123
+    resource_records(
+      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+      '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
+      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+    )
+  end
+end
+EOS
+        end
+      }
+
+      it {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "SPF" do
+    ttl 456
+    resource_records(
+      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+      '"spf2.0/pra +ip4:192.168.101.0/24 ~all"',
+      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+    )
+  end
+end
+EOS
+        end
+
+        zones = @route53.hosted_zones.to_a
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(3)
+
+        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        txt = zone.rrsets['www.winebarrel.jp.', 'SPF']
+        expect(txt.name).to eq("www.winebarrel.jp.")
+        expect(txt.ttl).to eq(456)
+        expect(rrs_list(txt.resource_records)).to eq([
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
+          "\"spf2.0/pra +ip4:192.168.101.0/24 ~all\"",
+          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\""
+        ])
+      }
+    end
+
     context 'NS record' do
       before {
         routefile do
