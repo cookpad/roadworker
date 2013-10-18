@@ -26,13 +26,13 @@ Or install it yourself as:
 
 ## Usage
 
-```
-shell> export AWS_ACCESS_KEY_ID='...'
-shell> export AWS_SECRET_ACCESS_KEY='...'
-shell> roadwork -e -o Routefile
-shell> vi Routefile
-shell> roadwork -a --dry-run
-shell> roudwork -a
+```sh
+export AWS_ACCESS_KEY_ID='...'
+export AWS_SECRET_ACCESS_KEY='...'
+roadwork -e -o Routefile
+vi Routefile
+roadwork -a --dry-run
+roudwork -a
 ```
 
 ## Routefile example
