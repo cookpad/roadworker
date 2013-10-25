@@ -47,15 +47,19 @@ module Roadworker
     end
 
     def hosted_zone(name, &block)
-      @result.hosted_zones << HostedZone.new(name, &block).result
+      if (hz = @result.hosted_zones.find {|i| i.name == name })
+        @result.hosted_zones.reject! {|i| i.name == name }
+        @result.hosted_zones << HostedZone.new(name, hz.rrsets, &block).result
+      else
+        @result.hosted_zones << HostedZone.new(name, [], &block).result
+      end
     end
 
     class HostedZone
       attr_reader :result
 
-      def initialize(name, &block)
+      def initialize(name, rrsets = [], &block)
         @name = name
-        rrsets = []
 
         @result = OpenStruct.new({
           :name => name,
