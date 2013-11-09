@@ -12,8 +12,8 @@ end
 proc {
   begin
     socket6 = UDPSocket.new(Socket::AF_INET6)
-    socket.close
-  rescue
+    socket6.close
+  rescue Errno::EAFNOSUPPORT
     verbose = $VERBOSE
     $VERBOSE = nil
     Socket::AF_INET6 = Socket::AF_INET
