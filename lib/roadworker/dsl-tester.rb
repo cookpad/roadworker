@@ -8,6 +8,19 @@ unless Socket.const_defined?(:AF_INET6)
   Socket::AF_INET6 = Socket::AF_INET
 end
 
+# XXX:
+proc {
+  begin
+    socket6 = UDPSocket.new(Socket::AF_INET6)
+    socket.close
+  rescue
+    verbose = $VERBOSE
+    $VERBOSE = nil
+    Socket::AF_INET6 = Socket::AF_INET
+    $VERBOSE = verbose
+  end
+}.call
+
 require 'net/dns'
 require 'roadworker/net-dns-ext'
 
