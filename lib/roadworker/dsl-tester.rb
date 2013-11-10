@@ -31,6 +31,8 @@ module Roadworker
 
       DEFAULT_NAMESERVERS = ['8.8.8.8', '8.8.4.4']
       ASTERISK_PREFIX = 'asterisk-of-wildcard'
+      RETRY = 3
+      RETRY_WAIT = 1
 
       class << self
         def test(dsl, options)
@@ -273,10 +275,17 @@ module Roadworker
         ctype = Net::DNS.const_get(type)
         response = nil
 
-        begin
-          response = @resolver.query(name, ctype)
-        rescue => e
-          error_messages << "#{name} #{type}: #{e.message}" if error_messages
+        RETRY.times do |i|
+          begin
+            response = @resolver.query(name, ctype)
+            break
+          rescue => e
+            if (i + 1) < RETRY
+              sleep RETRY_WAIT
+            else
+              error_messages << "#{name} #{type}: #{e.message}" if error_messages
+            end
+          end
         end
 
         return response
