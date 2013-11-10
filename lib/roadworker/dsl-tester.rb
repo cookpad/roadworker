@@ -99,7 +99,7 @@ module Roadworker
             actual_message = actual_value.zip(actual_ttls).map {|v, t| "#{v}(#{t})" }.join(',')
             logmsg_expected = "expected=#{expected_message}"
             logmsg_actual = "actual=#{actual_message}"
-            log(:debug, "  #{logmsg_expected}\n  #{logmsg_actual}", :white, "#{name} #{type}")
+            log(:debug, "  #{logmsg_expected}\n  #{logmsg_actual}", :white)
 
             is_same = false
 
