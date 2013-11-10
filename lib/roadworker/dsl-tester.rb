@@ -209,12 +209,16 @@ module Roadworker
 
       def create_resolver
         log_file = @options.debug ? Net::DNS::Resolver::Defaults[:log_file] : '/dev/null'
+        resolver_opts = {:log_file => log_file}
 
         if File.exist?(Net::DNS::Resolver::Defaults[:config_file])
-          Net::DNS::Resolver.new(:log_file => log_file)
+          resolver_opts[:nameservers] = @options.nameservers if @options.nameservers
+          Net::DNS::Resolver.new(resolver_opts)
         else
           Tempfile.open(File.basename(__FILE__)) do |f|
-            Net::DNS::Resolver.new(:config_file => f.path, :nameservers => DEFAULT_NAMESERVERS, :log_file => log_file)
+            resolver_opts.updated(:config_file => f.path, :nameservers => DEFAULT_NAMESERVERS)
+            resolver_opts[:nameservers] = @options.nameservers if @options.nameservers
+            Net::DNS::Resolver.new(resolver_opts)
           end
         end
       end

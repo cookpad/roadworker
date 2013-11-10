@@ -30,20 +30,21 @@ ARGV.options do |opt|
     access_key = nil
     secret_key = nil
 
-    opt.on('-k', '--access-key ACCESS_KEY') {|v| access_key                   = v       }
-    opt.on('-s', '--secret-key SECRET_KEY') {|v| secret_key                   = v       }
-    opt.on('-a', '--apply')                 {    mode                         = :apply  }
-    opt.on('-f', '--file FILE')             {|v| file                         = v       }
-    opt.on('',   '--dry-run')               {    options[:dry_run]            = true    }
-    opt.on(''  , '--force')                 {    options[:force]              = true    }
-    opt.on('',   '--no-health-check-gc')    {    options[:no_health_check_gc] = true    }
-    opt.on('-e', '--export')                {    mode                         = :export }
-    opt.on('-o', '--output FILE')           {|v| output_file                  = v       }
-    opt.on('',   '--split')                 {    split                        = true    }
-    opt.on('',   '--with-soa-ns')           {    options[:with_soa_ns]        = true    }
-    opt.on('-t', '--test')                  {    mode                         = :test   }
-    opt.on(''  , '--no-color')              {    options[:color]              = false   }
-    opt.on(''  , '--debug')                 {    options[:debug]              = true    }
+    opt.on('-k', '--access-key ACCESS_KEY')      {|v| access_key                   = v       }
+    opt.on('-s', '--secret-key SECRET_KEY')      {|v| secret_key                   = v       }
+    opt.on('-a', '--apply')                      {    mode                         = :apply  }
+    opt.on('-f', '--file FILE')                  {|v| file                         = v       }
+    opt.on('',   '--dry-run')                    {    options[:dry_run]            = true    }
+    opt.on(''  , '--force')                      {    options[:force]              = true    }
+    opt.on('',   '--no-health-check-gc')         {    options[:no_health_check_gc] = true    }
+    opt.on('-e', '--export')                     {    mode                         = :export }
+    opt.on('-o', '--output FILE')                {|v| output_file                  = v       }
+    opt.on('',   '--split')                      {    split                        = true    }
+    opt.on('',   '--with-soa-ns')                {    options[:with_soa_ns]        = true    }
+    opt.on('-t', '--test')                       {    mode                         = :test   }
+    opt.on(''  , '--nameservers SERVERS', Array) {|v| options[:nameservers]        = v       }
+    opt.on(''  , '--no-color')                   {    options[:color]              = false   }
+    opt.on(''  , '--debug')                      {    options[:debug]              = true    }
     opt.parse!
 
     if access_key and secret_key
