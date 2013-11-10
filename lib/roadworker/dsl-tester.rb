@@ -69,7 +69,7 @@ module Roadworker
 
           log(:debug, 'Check DNS', :white, "#{name} #{type}")
 
-          response = query(name, type, warning_messages)
+          response = query(name, type, error_messages)
 
           unless response
             failures += 1
@@ -106,8 +106,14 @@ module Roadworker
               case record.dns_name.sub(/\.\Z/, '')
               when /\.elb\.amazonaws\.com/i
                 is_same = response.answer.all? {|a|
-                  query(a.value, 'PTR', warning_messages).answer.all? do |ptr|
-                    ptr.value =~ /\.compute\.amazonaws\.com\.\Z/
+                  response_query_ptr = query(a.value, 'PTR', error_messages)
+
+                  if response_query_ptr
+                    response_query_ptr.answer.all? do |ptr|
+                      ptr.value =~ /\.compute\.amazonaws\.com\.\Z/
+                    end
+                  else
+                    false
                   end
                 }
               when /\As3-website-(?:[^.]+)\.amazonaws\.com\Z/
@@ -120,7 +126,7 @@ module Roadworker
                     log(:debug, 'Retry Check', :white, "#{name} #{type}")
                   end
 
-                  dns_name_a = query(record.dns_name, 'A', warning_messages)
+                  dns_name_a = query(record.dns_name, 'A', error_messages)
                   s3_website_endpoint_ips = dns_name_a.answer.map {|i| i.value }
 
                   !s3_website_endpoint_ips.empty? && s3_website_endpoint_ips.any? {|ip|
@@ -129,8 +135,12 @@ module Roadworker
                 end
               when /\.cloudfront\.net\Z/
                 is_same = response.answer.all? {|a|
-                  query(a.value, 'PTR', warning_messages).answer.all? do |ptr|
-                    ptr.value =~ /\.cloudfront\.net\.\Z/
+                  response_query_ptr = query(a.value, 'PTR', error_messages)
+
+                  if response_query_ptr
+                    response_query_ptr.answer.all? do |ptr|
+                      ptr.value =~ /\.cloudfront\.net\.\Z/
+                    end
                   end
                 }
               else
@@ -212,7 +222,7 @@ module Roadworker
         puts unless @options.debug
 
         error_messages.each do |msg|
-          log(:warn, msg, :intense_red)
+          log(:error, msg, :intense_red)
         end
 
         warning_messages.each do |msg|
@@ -259,14 +269,14 @@ module Roadworker
         name.gsub('*', "#{ASTERISK_PREFIX}-#{rand_str}")
       end
 
-      def query(name, type, warning_messages = nil)
+      def query(name, type, error_messages = nil)
         ctype = Net::DNS.const_get(type)
         response = nil
 
         begin
           response = @resolver.query(name, ctype)
         rescue => e
-          warning_messages << "#{name} #{type}: #{e.message}" if warning_messages
+          error_messages << "#{name} #{type}: #{e.message}" if error_messages
         end
 
         return response
