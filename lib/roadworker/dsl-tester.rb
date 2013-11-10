@@ -49,6 +49,16 @@ module Roadworker
         failures = 0
         error_messages = []
         warning_messages = []
+        a_records = {}
+
+        records.each do |key, rrs|
+          name, type = key
+          next unless type == "A"
+
+          a_records[name] = rrs.map do |record|
+            [(record.resource_records || []).map {|i| i[:value].strip }.sort, record.ttl]
+          end
+        end
 
         validate_record = lambda do |key, rrs, asterisk_answers|
           errors = []
@@ -124,8 +134,15 @@ module Roadworker
                   end
                 }
               else
-                warning_messages << "#{name} #{type}: Cannot check `#{record.dns_name}`"
-                is_same = true
+                if (alias_target_a_record = a_records[record.dns_name])
+                  expected_message = alias_target_a_record.map {|values, ttl| values.map {|i| "#{i}(#{ttl})" }.join(',') }.uniq.join (' or ')
+                  logmsg_expected = "expected=#{expected_message}"
+                  expected_ttl = alias_target_a_record.map {|values, ttl| ttl }.max
+                  is_same = alias_target_a_record.any? {|values, ttl| values == actual_value }
+                else
+                  warning_messages << "#{name} #{type}: Cannot check `#{record.dns_name}`"
+                  is_same = true
+                end
               end
             else
               is_same = (expected_value == actual_value)
