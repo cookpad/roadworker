@@ -34,7 +34,11 @@ module Roadworker
             when :health_check_id
               config = HealthCheck.config_to_hash(@health_checks[value])
               hc_args = config[:url].inspect
-              hc_args << ", #{config[:host_name].inspect}" if config[:host_name]
+
+              if config[:host_name]
+                hc_args << ", :host => #{config[:host_name].inspect}"
+              end
+
               "health_check #{hc_args}"
             else
               "#{key} #{value.inspect}"

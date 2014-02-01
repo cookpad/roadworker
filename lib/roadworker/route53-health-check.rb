@@ -18,7 +18,8 @@ module Roadworker
         port   = config[:port]
         type   = config[:type].downcase
         path   = config[:resource_path]
-        fqdn   = config[:fully_qualified_domain_name].downcase
+        fqdn   = config[:fully_qualified_domain_name]
+        fqdn   = fqdn.downcase if fqdn
 
         url = "#{type}://#{ipaddr}:#{port}"
         url << path if path && path != '/'
