@@ -91,8 +91,9 @@ module Roadworker
               expected_value = expected_value.map {|i| i.downcase.sub(/\.\Z/, '') }
               actual_value = actual_value.map {|i| i.downcase.sub(/\.\Z/, '') }
             when 'TXT', 'SPF'
-              expected_value = expected_value.map {|i| i.scan(/"([^"]+)"/).join.strip.gsub(/\s+/, ' ') }
-              actual_value = actual_value.map {|i| i.strip.gsub(/\s+/, ' ') }
+              # see https://github.com/bluemonk/net-dns/blob/master/lib/net/dns/rr/txt.rb#L38
+              expected_value = expected_value.map {|i| i.scan(/"([^"]+)"/).join(' ').strip }
+              actual_value = actual_value.map {|i| i.strip }
             end
 
             expected_message = record.resource_records ? expected_value.map {|i| "#{i}(#{expected_ttl})" }.join(',') : "#{record.dns_name}(#{expected_ttl})"
