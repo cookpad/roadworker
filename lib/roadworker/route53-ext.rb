@@ -1,6 +1,41 @@
 require 'aws-sdk'
 
 module AWS
+  module Core
+    class Client
+
+      class << self
+        alias load_api_config_orig load_api_config
+
+        def load_api_config(api_version)
+          yaml = load_api_config_orig(api_version)
+
+          if service_name == 'Route53'
+            replace_api_version(yaml)
+          end
+
+          return yaml
+        end
+
+        private
+
+        def replace_api_version(value)
+          case value
+          when String
+            if value =~ /2012-12-12/
+              value.gsub!(/2012-12-12/, '2013-04-01')
+            end
+          when Array
+            value.each {|v| replace_api_version(v) }
+          when Hash
+            value.each {|k, v| replace_api_version(v) }
+          end
+        end
+      end # of class method
+
+    end # Client
+  end # Core
+
   class Route53
 
     # http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
