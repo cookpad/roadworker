@@ -74,7 +74,7 @@ EOS
             :type => 'HTTP_STR_MATCH',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
-            :search_string => '123,'
+            :search_string => '123',
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -89,7 +89,7 @@ EOS
             :type => 'HTTP_STR_MATCH',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
-            :search_string => '123,'
+            :search_string => '123',
           })
         }
       end
@@ -149,7 +149,7 @@ EOS
             :type => 'HTTPS_STR_MATCH',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
-            :search_string => '123,'
+            :search_string => '123',
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -164,7 +164,7 @@ EOS
             :type => 'HTTPS_STR_MATCH',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
-            :search_string => '123,'
+            :search_string => '123',
           })
         }
       end
