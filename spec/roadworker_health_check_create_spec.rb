@@ -60,7 +60,7 @@ EOS
           expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(2)
+          expect(check_list.length).to eq(1)
 
           a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -135,7 +135,7 @@ EOS
           expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(1)
+          expect(check_list.length).to eq(2)
 
           a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
