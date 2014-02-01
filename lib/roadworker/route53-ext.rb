@@ -29,7 +29,17 @@ module AWS
           when Array
             value.each {|v| replace_api_version(v) }
           when Hash
-            value.each {|k, v| replace_api_version(v) }
+            value.each do |k, v|
+              if k == :health_check_config
+                v[:members][:search_string] = {
+                  :name     => 'SearchString',
+                  :type     => :string,
+                  :position => 5,
+                }
+              end
+
+              replace_api_version(v)
+            end
           end
         end
       end # of class method
