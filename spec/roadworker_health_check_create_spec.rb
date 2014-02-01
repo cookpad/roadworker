@@ -145,7 +145,7 @@ EOS
           expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
-            :port => 80,
+            :port => 443,
             :type => 'HTTPS_STR_MATCH',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
@@ -160,7 +160,7 @@ EOS
           expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
-            :port => 80,
+            :port => 443,
             :type => 'HTTPS_STR_MATCH',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
