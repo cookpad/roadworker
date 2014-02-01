@@ -13,11 +13,11 @@ class String
     end
   end # of class method
 
-  Term::ANSIColor::Attribute.named_attributes.map do |attr|
+  Term::ANSIColor::Attribute.named_attributes.map do |attribute|
     class_eval(<<-EOS, __FILE__, __LINE__ + 1)
-      def #{attr.name}
+      def #{attribute.name}
         if @@colorize
-          Term::ANSIColor.send(#{attr.name.inspect}, self)
+          Term::ANSIColor.send(#{attribute.name.inspect}, self)
         else
           self
         end
