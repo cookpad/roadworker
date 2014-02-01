@@ -61,7 +61,7 @@ module Roadworker
         HostedZoneWrapper.new(zone, @options)
       end
     end # HostedZoneCollection
- 
+
     class HostedZoneWrapper
       include Roadworker::Log
 
@@ -115,7 +115,7 @@ module Roadworker
       end
 
       def create(name, type, expected_record)
-        log(:info, 'Create ResourceRecordSet', :cyan) do 
+        log(:info, 'Create ResourceRecordSet', :cyan) do
           log_id = [name, type].join(' ')
           rrset_setid = expected_record.set_identifier
           rrset_setid ? (log_id + " (#{rrset_setid})") : log_id

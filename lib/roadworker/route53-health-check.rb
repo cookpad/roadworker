@@ -20,11 +20,12 @@ module Roadworker
         path   = config[:resource_path]
         fqdn   = config[:fully_qualified_domain_name]
         fqdn   = fqdn.downcase if fqdn
+        search_string = config[:search_string]
 
         url = "#{type}://#{ipaddr}:#{port}"
         url << path if path && path != '/'
 
-        {:url => url, :host_name => fqdn}
+        {:url => url, :host => fqdn, :search_string => search_string}
       end
 
       def parse_url(url)

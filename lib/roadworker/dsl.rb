@@ -120,18 +120,34 @@ module Roadworker
           @result.failover = value
         end
 
-        def health_check(url, options = nil)
+        def health_check(url, *options)
           config = HealthCheck.parse_url(url)
 
-          if options
-            if options.kind_of?(Hash)
-              config[:fully_qualified_domain_name] = options.fetch(:host)
-            else
-              config[:fully_qualified_domain_name] = options.to_s
+          if options.length == 1 and options.first.kind_of?(Hash)
+            options = options.first
+
+            {
+              :host          => :fully_qualified_domain_name,
+              :search_string => :search_string,
+            }.each do |option_key, config_key|
+              config[config_key] = options[option_key] if options[option_key]
+            end
+          else
+            options.each_with_index do |value, i|
+              key = [
+                :fully_qualified_domain_name,
+                :search_string,
+              ][i]
+
+              config[key] = value
             end
           end
 
-           @result.health_check = config
+          if config[:search_string]
+            config[:type] += '_STR_MATCH'
+          end
+
+          @result.health_check = config
         end
 
         def resource_records(*values)
