@@ -4,6 +4,7 @@ module AWS
   module Core
     class Client
 
+      # PTF:
       class << self
         alias load_api_config_orig load_api_config
 
