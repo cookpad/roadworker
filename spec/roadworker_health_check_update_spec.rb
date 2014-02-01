@@ -68,7 +68,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "Secondary"
     failover "SECONDARY"
-    health_check "https://192.0.43.10:80/path", :host => 'example.com', :search_string => '123'
+    health_check "https://192.0.43.10/path", :host => 'example.com', :search_string => '123'
     ttl 4560
     resource_records(
       "127.0.0.3",

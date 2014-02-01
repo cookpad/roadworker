@@ -113,7 +113,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "Secondary"
     failover "SECONDARY"
-    health_check "https://192.0.43.10:80/path", :host => 'example.com', :search_string => '123'
+    health_check "https://192.0.43.10/path", :host => 'example.com', :search_string => '123'
     ttl 456
     resource_records(
       "127.0.0.3",
@@ -145,7 +145,7 @@ EOS
           expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
-            :port => 443,
+            :port => 80,
             :type => 'HTTPS_STR_MATCH',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
