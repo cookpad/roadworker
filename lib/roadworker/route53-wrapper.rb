@@ -126,20 +126,20 @@ module Roadworker
         else
           opts = {}
 
-          Route53Wrapper::RRSET_ATTRS.each do |attr|
-            value = expected_record.send(attr)
+          Route53Wrapper::RRSET_ATTRS.each do |attribute|
+            value = expected_record.send(attribute)
             next unless value
 
-            case attr
+            case attribute
             when :dns_name
-              attr = :alias_target
+              attribute = :alias_target
               value = AWS::Route53.dns_name_to_alias_target(value, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
             when :health_check
-              attr = :health_check_id
+              attribute = :health_check_id
               value = @options.health_checks.find_or_create(value)
             end
 
-            opts[attr] = value
+            opts[attribute] = value
           end
 
           record = @resource_record_sets.create(name, type, opts)
@@ -160,16 +160,16 @@ module Roadworker
       end
 
       def eql?(expected_record)
-        Route53Wrapper::RRSET_ATTRS_WITH_TYPE.all? do |attr|
-          expected = expected_record.send(attr)
+        Route53Wrapper::RRSET_ATTRS_WITH_TYPE.all? do |attribute|
+          expected = expected_record.send(attribute)
           expected = nil if expected.kind_of?(Array) && expected.empty?
-          actual = self.send(attr)
+          actual = self.send(attribute)
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if !expected and !actual
             true
           elsif expected and actual
-            case attr
+            case attribute
             when :dns_name
               expected = expected.downcase.sub(/\.\Z/, '')
               actual = actual.downcase.sub(/\.\Z/, '')
@@ -191,19 +191,19 @@ module Roadworker
 
         log(:info, 'Update ResourceRecordSet', :green, &log_id_proc)
 
-        Route53Wrapper::RRSET_ATTRS_WITH_TYPE.each do |attr|
-          expected = expected_record.send(attr)
+        Route53Wrapper::RRSET_ATTRS_WITH_TYPE.each do |attribute|
+          expected = expected_record.send(attribute)
           expected = nil if expected.kind_of?(Array) && expected.empty?
-          actual = self.send(attr)
+          actual = self.send(attribute)
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if (expected and !actual) or (!expected and actual)
-            log(:info, "  set #{attr}=#{expected.inspect}" , :green)
-            self.send(:"#{attr}=", expected) unless @options.dry_run
+            log(:info, "  set #{attribute}=#{expected.inspect}" , :green)
+            self.send(:"#{attribute}=", expected) unless @options.dry_run
           elsif expected and actual
             if expected != actual
-              log(:info, "  set #{attr}=#{expected.inspect}" , :green)
-              self.send(:"#{attr}=", expected) unless @options.dry_run
+              log(:info, "  set #{attribute}=#{expected.inspect}" , :green)
+              self.send(:"#{attribute}=", expected) unless @options.dry_run
             end
           end
         end

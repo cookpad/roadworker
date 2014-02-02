@@ -72,9 +72,9 @@ module Roadworker
     def item_to_hash(item, *attrs)
       h = {}
 
-      attrs.each do |attr|
-        value = item.send(attr)
-        h[attr] = value if value
+      attrs.each do |attribute|
+        value = item.send(attribute)
+        h[attribute] = value if value
       end
 
       return h
