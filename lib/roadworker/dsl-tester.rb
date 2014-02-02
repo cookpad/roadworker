@@ -92,7 +92,7 @@ module Roadworker
               actual_value = actual_value.map {|i| i.downcase.sub(/\.\Z/, '') }
             when 'TXT', 'SPF'
               # see https://github.com/bluemonk/net-dns/blob/651dc1006d9ee0c167fa515e4b9d2494af415ae9/lib/net/dns/rr/txt.rb#L46
-              expected_value = expected_value.map {|i| i.scan(/"([^"]+)"/).join(' ').strip }
+              expected_value = expected_value.map {|i| i.scan(/(?:\\\\|(?:\\"|(?:[^\\"]|[^"])))*"((?:\\\\|(?:\\"|(?:\\"|(?:[^\\"]|[^"]))))*)"/).join(' ').gsub(/\\(.)/) { $1 }.strip }
               actual_value = actual_value.map {|i| i.strip }
             end
 
