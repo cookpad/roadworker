@@ -20,9 +20,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "aws-sdk", ">= 1.34.1"
-  spec.add_dependency "term-ansicolor", ">= 1.2.2"
+  spec.add_dependency "term-ansicolor"
   spec.add_dependency "net-dns", "~> 0.8.0"
-  spec.add_dependency "uuid", ">= 2.3.7"
+  spec.add_dependency "uuid"
+  spec.add_dependency "systemu"
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", "~> 2.14.1"
