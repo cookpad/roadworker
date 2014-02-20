@@ -27,7 +27,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "Primary"
     failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path", :host => 'example.com', :search_string => '123', :request_interval => 40, :failure_threshold => 5
+    health_check "http://192.0.43.10:80/path", :host => 'example.com', :search_string => '123', :request_interval => 10, :failure_threshold => 5
     ttl 456
     resource_records(
       "127.0.0.1",
@@ -38,7 +38,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "Secondary"
     failover "SECONDARY"
-    health_check "http://192.0.43.10:80/path", :host => 'example.com', :search_string => '123', :request_interval => 60, :failure_threshold => 10
+    health_check "http://192.0.43.10:80/path", :host => 'example.com', :search_string => '123', :request_interval => 10, :failure_threshold => 10
     ttl 456
     resource_records(
       "127.0.0.3",
@@ -75,7 +75,7 @@ EOS
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
             :search_string => '123',
-            :request_interval => 40,
+            :request_interval => 10,
             :failure_threshold => 5,
           })
 
@@ -92,7 +92,7 @@ EOS
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
             :search_string => '123',
-            :request_interval => 60,
+            :request_interval => 10,
             :failure_threshold => 10,
           })
         }
