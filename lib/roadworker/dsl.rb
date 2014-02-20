@@ -151,6 +151,9 @@ module Roadworker
             config[:type] += '_STR_MATCH'
           end
 
+          config[:request_interval]  ||= 30
+          config[:failure_threshold] ||= 3
+
           @result.health_check = config
         end
 
