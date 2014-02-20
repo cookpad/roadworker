@@ -20,12 +20,20 @@ module Roadworker
         path   = config[:resource_path]
         fqdn   = config[:fully_qualified_domain_name]
         fqdn   = fqdn.downcase if fqdn
-        search_string = config[:search_string]
+        search_string     = config[:search_string]
+        request_interval  = config[:request_interval]
+        failure_threshold = config[:failure_threshold]
 
         url = "#{type}://#{ipaddr}:#{port}"
         url << path if path && path != '/'
 
-        {:url => url, :host => fqdn, :search_string => search_string}
+        {
+          :url               => url,
+          :host              => fqdn,
+          :search_string     => search_string,
+          :request_interval  => request_interval,
+          :failure_threshold => failure_threshold,
+        }
       end
 
       def parse_url(url)
