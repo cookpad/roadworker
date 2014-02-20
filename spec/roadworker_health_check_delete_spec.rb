@@ -35,7 +35,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "Primary"
     failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path", :host => 'example.com', :search_string => '123'
+    health_check "http://192.0.43.10:80/path", :host => 'example.com', :search_string => '123', :request_interval => 60, :failure_threshold => 10
     ttl 456
     resource_records(
       "127.0.0.1",
