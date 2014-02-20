@@ -127,8 +127,10 @@ module Roadworker
             options = options.first
 
             {
-              :host          => :fully_qualified_domain_name,
-              :search_string => :search_string,
+              :host              => :fully_qualified_domain_name,
+              :search_string     => :search_string,
+              :request_interval  => :request_interval,
+              :failure_threshold => :failure_threshold,
             }.each do |option_key, config_key|
               config[config_key] = options[option_key] if options[option_key]
             end
@@ -137,6 +139,8 @@ module Roadworker
               key = [
                 :fully_qualified_domain_name,
                 :search_string,
+                :request_interval,
+                :failure_threshold,
               ][i]
 
               config[key] = value

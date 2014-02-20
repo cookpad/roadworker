@@ -1,6 +1,65 @@
 require 'aws-sdk'
 
 module AWS
+  module Core
+    class Client
+
+      # PTF:
+      class << self
+        alias load_api_config_orig load_api_config
+
+        def load_api_config(api_version)
+          yaml = load_api_config_orig(api_version)
+
+          if service_name == 'Route53'
+            replace_api_version(yaml)
+          end
+
+          return yaml
+        end
+
+        private
+
+        def replace_api_version(value)
+          case value
+          when Array
+            value.each {|v| replace_api_version(v) }
+          when Hash
+            value.each do |k, v|
+              case k
+              when :health_check_config
+                {
+                  :request_interval => {
+                    :name     => 'RequestInterval',
+                    :type     => :integer,
+                    :position => 6,
+                  },
+                  :failure_threshold => {
+                    :name     => 'FailureThreshold',
+                    :type     => :integer,
+                    :position => 7,
+                  },
+                }.each {|name, attrs|
+                  v[:members][name] = attrs
+                }
+              when 'HealthCheckConfig'
+                {
+                  'RequestInterval'  => {:type => :integer},
+                  'FailureThreshold' => {:type => :integer},
+                }.each {|name, attrs|
+                  v[:children][name] = attrs
+                }
+              end
+
+              replace_api_version(v)
+            end
+          end
+        end
+      end # of class method
+
+    end # Client
+  end # Core
+
   class Route53
 
     # http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
