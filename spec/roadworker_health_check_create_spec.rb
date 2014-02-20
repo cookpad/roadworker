@@ -75,6 +75,8 @@ EOS
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
             :search_string => '123',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -90,6 +92,8 @@ EOS
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
             :search_string => '123',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
@@ -150,6 +154,8 @@ EOS
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
             :search_string => '123',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -165,6 +171,8 @@ EOS
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
             :search_string => '123',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
@@ -223,6 +231,8 @@ EOS
             :port => 80,
             :type => 'HTTP',
             :resource_path => '/path',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -236,6 +246,8 @@ EOS
             :port => 80,
             :type => 'HTTP',
             :resource_path => '/path',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
@@ -293,6 +305,8 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'TCP',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -305,6 +319,8 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'TCP',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
@@ -361,6 +377,8 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -428,6 +446,8 @@ EOS
             :type => 'HTTP',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -440,6 +460,8 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 3306,
             :type => 'TCP',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
@@ -540,6 +562,8 @@ EOS
             :type => 'HTTP',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "w50"]
@@ -552,6 +576,8 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 3306,
             :type => 'TCP',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
@@ -611,6 +637,8 @@ EOS
             :type => 'HTTP',
             :resource_path => '/path',
             :fully_qualified_domain_name => 'example.com',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
 
           a2 = zone.rrsets['www.winebarrel.jp.', 'A', "us"]
@@ -623,6 +651,8 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 3306,
             :type => 'TCP',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
