@@ -112,6 +112,8 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 3306,
             :type => 'TCP',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
@@ -209,6 +211,8 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 3306,
             :type => 'TCP',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end
@@ -307,6 +311,8 @@ EOS
             :port => 80,
             :type => 'HTTP',
             :resource_path => '/path',
+            :request_interval => 30,
+            :failure_threshold => 3,
           })
         }
       end

@@ -220,6 +220,8 @@ EOS
           :ip_address => '192.0.43.10',
           :port => 3306,
           :type => 'TCP',
+          :request_interval => 30,
+          :failure_threshold => 3,
         })
 
         fo_s = zone.rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -234,6 +236,8 @@ EOS
           :type => 'HTTP',
           :resource_path => '/path',
           :fully_qualified_domain_name => 'example.com',
+          :request_interval => 30,
+          :failure_threshold => 3,
         })
       }
     end
@@ -371,6 +375,8 @@ EOS
           :ip_address => '192.0.43.10',
           :port => 3306,
           :type => 'TCP',
+          :request_interval => 30,
+          :failure_threshold => 3,
         })
 
         fo_s = zone.rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -385,6 +391,8 @@ EOS
           :type => 'HTTP',
           :resource_path => '/path',
           :fully_qualified_domain_name => 'example.com',
+          :request_interval => 30,
+          :failure_threshold => 3,
         })
       }
     end
@@ -544,6 +552,8 @@ EOS
           :type => 'HTTP',
           :resource_path => '/path',
           :fully_qualified_domain_name => 'example.com',
+          :request_interval => 30,
+          :failure_threshold => 3,
         })
 
         fo_s = zone.rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -556,6 +566,8 @@ EOS
           :ip_address => '192.0.43.10',
           :port => 3306,
           :type => 'TCP',
+          :request_interval => 30,
+          :failure_threshold => 3,
         })
       }
     end
@@ -826,6 +838,8 @@ EOS
           :type => 'HTTP',
           :resource_path => '/path',
           :fully_qualified_domain_name => 'example.com',
+          :request_interval => 30,
+          :failure_threshold => 3,
         })
 
         fo_s = zone.rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -838,6 +852,8 @@ EOS
           :ip_address => '192.0.43.10',
           :port => 3306,
           :type => 'TCP',
+          :request_interval => 30,
+          :failure_threshold => 3,
         })
       }
     end
