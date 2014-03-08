@@ -107,7 +107,7 @@ EOS
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records)).to eq(["127.0.0.4", "127.0.0.3"])
           expect(check_list[a2.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 3306,
@@ -206,7 +206,7 @@ EOS
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records)).to eq(["127.0.0.4", "127.0.0.3"])
           expect(check_list[a2.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 3306,
@@ -305,7 +305,7 @@ EOS
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,
@@ -384,7 +384,7 @@ EOS
           info = zone.rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(0)
@@ -458,7 +458,7 @@ EOS
           info = zone.rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(2)
@@ -532,7 +532,7 @@ EOS
           info = zone.rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(0)
@@ -606,7 +606,7 @@ EOS
           info = zone.rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(0)

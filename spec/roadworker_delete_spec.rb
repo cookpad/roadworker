@@ -51,7 +51,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -133,7 +133,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -190,7 +190,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -243,7 +243,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -296,7 +296,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -349,7 +349,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -403,7 +403,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -489,7 +489,7 @@ EOS
         expect(a2.set_identifier).to eq('web server 2')
         expect(a2.weight).to eq(50)
         expect(a2.ttl).to eq(456)
-        expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a2.resource_records)).to eq(["127.0.0.4", "127.0.0.3"])
       }
     end
 
@@ -558,7 +558,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -644,7 +644,7 @@ EOS
         expect(a1.set_identifier).to eq('web server 1')
         expect(a1.ttl).to eq(456)
         expect(a1.region).to eq("us-west-1")
-        expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -714,7 +714,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -772,7 +772,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -826,7 +826,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -883,7 +883,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -988,7 +988,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -1042,7 +1042,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -1100,7 +1100,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -1157,7 +1157,7 @@ EOS
         info = zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
-        expect(rrs_list(info.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(info.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
   end

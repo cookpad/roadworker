@@ -74,7 +74,7 @@ EOS
         a = zone.rrsets["\\052.winebarrel.jp.", 'A']
         expect(a.name).to eq("\\052.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -107,7 +107,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
       }
     end
 
@@ -302,7 +302,7 @@ EOS
         expect(a2.set_identifier).to eq('web server 2')
         expect(a2.weight).to eq(50)
         expect(a2.ttl).to eq(456)
-        expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a2.resource_records)).to eq(["127.0.0.4", "127.0.0.3"])
       }
     end
 
@@ -356,7 +356,7 @@ EOS
         expect(a2.set_identifier).to eq('web server 2')
         expect(a2.ttl).to eq(456)
         expect(a2.region).to eq("us-west-2")
-        expect(rrs_list(a2.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a2.resource_records)).to eq(["127.0.0.4", "127.0.0.3"])
       }
     end
 
@@ -392,8 +392,8 @@ EOS
         expect(txt.ttl).to eq(123)
         expect(rrs_list(txt.resource_records)).to eq([
           "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
+          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\""
         ])
       }
     end
@@ -457,7 +457,7 @@ EOS
         mx = zone.rrsets['www.winebarrel.jp.', 'MX']
         expect(mx.name).to eq("www.winebarrel.jp.")
         expect(mx.ttl).to eq(123)
-        expect(rrs_list(mx.resource_records)).to eq(["10 mail.winebarrel.jp", "20 mail2.winebarrel.jp"])
+        expect(rrs_list(mx.resource_records)).to eq(["20 mail2.winebarrel.jp", "10 mail.winebarrel.jp"])
       }
     end
 
@@ -521,8 +521,8 @@ EOS
         expect(srv.name).to eq("ftp.winebarrel.jp.")
         expect(srv.ttl).to eq(123)
         expect(rrs_list(srv.resource_records)).to eq([
-          "1   0   21  server01.example.jp",
-          "2   0   21  server02.example.jp"
+          "2   0   21  server02.example.jp",
+          "1   0   21  server01.example.jp"
         ])
       }
     end
@@ -589,8 +589,8 @@ EOS
         expect(txt.ttl).to eq(123)
         expect(rrs_list(txt.resource_records)).to eq([
           "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
+          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\""
         ])
       }
     end
@@ -624,7 +624,7 @@ EOS
         ns = zone.rrsets['www.winebarrel.jp.', 'NS']
         expect(ns.name).to eq("www.winebarrel.jp.")
         expect(ns.ttl).to eq(123)
-        expect(rrs_list(ns.resource_records)).to eq(["ns.winebarrel.jp", "ns2.winebarrel.jp"])
+        expect(rrs_list(ns.resource_records)).to eq(["ns2.winebarrel.jp", "ns.winebarrel.jp"])
       }
     end
   end
