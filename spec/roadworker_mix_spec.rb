@@ -171,7 +171,7 @@ EOS
         info_a = info_zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info_a.name).to eq("info.winebarrel.jp.")
         expect(info_a.ttl).to eq(123)
-        expect(rrs_list(info_a.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(info_a.resource_records.sort)).to eq(["127.0.0.3", "127.0.0.4"])
 
         zone = zones[1]
         expect(zone.name).to eq("winebarrel.jp.")
@@ -183,7 +183,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records.sort)).to eq(["127.0.0.1", "127.0.0.2"])
 
         a_alias = zone.rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
@@ -196,16 +196,16 @@ EOS
         txt = zone.rrsets['www.winebarrel.jp.', 'TXT']
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(123)
-        expect(rrs_list(txt.resource_records)).to eq([
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
+        expect(rrs_list(txt.resource_records.sort)).to eq([
           "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
         ])
 
         mx = zone.rrsets['www.winebarrel.jp.', 'MX']
         expect(mx.name).to eq("www.winebarrel.jp.")
         expect(mx.ttl).to eq(123)
-        expect(rrs_list(mx.resource_records)).to eq(["20 mail2.winebarrel.jp", "10 mail.winebarrel.jp"])
+        expect(rrs_list(mx.resource_records.sort)).to eq(["10 mail.winebarrel.jp", "20 mail2.winebarrel.jp"])
 
         check_list = fetch_health_checks(@route53)
         expect(check_list.length).to eq(2)
@@ -215,7 +215,7 @@ EOS
         expect(fo_p.set_identifier).to eq('Primary')
         expect(fo_p.failover).to eq('PRIMARY')
         expect(fo_p.ttl).to eq(456)
-        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.5", "127.0.0.6"])
+        expect(rrs_list(fo_p.resource_records.sort)).to eq(["127.0.0.5", "127.0.0.6"])
         expect(check_list[fo_p.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 3306,
@@ -229,7 +229,7 @@ EOS
         expect(fo_s.set_identifier).to eq('Secondary')
         expect(fo_s.failover).to eq('SECONDARY')
         expect(fo_s.ttl).to eq(456)
-        expect(rrs_list(fo_s.resource_records)).to eq(["127.0.0.7", "127.0.0.8"])
+        expect(rrs_list(fo_s.resource_records.sort)).to eq(["127.0.0.7", "127.0.0.8"])
         expect(check_list[fo_s.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 80,
@@ -326,7 +326,7 @@ EOS
         info_a = info_zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info_a.name).to eq("info.winebarrel.jp.")
         expect(info_a.ttl).to eq(123)
-        expect(rrs_list(info_a.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(info_a.resource_records.sort)).to eq(["127.0.0.3", "127.0.0.4"])
 
         zone = zones[1]
         expect(zone.name).to eq("winebarrel.jp.")
@@ -338,7 +338,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records.sort)).to eq(["127.0.0.1", "127.0.0.2"])
 
         a_alias = zone.rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
@@ -351,16 +351,16 @@ EOS
         txt = zone.rrsets['www.winebarrel.jp.', 'TXT']
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(123)
-        expect(rrs_list(txt.resource_records)).to eq([
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
+        expect(rrs_list(txt.resource_records.sort)).to eq([
           "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
         ])
 
         mx = zone.rrsets['www.winebarrel.jp.', 'MX']
         expect(mx.name).to eq("www.winebarrel.jp.")
         expect(mx.ttl).to eq(123)
-        expect(rrs_list(mx.resource_records)).to eq(["20 mail2.winebarrel.jp", "10 mail.winebarrel.jp"])
+        expect(rrs_list(mx.resource_records.sort)).to eq(["10 mail.winebarrel.jp", "20 mail2.winebarrel.jp"])
 
         check_list = fetch_health_checks(@route53)
         expect(check_list.length).to eq(2)
@@ -370,7 +370,7 @@ EOS
         expect(fo_p.set_identifier).to eq('Primary')
         expect(fo_p.failover).to eq('PRIMARY')
         expect(fo_p.ttl).to eq(456)
-        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.5", "127.0.0.6"])
+        expect(rrs_list(fo_p.resource_records.sort)).to eq(["127.0.0.5", "127.0.0.6"])
         expect(check_list[fo_p.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 3306,
@@ -384,7 +384,7 @@ EOS
         expect(fo_s.set_identifier).to eq('Secondary')
         expect(fo_s.failover).to eq('SECONDARY')
         expect(fo_s.ttl).to eq(456)
-        expect(rrs_list(fo_s.resource_records)).to eq(["127.0.0.7", "127.0.0.8"])
+        expect(rrs_list(fo_s.resource_records.sort)).to eq(["127.0.0.7", "127.0.0.8"])
         expect(check_list[fo_s.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 80,
@@ -482,7 +482,7 @@ EOS
         ptr = ptr_zone.rrsets['444.333.222.111.in-addr.arpa.', 'PTR']
         expect(ptr.name).to eq("444.333.222.111.in-addr.arpa.")
         expect(ptr.ttl).to eq(123)
-        expect(rrs_list(ptr.resource_records)).to eq(["www.winebarrel.jp"])
+        expect(rrs_list(ptr.resource_records.sort)).to eq(["www.winebarrel.jp"])
 
         info_zone = zones[1]
         expect(info_zone.name).to eq("info.winebarrel.jp.")
@@ -494,7 +494,7 @@ EOS
         info_a = info_zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info_a.name).to eq("info.winebarrel.jp.")
         expect(info_a.ttl).to eq(123)
-        expect(rrs_list(info_a.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(info_a.resource_records.sort)).to eq(["127.0.0.3", "127.0.0.4"])
 
         zone = zones[2]
         expect(zone.name).to eq("winebarrel.jp.")
@@ -506,7 +506,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1"])
+        expect(rrs_list(a.resource_records.sort)).to eq(["127.0.0.1"])
 
         a_alias = zone.rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
@@ -519,24 +519,24 @@ EOS
         txt = zone.rrsets['www.winebarrel.jp.', 'TXT']
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(456)
-        expect(rrs_list(txt.resource_records)).to eq([
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
+        expect(rrs_list(txt.resource_records.sort)).to eq([
           "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
         ])
 
         srv = zone.rrsets['ftp.winebarrel.jp.', 'SRV']
         expect(srv.name).to eq("ftp.winebarrel.jp.")
         expect(srv.ttl).to eq(123)
-        expect(rrs_list(srv.resource_records)).to eq([
+        expect(rrs_list(srv.resource_records.sort)).to eq([
           "1   0   21  server01.example.jp",
-          "2   0   21  server02.example.jp"
+          "2   0   21  server02.example.jp",
         ])
 
         aaaa = zone.rrsets['www.winebarrel.jp.', 'AAAA']
         expect(aaaa.name).to eq("www.winebarrel.jp.")
         expect(aaaa.ttl).to eq(123)
-        expect(rrs_list(aaaa.resource_records)).to eq(["::1"])
+        expect(rrs_list(aaaa.resource_records.sort)).to eq(["::1"])
         check_list = fetch_health_checks(@route53)
         expect(check_list.length).to eq(2)
 
@@ -545,7 +545,7 @@ EOS
         expect(fo_p.set_identifier).to eq('Primary')
         expect(fo_p.failover).to eq('PRIMARY')
         expect(fo_p.ttl).to eq(456)
-        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(fo_p.resource_records.sort)).to eq(["127.0.0.1", "127.0.0.2"])
         expect(check_list[fo_p.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 80,
@@ -561,7 +561,7 @@ EOS
         expect(fo_s.set_identifier).to eq('Secondary')
         expect(fo_s.failover).to eq('SECONDARY')
         expect(fo_s.ttl).to eq(456)
-        expect(rrs_list(fo_s.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(fo_s.resource_records.sort)).to eq(["127.0.0.3", "127.0.0.4"])
         expect(check_list[fo_s.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 3306,
@@ -635,7 +635,7 @@ EOS
         ptr = ptr_zone.rrsets['444.333.222.111.in-addr.arpa.', 'PTR']
         expect(ptr.name).to eq("444.333.222.111.in-addr.arpa.")
         expect(ptr.ttl).to eq(123)
-        expect(rrs_list(ptr.resource_records)).to eq(["www.winebarrel.jp"])
+        expect(rrs_list(ptr.resource_records.sort)).to eq(["www.winebarrel.jp"])
 
         zone = zones[1]
         expect(zone.name).to eq("winebarrel.jp.")
@@ -647,7 +647,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1"])
+        expect(rrs_list(a.resource_records.sort)).to eq(["127.0.0.1"])
 
         a_alias = zone.rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
@@ -660,24 +660,24 @@ EOS
         txt = zone.rrsets['www.winebarrel.jp.', 'TXT']
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(456)
-        expect(rrs_list(txt.resource_records)).to eq([
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
+        expect(rrs_list(txt.resource_records.sort)).to eq([
           "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
         ])
 
         srv = zone.rrsets['ftp.winebarrel.jp.', 'SRV']
         expect(srv.name).to eq("ftp.winebarrel.jp.")
         expect(srv.ttl).to eq(123)
-        expect(rrs_list(srv.resource_records)).to eq([
+        expect(rrs_list(srv.resource_records.sort)).to eq([
           "1   0   21  server01.example.jp",
-          "2   0   21  server02.example.jp"
+          "2   0   21  server02.example.jp",
         ])
 
         aaaa = zone.rrsets['www.winebarrel.jp.', 'AAAA']
         expect(aaaa.name).to eq("www.winebarrel.jp.")
         expect(aaaa.ttl).to eq(123)
-        expect(rrs_list(aaaa.resource_records)).to eq(["::1"])
+        expect(rrs_list(aaaa.resource_records.sort)).to eq(["::1"])
       }
     end
 
@@ -768,7 +768,7 @@ EOS
         ptr = ptr_zone.rrsets['444.333.222.111.in-addr.arpa.', 'PTR']
         expect(ptr.name).to eq("444.333.222.111.in-addr.arpa.")
         expect(ptr.ttl).to eq(123)
-        expect(rrs_list(ptr.resource_records)).to eq(["www.winebarrel.jp"])
+        expect(rrs_list(ptr.resource_records.sort)).to eq(["www.winebarrel.jp"])
 
         info_zone = zones[1]
         expect(info_zone.name).to eq("info.winebarrel.jp.")
@@ -780,7 +780,7 @@ EOS
         info_a = info_zone.rrsets['info.winebarrel.jp.', 'A']
         expect(info_a.name).to eq("info.winebarrel.jp.")
         expect(info_a.ttl).to eq(123)
-        expect(rrs_list(info_a.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(info_a.resource_records.sort)).to eq(["127.0.0.3", "127.0.0.4"])
 
         zone = zones[2]
         expect(zone.name).to eq("winebarrel.jp.")
@@ -792,7 +792,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1"])
+        expect(rrs_list(a.resource_records.sort)).to eq(["127.0.0.1"])
 
         a_alias = zone.rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
@@ -805,24 +805,24 @@ EOS
         txt = zone.rrsets['www.winebarrel.jp.', 'TXT']
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(456)
-        expect(rrs_list(txt.resource_records)).to eq([
-          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
+        expect(rrs_list(txt.resource_records.sort)).to eq([
           "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
-          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\""
+          "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
+          "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
         ])
 
         srv = zone.rrsets['ftp.winebarrel.jp.', 'SRV']
         expect(srv.name).to eq("ftp.winebarrel.jp.")
         expect(srv.ttl).to eq(123)
-        expect(rrs_list(srv.resource_records)).to eq([
+        expect(rrs_list(srv.resource_records.sort)).to eq([
           "1   0   21  server01.example.jp",
-          "2   0   21  server02.example.jp"
+          "2   0   21  server02.example.jp",
         ])
 
         aaaa = zone.rrsets['www.winebarrel.jp.', 'AAAA']
         expect(aaaa.name).to eq("www.winebarrel.jp.")
         expect(aaaa.ttl).to eq(123)
-        expect(rrs_list(aaaa.resource_records)).to eq(["::1"])
+        expect(rrs_list(aaaa.resource_records.sort)).to eq(["::1"])
         check_list = fetch_health_checks(@route53)
         expect(check_list.length).to eq(2)
 
@@ -831,7 +831,7 @@ EOS
         expect(fo_p.set_identifier).to eq('Primary')
         expect(fo_p.failover).to eq('PRIMARY')
         expect(fo_p.ttl).to eq(456)
-        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(fo_p.resource_records.sort)).to eq(["127.0.0.1", "127.0.0.2"])
         expect(check_list[fo_p.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 80,
@@ -847,7 +847,7 @@ EOS
         expect(fo_s.set_identifier).to eq('Secondary')
         expect(fo_s.failover).to eq('SECONDARY')
         expect(fo_s.ttl).to eq(456)
-        expect(rrs_list(fo_s.resource_records)).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(fo_s.resource_records.sort)).to eq(["127.0.0.3", "127.0.0.4"])
         expect(check_list[fo_s.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 3306,
