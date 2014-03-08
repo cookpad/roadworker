@@ -67,7 +67,7 @@ EOS
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,
@@ -146,7 +146,7 @@ EOS
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,
@@ -225,7 +225,7 @@ EOS
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,
@@ -300,7 +300,7 @@ EOS
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,
@@ -372,7 +372,7 @@ EOS
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,
@@ -439,7 +439,7 @@ EOS
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,
@@ -502,7 +502,7 @@ EOS
           expect(a1.set_identifier).to eq('Secondary')
           expect(a1.failover).to eq('SECONDARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(a1.health_check_id).to be_nil
         }
       end
@@ -555,7 +555,7 @@ EOS
           expect(a1.set_identifier).to eq('w100')
           expect(a1.weight).to eq(100)
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,
@@ -630,7 +630,7 @@ EOS
           expect(a1.set_identifier).to eq('jp')
           expect(a1.region).to eq('ap-northeast-1')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
           expect(check_list[a1.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 80,

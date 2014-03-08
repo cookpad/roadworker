@@ -183,7 +183,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
 
         a_alias = zone.rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
@@ -338,7 +338,7 @@ EOS
         a = zone.rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
 
         a_alias = zone.rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
@@ -545,7 +545,7 @@ EOS
         expect(fo_p.set_identifier).to eq('Primary')
         expect(fo_p.failover).to eq('PRIMARY')
         expect(fo_p.ttl).to eq(456)
-        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
         expect(check_list[fo_p.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 80,
@@ -831,7 +831,7 @@ EOS
         expect(fo_p.set_identifier).to eq('Primary')
         expect(fo_p.failover).to eq('PRIMARY')
         expect(fo_p.ttl).to eq(456)
-        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(fo_p.resource_records)).to eq(["127.0.0.2", "127.0.0.1"])
         expect(check_list[fo_p.health_check_id]).to eq({
           :ip_address => '192.0.43.10',
           :port => 80,
