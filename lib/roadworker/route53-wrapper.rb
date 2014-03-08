@@ -162,10 +162,10 @@ module Roadworker
       def eql?(expected_record)
         Route53Wrapper::RRSET_ATTRS_WITH_TYPE.all? do |attribute|
           expected = expected_record.send(attribute)
-          expected = expected.sort if expected.kind_of?(Array)
+          expected = expected.sort_by {|i| i.to_s } if expected.kind_of?(Array)
           expected = nil if expected.kind_of?(Array) && expected.empty?
           actual = self.send(attribute)
-          actual = actual.sort if actual.kind_of?(Array)
+          actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if !expected and !actual
