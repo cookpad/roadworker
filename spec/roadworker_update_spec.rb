@@ -583,7 +583,7 @@ EOS
         expect(a2.set_identifier).to eq('web server 2')
         expect(a2.ttl).to eq(456)
         expect(a2.region).to eq("ap-northeast-1")
-        expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.8", "127.0.0.7"])
+        expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.7", "127.0.0.8"])
       }
     end
 

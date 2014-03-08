@@ -624,7 +624,7 @@ EOS
         ns = zone.rrsets['www.winebarrel.jp.', 'NS']
         expect(ns.name).to eq("www.winebarrel.jp.")
         expect(ns.ttl).to eq(123)
-        expect(rrs_list(ns.resource_records.sort_by {|i| i.to_s })).to eq(["ns2.winebarrel.jp", "ns.winebarrel.jp"])
+        expect(rrs_list(ns.resource_records.sort_by {|i| i.to_s })).to eq(["ns.winebarrel.jp", "ns2.winebarrel.jp"])
       }
     end
   end
