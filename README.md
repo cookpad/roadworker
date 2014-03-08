@@ -10,6 +10,7 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 **Notice**
 
 * Roadworker cannot update TTL of two or more same weighted A records (with different SetIdentifier) after creation.
+* `>= 0.4.3` compare resource records ignoring the order.
 
 ## Installation
 
