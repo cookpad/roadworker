@@ -556,7 +556,7 @@ EOS
           expect(a2.set_identifier).to eq('us')
           expect(a2.region).to eq('us-east-1')
           expect(a2.ttl).to eq(4560)
-          expect(rrs_list(a2.resource_records)).to eq( ["127.0.0.8", "127.0.0.7"])
+          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq( ["127.0.0.7", "127.0.0.8"])
           expect(check_list[a2.health_check_id]).to eq({
             :ip_address => '192.0.43.10',
             :port => 3306,
