@@ -24,7 +24,15 @@ module Roadworker
         request_interval  = config[:request_interval]
         failure_threshold = config[:failure_threshold]
 
-        url = "#{type}://#{ipaddr}:#{port}"
+        ulr = nil
+
+        if ipaddr
+          url = "#{type}://#{ipaddr}:#{port}"
+        else
+          url = "#{type}://#{fqdn}:#{port}"
+          fqdn = nil
+        end
+
         url << path if path && path != '/'
 
         {
