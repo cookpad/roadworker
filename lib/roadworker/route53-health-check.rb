@@ -24,7 +24,15 @@ module Roadworker
         request_interval  = config[:request_interval]
         failure_threshold = config[:failure_threshold]
 
-        url = "#{type}://#{ipaddr}:#{port}"
+        ulr = nil
+
+        if ipaddr
+          url = "#{type}://#{ipaddr}:#{port}"
+        else
+          url = "#{type}://#{fqdn}:#{port}"
+          fqdn = nil
+        end
+
         url << path if path && path != '/'
 
         {
@@ -47,13 +55,18 @@ module Roadworker
         config = {}
 
         {
-          :ip_address    => url.host,
           :port          => url.port,
           :type          => url.scheme.upcase,
           :resource_path => path,
         }.each {|key, value|
           config[key] = value if value
         }
+
+        if url.host =~ /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\Z/
+          config[:ip_address] = url.host
+        else
+          config[:fully_qualified_domain_name] = url.host
+        end
 
         return config
       end
