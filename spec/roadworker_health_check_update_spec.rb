@@ -388,7 +388,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "Secondary"
     failover "SECONDARY"
-    health_check "tcp://example:3307"
+    health_check "tcp://example.com:3307"
     ttl 4560
     resource_records(
       "127.0.0.3",
