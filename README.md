@@ -68,7 +68,9 @@ hosted_zone "info.winebarrel.jp." do
   rrset "zzz.info.winebarrel.jp", "A" do
     set_identifier "Primary"
     failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path", :host => "example.com", :search_string => "ANY_RESPONSE_STRING", :request_interval => 30, :failure_threshold => 3
+    health_check "http://example.com:80/path", :search_string => "ANY_RESPONSE_STRING", :request_interval => 30, :failure_threshold => 3
+    # If you want to specify the IP address:
+    #health_check "http://192.0.43.10:80/path", :host => "example.com",...
     ttl 456
     resource_records(
       "127.0.0.1",
