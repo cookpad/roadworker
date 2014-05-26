@@ -1,45 +1,6 @@
 require 'aws-sdk'
 
 module AWS
-  module Core
-    class Client
-
-      # PTF:
-      class << self
-        alias load_api_config_orig load_api_config
-
-        def load_api_config(api_version)
-          yaml = load_api_config_orig(api_version)
-
-          if service_name == 'Route53'
-            rewrite_api(yaml)
-          end
-
-          return yaml
-        end
-
-        private
-
-        def rewrite_api(value)
-          case value
-          when Array
-            value.each {|v| rewrite_api(v) }
-          when Hash
-            value.each do |k, v|
-              case k
-              when :health_check_config
-                v[:members][:ip_address][:required] = false
-              end
-
-              rewrite_api(v)
-            end
-          end
-        end
-      end # of class method
-
-    end # Client
-  end # Core
-
   class Route53
 
     # http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
