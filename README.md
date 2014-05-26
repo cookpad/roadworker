@@ -65,6 +65,10 @@ hosted_zone "info.winebarrel.jp." do
     dns_name "elb-dns-name.elb.amazonaws.com"
   end
 
+  rrset "yyy.info.winebarrel.jp.", "A" do
+    dns_name "elb-dns-name2.elb.amazonaws.com", :evaluate_target_health => true
+  end
+
   rrset "zzz.info.winebarrel.jp", "A" do
     set_identifier "Primary"
     failover "PRIMARY"

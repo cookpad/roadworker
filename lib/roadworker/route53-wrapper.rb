@@ -133,7 +133,8 @@ module Roadworker
             case attribute
             when :dns_name
               attribute = :alias_target
-              value = AWS::Route53.dns_name_to_alias_target(value, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
+              dns_name, dns_name_opts = value
+              value = AWS::Route53.dns_name_to_alias_target(dns_name, dns_name_opts, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
             when :health_check
               attribute = :health_check_id
               value = @options.health_checks.find_or_create(value)
@@ -173,8 +174,8 @@ module Roadworker
           elsif expected and actual
             case attribute
             when :dns_name
-              expected = expected.downcase.sub(/\.\Z/, '')
-              actual = actual.downcase.sub(/\.\Z/, '')
+              expected[0] = expected[0].downcase.sub(/\.\Z/, '')
+              actual[0] = actual[0].downcase.sub(/\.\Z/, '')
             end
 
             (expected == actual)
@@ -243,12 +244,23 @@ module Roadworker
       end
 
       def dns_name
-        (@resource_record_set.alias_target || {})[:dns_name]
+        alias_target = @resource_record_set.alias_target || {}
+        dns_name = alias_target[:dns_name]
+
+        if dns_name
+          [
+            dns_name,
+            AWS::Route53.normalize_dns_name_options(alias_target),
+          ]
+        else
+          nil
+        end
       end
 
-      def dns_name=(name)
-        if name
-          @resource_record_set.alias_target = AWS::Route53.dns_name_to_alias_target(name, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
+      def dns_name=(value)
+        if value
+          dns_name, dns_name_opts = value
+          @resource_record_set.alias_target = AWS::Route53.dns_name_to_alias_target(dns_name, dns_name_opts, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
         else
           @resource_record_set.alias_target = nil
         end

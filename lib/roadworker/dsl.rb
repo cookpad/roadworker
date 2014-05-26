@@ -112,8 +112,9 @@ module Roadworker
           @result.region = value
         end
 
-        def dns_name(value)
-          @result.dns_name = value
+        def dns_name(value, options = {})
+          options = AWS::Route53.normalize_dns_name_options(options)
+          @result.dns_name = [value, options]
         end
 
         def failover(value)

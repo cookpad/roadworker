@@ -22,7 +22,6 @@ proc {
 }.call
 
 require 'net/dns'
-require 'roadworker/net-dns-ext'
 
 module Roadworker
   class DSL
