@@ -20,13 +20,29 @@ module AWS
     CF_HOSTED_ZONE_ID = 'Z2FDTNDATAQYW2'
 
     class << self
-      def dns_name_to_alias_target(name, hosted_zone_id, hosted_zone_name)
+      def normalize_dns_name_options(src)
+        dst = {}
+
+        {
+          :evaluate_target_health => false,
+        }.each do |key, defalut_value|
+          dst[key] = src[key] || false
+        end
+
+        return dst
+      end
+
+      def dns_name_to_alias_target(name, options, hosted_zone_id, hosted_zone_name)
         hosted_zone_name = hosted_zone_name.sub(/\.\Z/, '')
         name = name.sub(/\.\Z/, '')
+        options ||= {}
 
         if name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
           region = $1.downcase
-          elb_dns_name_to_alias_target(name, region)
+          alias_target = elb_dns_name_to_alias_target(name, region)
+
+          # XXX:
+          alias_target.merge(options)
         elsif (s3_hosted_zone_id = S3_WEBSITE_ENDPOINTS[name.downcase]) and name =~ /\As3-website-([^.]+)\.amazonaws\.com\Z/i
           region = $1.downcase
           s3_dns_name_to_alias_target(name, region, s3_hosted_zone_id)
