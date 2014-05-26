@@ -64,6 +64,13 @@ module Roadworker
 
           if (alias_target = record_h.delete(:alias_target))
             record_h[:dns_name] = alias_target[:dns_name]
+
+            if alias_target[:evaluate_target_health]
+              record_h[:dns_name] = [
+                record_h[:dns_name],
+                {:evaluate_target_health => alias_target[:evaluate_target_health]}
+              ]
+            end
           end
         end
       end
