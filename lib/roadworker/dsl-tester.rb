@@ -80,7 +80,7 @@ module Roadworker
 
           is_valid = rrs.any? {|record|
             expected_value = (record.resource_records || []).map {|i| i[:value].strip }.sort
-            expected_ttl = record.dns_name ? 60 : record.ttl
+            expected_ttl = fetch_dns_name(record.dns_name) ? 60 : record.ttl
 
             actual_value = response.answer.map {|i| (%w(TXT SPF).include?(type) ? i.txt : i.value).strip }.sort
             actual_ttls = response.answer.map {|i| i.ttl }
@@ -95,7 +95,7 @@ module Roadworker
               actual_value = actual_value.map {|i| i.strip }
             end
 
-            expected_message = record.resource_records ? expected_value.map {|i| "#{i}(#{expected_ttl})" }.join(',') : "#{record.dns_name}(#{expected_ttl})"
+            expected_message = record.resource_records ? expected_value.map {|i| "#{i}(#{expected_ttl})" }.join(',') : "#{fetch_dns_name(record.dns_name)}(#{expected_ttl})"
             actual_message = actual_value.zip(actual_ttls).map {|v, t| "#{v}(#{t})" }.join(',')
             logmsg_expected = "expected=#{expected_message}"
             logmsg_actual = "actual=#{actual_message}"
@@ -103,9 +103,9 @@ module Roadworker
 
             is_same = false
 
-            if record.dns_name
+            if fetch_dns_name(record.dns_name)
               # A(Alias)
-              case record.dns_name.sub(/\.\Z/, '')
+              case fetch_dns_name(record.dns_name).sub(/\.\Z/, '')
               when /\.elb\.amazonaws\.com/i
                 is_same = response.answer.all? {|a|
                   response_query_ptr = query(a.value, 'PTR', error_messages)
@@ -128,7 +128,7 @@ module Roadworker
                     log(:debug, 'Retry Check', :white, "#{name} #{type}")
                   end
 
-                  dns_name_a = query(record.dns_name, 'A', error_messages)
+                  dns_name_a = query(fetch_dns_name(record.dns_name), 'A', error_messages)
                   s3_website_endpoint_ips = dns_name_a.answer.map {|i| i.value }
 
                   !s3_website_endpoint_ips.empty? && s3_website_endpoint_ips.any? {|ip|
@@ -146,13 +146,13 @@ module Roadworker
                   end
                 }
               else
-                if (alias_target_a_record = a_records[record.dns_name])
+                if (alias_target_a_record = a_records[fetch_dns_name(record.dns_name)])
                   expected_message = alias_target_a_record.map {|values, ttl| values.map {|i| "#{i}(#{ttl})" }.join(',') }.uniq.join (' or ')
                   logmsg_expected = "expected=#{expected_message}"
                   expected_ttl = alias_target_a_record.map {|values, ttl| ttl }.max
                   is_same = alias_target_a_record.any? {|values, ttl| values == actual_value }
                 else
-                  warning_messages << "#{name} #{type}: Cannot check `#{record.dns_name}`"
+                  warning_messages << "#{name} #{type}: Cannot check `#{fetch_dns_name(record.dns_name)}`"
                   is_same = true
                 end
               end
@@ -299,6 +299,13 @@ module Roadworker
         print 'F'.intense_red unless @options.debug
       end
 
+      def fetch_dns_name(dns_name)
+        if dns_name
+          dns_name.first
+        else
+          nil
+        end
+      end
     end # Tester
   end # DSL
 end # Roadworker
