@@ -29,7 +29,9 @@ ARGV.options do |opt|
   begin
     access_key = nil
     secret_key = nil
+    profile_name = nil
 
+    opt.on('-p', '--profile PROFILE_NAME')       {|v| profile_name                 = v       }
     opt.on('-k', '--access-key ACCESS_KEY')      {|v| access_key                   = v       }
     opt.on('-s', '--secret-key SECRET_KEY')      {|v| secret_key                   = v       }
     opt.on('-a', '--apply')                      {    mode                         = :apply  }
@@ -47,15 +49,20 @@ ARGV.options do |opt|
     opt.on(''  , '--debug')                      {    options[:debug]              = true    }
     opt.parse!
 
+    aws_opts = {}
     if access_key and secret_key
-      AWS.config({
-        :access_key_id     => access_key,
-        :secret_access_key => secret_key,
-      })
+      aws_opts[:access_key_id] = access_key
+      aws_opts[:secret_access_key] = secret_key
+    elsif profile_name
+      provider = AWS::Core::CredentialProviders::SharedCredentialFileProvider.new(
+        :profile_name => profile_name
+      )
+      aws_opts[:credential_provider] = provider
     elsif (access_key and !secret_key) or (!access_key and secret_key) or mode.nil?
       puts opt.help
       exit 1
     end
+    AWS.config(aws_opts)
   rescue => e
     $stderr.puts e
     exit 1
