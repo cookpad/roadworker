@@ -37,6 +37,28 @@ roadwork -a --dry-run
 roudwork -a
 ```
 
+## Help
+
+```
+Usage: roadwork [options]
+    -p, --profile PROFILE_NAME
+    -k, --access-key ACCESS_KEY
+    -s, --secret-key SECRET_KEY
+    -a, --apply
+    -f, --file FILE
+        --dry-run
+        --force
+        --no-health-check-gc
+    -e, --export
+    -o, --output FILE
+        --split
+        --with-soa-ns
+    -t, --test
+        --nameservers SERVERS
+        --no-color
+        --debug
+```
+
 ## Routefile example
 
 ```ruby
