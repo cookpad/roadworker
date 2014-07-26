@@ -134,7 +134,7 @@ info.winebarrel.jp. A:
 
 ## Demo
 
-![Roadworker Demo](https://bitbucket.org/winebarrel/roadworker/downloads/roadworker-demo.gif)
+![Roadworker Demo](https://raw.githubusercontent.com/winebarrel/roadworker/master/etc/demo.gif)
 
 ## DNS management using GitHub/Bitbucket
 
