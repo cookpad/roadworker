@@ -15,6 +15,7 @@ module Roadworker
       :resource_records,
       :dns_name,
       :region,
+      :geo_location,
       :failover,
       :health_check,
     ]
