@@ -53,7 +53,9 @@ module Roadworker
                 "#{key} #{value}"
               end
             else
-              "#{key} #{value.inspect}"
+              inspected_value = value.inspect
+              inspected_value.sub!(/\A{/, '').sub!(/}\z/, '') if value.kind_of?(Hash)
+              "#{key} #{inspected_value}"
             end
           }.select {|i| i }.join("\n    ")
 
