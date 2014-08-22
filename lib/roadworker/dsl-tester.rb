@@ -82,11 +82,11 @@ module Roadworker
             expected_value = (record.resource_records || []).map {|i| i[:value].strip }.sort
             expected_ttl = fetch_dns_name(record.dns_name) ? 60 : record.ttl
 
-            actual_value = response.answer.map {|i| (%w(TXT SPF).include?(type) ? i.txt : i.value).strip }.sort
+            actual_value = response.answer.map {|i| (%w(TXT SPF).include?(type) ? i.txt : type == 'SRV' ? [i.priority, i.weight, i.port, i.host].join(' ') : i.value).strip }.sort
             actual_ttls = response.answer.map {|i| i.ttl }
 
             case type
-            when 'NS', 'PTR', 'MX', 'CNAME'
+            when 'NS', 'PTR', 'MX', 'CNAME', 'SRV'
               expected_value = expected_value.map {|i| i.downcase.sub(/\.\Z/, '') }
               actual_value = actual_value.map {|i| i.downcase.sub(/\.\Z/, '') }
             when 'TXT', 'SPF'
