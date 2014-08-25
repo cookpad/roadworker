@@ -45,6 +45,7 @@ ARGV.options do |opt|
     opt.on('',   '--with-soa-ns')                {    options[:with_soa_ns]        = true    }
     opt.on('-t', '--test')                       {    mode                         = :test   }
     opt.on(''  , '--nameservers SERVERS', Array) {|v| options[:nameservers]        = v       }
+    opt.on(''  , '--port PORT', Integer)         {|v| options[:port]               = v       }
     opt.on(''  , '--no-color')                   {    options[:color]              = false   }
     opt.on(''  , '--debug')                      {    options[:debug]              = true    }
     opt.parse!
