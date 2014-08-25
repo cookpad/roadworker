@@ -1,7 +1,7 @@
 describe Roadworker::DSL::Tester do
   it 'checks A record' do
     handler = proc do
-      match(/test.mydomain.org/, Resolv::DNS::Resource::IN::A) do |tx|
+      match('test.mydomain.org', Resolv::DNS::Resource::IN::A) do |tx|
         tx.respond!("10.0.0.80", :ttl => 300)
       end
     end
@@ -12,6 +12,27 @@ describe Roadworker::DSL::Tester do
           ttl 300
           resource_records(
             "10.0.0.80"
+          )
+        end
+      end
+    RUBY
+
+    expect(failures).to eq(0)
+  end
+
+  it 'checks PTR record' do
+    handler = proc do
+      match('80.0.0.10.in-addr.arpa', Resolv::DNS::Resource::IN::PTR) do |tx|
+        tx.respond!(Resolv::DNS::Name.create('test.mydomain.org.'), :ttl => 300)
+      end
+    end
+
+    failures = run_dns(<<-RUBY, :handler => handler)
+      hosted_zone "0.0.10.in-addr.arpa." do
+        rrset "80.0.0.10.in-addr.arpa.", "PTR" do
+          ttl 300
+          resource_records(
+            "test.mydomain.org."
           )
         end
       end
