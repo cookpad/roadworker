@@ -31,7 +31,7 @@ def run_dns(dsl, options)
   handler = options.fetch(:handler)
 
   options = {
-    :logger      => Logger.new('/dev/null'),
+    :logger      => Logger.new(debug? ? $stdout : '/dev/null'),
     :nameservers => "127.0.0.1",
     :port        => DNS_PORT,
   }.merge(options)
@@ -69,7 +69,7 @@ def run_dns(dsl, options)
 end
 
 def quiet
-  if ENV['DEBUG'] == '1'
+  if debug?
     yield
     return
   end
@@ -126,4 +126,8 @@ def fetch_health_checks(route53)
   end
 
   return check_list
+end
+
+def debug?
+  ENV['DEBUG'] == '1'
 end

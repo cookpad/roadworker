@@ -40,4 +40,25 @@ describe Roadworker::DSL::Tester do
 
     expect(failures).to eq(0)
   end
+
+  it 'checks TXT record' do
+    handler = proc do
+      match('test.mydomain.org', Resolv::DNS::Resource::IN::TXT) do |tx|
+        tx.respond!('v=spf1 +ip4:192.168.100.0/24 ~all', :ttl => 300)
+      end
+    end
+
+    failures = run_dns(<<-RUBY, :handler => handler)
+      hosted_zone "mydomain.org." do
+        rrset "test.mydomain.org.", "TXT" do
+          ttl 300
+          resource_records(
+            '"v=spf1 +ip4:192.168.100.0/24 ~all"'
+          )
+        end
+      end
+    RUBY
+
+    expect(failures).to eq(0)
+  end
 end
