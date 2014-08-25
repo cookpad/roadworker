@@ -37,7 +37,7 @@ def run_dns(dsl, options)
   }.merge(options)
 
   begin
-    server = RubyDNS::RuleBasedServer.new(:logger => Logger.new('/dev/null'), &handler)
+    server = RubyDNS::RuleBasedServer.new(:logger => Logger.new(debug? ? $stdout : '/dev/null'), &handler)
 
     Thread.new {
       EventMachine.run do
@@ -92,7 +92,7 @@ def routefile(options = {})
 
   begin
     open(tempfile, 'wb') {|f| f.puts(yield) }
-    options = {:logger => Logger.new('/dev/null')}.merge(options)
+    options = {:logger => Logger.new(debug? ? $stdout : '/dev/null')}.merge(options)
     client = Roadworker::Client.new(options)
     updated = client.apply(tempfile)
     sleep ENV['TEST_DELAY'].to_f

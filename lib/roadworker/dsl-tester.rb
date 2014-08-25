@@ -87,7 +87,7 @@ module Roadworker
               when 'TXT', 'SPF'
                 i.txt
               when 'SRV'
-                [i.priority, i.weight, i.port, i.host].join(' ')
+                [i.priority, i.weight, i.port, fix_srv_host(name, i.host)].join(' ')
               else
                 i.value
               end
@@ -102,6 +102,11 @@ module Roadworker
               # see https://github.com/bluemonk/net-dns/blob/651dc1006d9ee0c167fa515e4b9d2494af415ae9/lib/net/dns/rr/txt.rb#L46
               expected_value = expected_value.map {|i| i.scan(/(?:\\\\|(?:\\"|(?:[^\\"]|[^"])))*"((?:\\\\|(?:\\"|(?:\\"|(?:[^\\"]|[^"]))))*)"/).join(' ').gsub(/\\(.)/) { $1 }.strip }
               actual_value = actual_value.map {|i| i.strip }
+            end
+
+            if ['SRV', 'MX'].include?(type)
+              expected_value = expected_value.map {|i| i.gsub(/\s+/, ' ') }
+              actual_value = actual_value.map {|i| i.gsub(/\s+/, ' ') }
             end
 
             expected_message = record.resource_records ? expected_value.map {|i| "#{i}(#{expected_ttl})" }.join(',') : "#{fetch_dns_name(record.dns_name)}(#{expected_ttl})"
@@ -244,6 +249,19 @@ module Roadworker
       end
 
       private
+
+      def fix_srv_host(query_name, host)
+        if (host || '').strip.empty?
+          query_name
+        elsif host =~ /\x1A\Z/
+          host = host.sub(/\x1A\Z/, '')
+          query_name = query_name.split('.')
+          query_name.slice!(0, host.count('.'))
+          host + query_name.join('.')
+        else
+          host
+        end
+      end
 
       def create_resolver
         log_file = @options.debug ? Net::DNS::Resolver::Defaults[:log_file] : '/dev/null'

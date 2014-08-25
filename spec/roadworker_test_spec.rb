@@ -103,4 +103,67 @@ describe Roadworker::DSL::Tester do
 
     expect(failures).to eq(0)
   end
+
+  it 'checks SRV record (1)' do
+    handler = proc do
+      match('test.mydomain.org', Resolv::DNS::Resource::IN::SRV) do |tx|
+        tx.respond!(1, 0, 21, 'test.mydomain.org', :ttl => 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
+      end
+    end
+
+    failures = run_dns(<<-RUBY, :handler => handler)
+      hosted_zone "mydomain.org." do
+        rrset "test.mydomain.org.", "SRV" do
+          ttl 300
+          resource_records(
+            "1   0   21  test.mydomain.org."
+          )
+        end
+      end
+    RUBY
+
+    expect(failures).to eq(0)
+  end
+
+  it 'checks SRV record (2)' do
+    handler = proc do
+      match('test.mydomain.org', Resolv::DNS::Resource::IN::SRV) do |tx|
+        tx.respond!(1, 0, 21, 'test2.mydomain2.org', :ttl => 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
+      end
+    end
+
+    failures = run_dns(<<-RUBY, :handler => handler)
+      hosted_zone "mydomain.org." do
+        rrset "test.mydomain.org.", "SRV" do
+          ttl 300
+          resource_records(
+            "1   0   21  test2.mydomain2.org."
+          )
+        end
+      end
+    RUBY
+
+    expect(failures).to eq(0)
+  end
+
+  it 'checks SRV record (3)' do
+    handler = proc do
+      match('test.mydomain.org', Resolv::DNS::Resource::IN::SRV) do |tx|
+        tx.respond!(1, 0, 21, 'test2.mydomain2.org2', :ttl => 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
+      end
+    end
+
+    failures = run_dns(<<-RUBY, :handler => handler)
+      hosted_zone "mydomain.org." do
+        rrset "test.mydomain.org.", "SRV" do
+          ttl 300
+          resource_records(
+            "1   0   21  test2.mydomain2.org2."
+          )
+        end
+      end
+    RUBY
+
+    expect(failures).to eq(0)
+  end
 end
