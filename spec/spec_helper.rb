@@ -1,5 +1,12 @@
+$: << File.expand_path("#{File.dirname __FILE__}/../lib")
+
 TEST_ELB = ENV['TEST_ELB']
 TEST_CF = ENV['TEST_CF']
+
+require 'rubygems'
+require 'roadworker'
+require 'fileutils'
+require 'logger'
 
 AWS.config({
   :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),

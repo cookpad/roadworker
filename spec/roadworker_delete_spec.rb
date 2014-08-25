@@ -1,12 +1,3 @@
-$: << File.expand_path("#{File.dirname __FILE__}/../lib")
-$: << File.expand_path("#{File.dirname __FILE__}/../spec")
-
-require 'rubygems'
-require 'roadworker'
-require 'spec_helper'
-require 'fileutils'
-require 'logger'
-
 describe Roadworker::Client do
   before(:each) {
     routefile(:force => true) { '' }
