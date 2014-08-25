@@ -187,4 +187,27 @@ describe Roadworker::DSL::Tester do
 
     expect(failures).to eq(0)
   end
+
+  # XXX: It is not possible to test the SPF record...
+
+  it 'checks NS record' do
+    handler = proc do
+      match('test.mydomain.org', Resolv::DNS::Resource::IN::NS) do |tx|
+        tx.respond!(Resolv::DNS::Name.create('ns.mydomain.org.'), :ttl => 300)
+      end
+    end
+
+    failures = run_dns(<<-RUBY, :handler => handler)
+      hosted_zone "mydomain.org." do
+        rrset "test.mydomain.org.", "NS" do
+          ttl 300
+          resource_records(
+            "ns.mydomain.org."
+          )
+        end
+      end
+    RUBY
+
+    expect(failures).to eq(0)
+  end
 end
