@@ -1,13 +1,4 @@
 describe Roadworker::Client do
-  before(:each) {
-    routefile(:force => true) { '' }
-    @route53 = AWS::Route53.new
-  }
-
-  after(:all) do
-    routefile(:force => true) { '' }
-  end
-
   context 'Update' do
     context 'A(Wildcard) record' do
       before {

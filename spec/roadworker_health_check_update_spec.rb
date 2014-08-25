@@ -1,13 +1,4 @@
 describe Roadworker::Client do
-  before(:each) {
-    routefile(:force => true) { '' }
-    @route53 = AWS::Route53.new
-  }
-
-  after(:all) do
-    routefile(:force => true) { '' }
-  end
-
   describe 'HealthCheck' do
     context 'Update' do
       context 'HTTPS?_STR_MATCH' do

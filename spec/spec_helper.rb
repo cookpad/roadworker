@@ -13,6 +13,17 @@ AWS.config({
   :secret_access_key => (ENV['TEST_AWS_SECRET_ACCESS_KEY'] || 'tiger'),
 })
 
+RSpec.configure do |config|
+  config.before(:each) {
+    routefile(:force => true) { '' }
+    @route53 = AWS::Route53.new
+  }
+
+  config.after(:all) do
+    routefile(:force => true) { '' }
+  end
+end
+
 def routefile(options = {})
   updated = false
   tempfile = `mktemp /tmp/#{File.basename(__FILE__)}.XXXXXX`.strip
