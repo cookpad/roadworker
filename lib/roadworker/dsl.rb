@@ -117,6 +117,10 @@ module Roadworker
           @result.dns_name = [value, options]
         end
 
+        def geo_location(value)
+          @result.geo_location = value
+        end
+
         def failover(value)
           @result.failover = value
         end
