@@ -82,4 +82,25 @@ describe Roadworker::DSL::Tester do
 
     expect(failures).to eq(0)
   end
+
+  it 'checks MX record' do
+    handler = proc do
+      match('test.mydomain.org', Resolv::DNS::Resource::IN::MX) do |tx|
+        tx.respond!(10, Resolv::DNS::Name.create('mail.mydomain.org.'), :ttl => 300)
+      end
+    end
+
+    failures = run_dns(<<-RUBY, :handler => handler)
+      hosted_zone "mydomain.org." do
+        rrset "test.mydomain.org.", "MX" do
+          ttl 300
+          resource_records(
+            "10 mail.mydomain.org."
+          )
+        end
+      end
+    RUBY
+
+    expect(failures).to eq(0)
+  end
 end
