@@ -2,11 +2,13 @@ $: << File.expand_path("#{File.dirname __FILE__}/../lib")
 
 TEST_ELB = ENV['TEST_ELB']
 TEST_CF = ENV['TEST_CF']
+DNS_PORT = 5300
 
 require 'rubygems'
 require 'roadworker'
 require 'fileutils'
 require 'logger'
+require 'rubydns'
 
 AWS.config({
   :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
@@ -21,6 +23,66 @@ RSpec.configure do |config|
 
   config.after(:all) do
     routefile(:force => true) { '' }
+  end
+end
+
+def run_dns(dsl, options)
+  server = nil
+  handler = options.fetch(:handler)
+
+  options = {
+    :logger      => Logger.new('/dev/null'),
+    :nameservers => "127.0.0.1",
+    :port        => DNS_PORT,
+  }.merge(options)
+
+  begin
+    server = RubyDNS::RuleBasedServer.new(:logger => Logger.new('/dev/null'), &handler)
+
+    Thread.new {
+      EventMachine.run do
+        server.run(
+          :listen => [:udp, :tcp].map {|i| [i, "0.0.0.0", DNS_PORT] },
+        )
+      end
+    }
+
+    sleep 0.1 until EventMachine.reactor_running?
+    tempfile = `mktemp /tmp/#{File.basename(__FILE__)}.XXXXXX`.strip
+    records_length, failures = nil
+
+    begin
+      open(tempfile, 'wb') {|f| f.puts(dsl) }
+      client = Roadworker::Client.new(options)
+
+      quiet do
+        records_length, failures = client.test(tempfile)
+      end
+    ensure
+      FileUtils.rm_f(tempfile)
+    end
+  ensure
+    EventMachine.stop if server
+  end
+
+  return failures
+end
+
+def quiet
+  if ENV['DEBUG'] == '1'
+    yield
+    return
+  end
+
+  open('/dev/null', 'wb') do |f|
+    stdout_orig = $stdout
+
+    begin
+      $stdout = f
+      yield
+    ensure
+      $stdout = stdout_orig
+    end
   end
 end
 
