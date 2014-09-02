@@ -264,8 +264,7 @@ module Roadworker
       end
 
       def create_resolver
-        log_file = @options.debug ? Net::DNS::Resolver::Defaults[:log_file] : '/dev/null'
-        resolver_opts = {:log_file => log_file}
+        resolver_opts = {}
         resolver_opts[:port] = @options.port if @options.port
 
         if File.exist?(Net::DNS::Resolver::Defaults[:config_file])
