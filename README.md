@@ -42,6 +42,7 @@ roudwork -a
 ```
 Usage: roadwork [options]
     -p, --profile PROFILE_NAME
+        --credentials-path PATH
     -k, --access-key ACCESS_KEY
     -s, --secret-key SECRET_KEY
     -a, --apply
@@ -55,6 +56,7 @@ Usage: roadwork [options]
         --with-soa-ns
     -t, --test
         --nameservers SERVERS
+        --port PORT
         --no-color
         --debug
 ```
