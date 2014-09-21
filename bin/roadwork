@@ -30,8 +30,10 @@ ARGV.options do |opt|
     access_key = nil
     secret_key = nil
     profile_name = nil
+    credentials_path = nil
 
     opt.on('-p', '--profile PROFILE_NAME')       {|v| profile_name                 = v       }
+    opt.on(''  , '--credentials-path PATH')      {|v| credentials_path             = v       }
     opt.on('-k', '--access-key ACCESS_KEY')      {|v| access_key                   = v       }
     opt.on('-s', '--secret-key SECRET_KEY')      {|v| secret_key                   = v       }
     opt.on('-a', '--apply')                      {    mode                         = :apply  }
@@ -54,10 +56,11 @@ ARGV.options do |opt|
     if access_key and secret_key
       aws_opts[:access_key_id] = access_key
       aws_opts[:secret_access_key] = secret_key
-    elsif profile_name
-      provider = AWS::Core::CredentialProviders::SharedCredentialFileProvider.new(
-        :profile_name => profile_name
-      )
+    elsif profile_name or credentials_path
+      credentials_opts = {}
+      credentials_opts[:profile_name] = profile_name if profile_name
+      credentials_opts[:path] = credentials_path if credentials_path
+      provider = AWS::Core::CredentialProviders::SharedCredentialFileProvider.new(credentials_opts)
       aws_opts[:credential_provider] = provider
     elsif (access_key and !secret_key) or (!access_key and secret_key) or mode.nil?
       puts opt.help
