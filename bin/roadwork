@@ -56,7 +56,7 @@ ARGV.options do |opt|
     if access_key and secret_key
       aws_opts[:access_key_id] = access_key
       aws_opts[:secret_access_key] = secret_key
-    elsif profile_name
+    elsif profile_name or credentials_path
       credentials_opts = {}
       credentials_opts[:profile_name] = profile_name if profile_name
       credentials_opts[:path] = credentials_path if credentials_path
