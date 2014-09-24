@@ -5,8 +5,15 @@ require 'roadworker'
 require 'optparse'
 require 'logger'
 
+MAGIC_COMMENT = <<-EOS
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+EOS
+
+DEFAULT_ROUTEFILE = 'Routefile'
+
 mode = nil
-file = 'Routefile'
+file = DEFAULT_ROUTEFILE
 output_file = '-'
 split = false
 
@@ -91,7 +98,8 @@ begin
     if split
       logger.info('Export Route53')
 
-      output_file = 'Routefile' if output_file == '-'
+      output_file = DEFAULT_ROUTEFILE if output_file == '-'
+      output_file = File.join(output_file, DEFAULT_ROUTEFILE) if File.directory?(output_file)
       requires = []
 
       client.export do |exported, converter|
@@ -102,6 +110,7 @@ begin
           logger.info("  write `#{route_file}`")
 
           open(route_file, 'wb') do |f|
+            f.puts MAGIC_COMMENT
             f.puts converter.call({
               :hosted_zones => [zone],
               :health_checks => exported[:health_checks],
@@ -113,6 +122,8 @@ begin
       logger.info("  write `#{output_file}`")
 
       open(output_file, 'wb') do |f|
+        f.puts MAGIC_COMMENT
+
         requires.each do |route_file|
           f.puts "require '#{File.basename route_file}'"
         end
@@ -125,7 +136,10 @@ begin
         puts client.export
       else
         logger.info("Export Route53 to `#{output_file}`")
-        open(output_file, 'wb') {|f| f.puts client.export }
+        open(output_file, 'wb') do |f|
+          f.puts MAGIC_COMMENT
+          f.puts client.export
+        end
       end
     end
   when :test
