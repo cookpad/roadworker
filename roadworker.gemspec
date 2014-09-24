@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 2.14.1"
   spec.add_development_dependency "rspec-instafail"
   spec.add_development_dependency "rubydns"
+  spec.add_development_dependency "coveralls"
 end

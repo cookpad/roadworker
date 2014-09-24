@@ -1,5 +1,15 @@
 $: << File.expand_path("#{File.dirname __FILE__}/../lib")
 
+if ENV['TRAVIS']
+  require 'simplecov'
+  require 'coveralls'
+
+  SimpleCov.formatter = Coveralls::SimpleCov::Formatter
+  SimpleCov.start do
+    add_filter "spec/"
+  end
+end
+
 TEST_ELB = ENV['TEST_ELB']
 TEST_CF = ENV['TEST_CF']
 DNS_PORT = 5300
