@@ -35,7 +35,7 @@ module Roadworker
     private
 
     def require(file)
-      routefile = File.expand_path(File.join(File.dirname(@path), file))
+      routefile = (file =~ %r|\A/|) ? file : File.expand_path(File.join(File.dirname(@path), file))
 
       if File.exist?(routefile)
         instance_eval(File.read(routefile))
