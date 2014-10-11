@@ -51,6 +51,7 @@ module Roadworker
             :resource_records,
             :alias_target,
             :region,
+            :geo_location,
             :failover,
             :health_check_id,
           ]

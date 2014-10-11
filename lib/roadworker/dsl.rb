@@ -35,7 +35,7 @@ module Roadworker
     private
 
     def require(file)
-      routefile = File.expand_path(File.join(File.dirname(@path), file))
+      routefile = (file =~ %r|\A/|) ? file : File.expand_path(File.join(File.dirname(@path), file))
 
       if File.exist?(routefile)
         instance_eval(File.read(routefile))
@@ -115,6 +115,10 @@ module Roadworker
         def dns_name(value, options = {})
           options = AWS::Route53.normalize_dns_name_options(options)
           @result.dns_name = [value, options]
+        end
+
+        def geo_location(value)
+          @result.geo_location = value
         end
 
         def failover(value)
