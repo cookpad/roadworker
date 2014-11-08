@@ -283,6 +283,10 @@ module Roadworker
         record_list = {}
 
         dsl.hosted_zones.each do |zone|
+          if @options.target_zone
+            next unless zone.name =~ @options.target_zone
+          end
+
           zone.rrsets.each do |record|
             key = [record.name, record.type]
             record_list[key] ||= []
