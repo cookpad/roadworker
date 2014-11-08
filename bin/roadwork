@@ -5,6 +5,8 @@ require 'roadworker'
 require 'optparse'
 require 'logger'
 
+Version = Roadworker::VERSION
+
 mode = nil
 file = 'Routefile'
 output_file = '-'
