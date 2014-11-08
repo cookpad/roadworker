@@ -82,7 +82,8 @@ module Roadworker
           next unless name =~ @options.target_zone
         end
 
-        actual_zone = actual.delete(keys) || @route53.hosted_zones.create(name)
+        actual_zone = actual.delete(keys) || @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
+        walk_vpcs(expected_zone, actual_zone)
         walk_rrsets(expected_zone, actual_zone)
       end
 
@@ -94,6 +95,19 @@ module Roadworker
         end
 
         zone.delete
+      end
+    end
+
+    def walk_vpcs(expected_zone, actual_zone)
+      expected_vpcs = expected_zone.vpcs
+      actual_vpcs = actual_zone.vpcs
+
+      (expected_vpcs - actual_vpcs).each do |vpc|
+        actual_zone.associate_vpc(vpc)
+      end
+
+      (actual_vpcs - expected_vpcs).each do |vpc|
+        actual_zone.disassociate_vpc(vpc)
       end
     end
 
