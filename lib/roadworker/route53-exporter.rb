@@ -31,7 +31,7 @@ module Roadworker
 
     def export_hosted_zones(hosted_zones)
       Collection.batch(@options.route53.hosted_zones) do |zone|
-        zone_h = item_to_hash(zone, :name)
+        zone_h = item_to_hash(zone, :name, :vpcs)
         hosted_zones << zone_h
 
         rrsets = []
