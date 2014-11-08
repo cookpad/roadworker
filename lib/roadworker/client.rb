@@ -77,11 +77,22 @@ module Roadworker
 
       expected.each do |keys, expected_zone|
         name = keys[0]
+
+        if @options.target_zone
+          next unless name =~ @options.target_zone
+        end
+
         actual_zone = actual.delete(keys) || @route53.hosted_zones.create(name)
         walk_rrsets(expected_zone, actual_zone)
       end
 
       actual.each do |keys, zone|
+        name = keys[0]
+
+        if @options.target_zone
+          next unless name =~ @options.target_zone
+        end
+
         zone.delete
       end
     end
