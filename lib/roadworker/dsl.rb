@@ -38,9 +38,9 @@ module Roadworker
       routefile = (file =~ %r|\A/|) ? file : File.expand_path(File.join(File.dirname(@path), file))
 
       if File.exist?(routefile)
-        instance_eval(File.read(routefile))
+        instance_eval(File.read(routefile), routefile)
       elsif File.exist?(routefile + '.rb')
-        instance_eval(File.read(routefile + '.rb'))
+        instance_eval(File.read(routefile + '.rb'), routefile + '.rb')
       else
         Kernel.require(file)
       end
