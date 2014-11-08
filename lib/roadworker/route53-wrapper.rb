@@ -120,14 +120,12 @@ module Roadworker
       end
 
       def associate_vpc(vpc)
-        log(:info, 'Update ResourceRecordSet', :green, @hosted_zone.name)
-        log(:info, "  associate #{vpc.inspect}", :green)
+        log(:info, "Associate #{vpc.inspect}", :green, @hosted_zone.name)
         @hosted_zone.associate_vpc(vpc) unless @options.dry_run
       end
 
       def disassociate_vpc(vpc)
-        log(:info, 'Update ResourceRecordSet', :green, @hosted_zone.name)
-        log(:info, "  disassociate #{vpc.inspect}", :red)
+        log(:info, "Disassociate #{vpc.inspect}", :red, @hosted_zone.name)
         @hosted_zone.disassociate_vpc(vpc) unless @options.dry_run
       end
 
