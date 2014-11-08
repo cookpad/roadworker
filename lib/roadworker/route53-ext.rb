@@ -1,6 +1,43 @@
 require 'aws-sdk-v1'
 
 module AWS
+  module Core
+    class Client
+
+      # PTF:
+      class << self
+        alias load_api_config_orig load_api_config
+
+        def load_api_config(api_version)
+          yaml = load_api_config_orig(api_version)
+
+          if service_name == 'Route53'
+            rewrite_api(yaml)
+          end
+
+          return yaml
+        end
+
+        private
+
+        def rewrite_api(yaml)
+          # XXX: Fix aws-sdk 1.5.8 bug
+          get_hosted_zone = yaml[:operations].find {|h| h[:name] == 'GetHostedZone' }
+          vpcs = get_hosted_zone[:outputs][:children]['VPCs']
+
+          if vpcs
+            vpc = vpcs[:children]['VPC']
+
+            if vpc[:rename] == :vp_cs
+              vpc[:rename] = :vpcs
+            end
+          end
+        end
+      end # of class method
+
+    end # Client
+  end # Core
+
   class Route53
 
     # http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
