@@ -69,12 +69,25 @@ module Roadworker
         def output_zone(zone)
           name = zone[:name].inspect
           rrsets = zone[:rrsets]
+          vpcs = output_vpcs(zone[:vpcs])
+          vpcs = "  #{vpcs}\n\n" if vpcs
 
           return(<<-EOS)
 hosted_zone #{name} do
-#{rrsets.map {|i| output_rrset(i) }.join("\n").chomp}
+#{vpcs
+}#{rrsets.map {|i| output_rrset(i) }.join("\n").chomp}
 end
           EOS
+        end
+
+        def output_vpcs(vpcs)
+          return nil if (vpcs || []).empty?
+
+          vpcs.map {|vpc|
+            region = vpc[:vpc_region]
+            vpc_id = vpc[:vpc_id]
+            "vpc #{region.inspect}, #{vpc_id.inspect}"
+          }.join("\n  ")
         end
 
     end # Converter

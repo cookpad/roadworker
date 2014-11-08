@@ -38,9 +38,9 @@ module Roadworker
       routefile = (file =~ %r|\A/|) ? file : File.expand_path(File.join(File.dirname(@path), file))
 
       if File.exist?(routefile)
-        instance_eval(File.read(routefile))
+        instance_eval(File.read(routefile), routefile)
       elsif File.exist?(routefile + '.rb')
-        instance_eval(File.read(routefile + '.rb'))
+        instance_eval(File.read(routefile + '.rb'), routefile + '.rb')
       else
         Kernel.require(file)
       end
@@ -63,6 +63,7 @@ module Roadworker
 
         @result = OpenStruct.new({
           :name => name,
+          :vpcs => [],
           :resource_record_sets => rrsets,
           :rrsets => rrsets,
         })
@@ -71,6 +72,24 @@ module Roadworker
       end
 
       private
+
+      def vpc(vpc_region, vpc_id)
+        unless vpc_region
+          raise "Invalid VPC Region: #{vpc_region.inspect}"
+        end
+
+        unless vpc_id
+          raise "Invalid VPC ID: #{vpc_id}"
+        end
+
+        vpc_h = {:vpc_region => vpc_region.to_s, :vpc_id => vpc_id.to_s}
+
+        if @result.vpcs.include?(vpc_h)
+          raise "VPC is already defined: #{vpc_h.inspect}"
+        end
+
+        @result.vpcs << vpc_h
+      end
 
       def resource_record_set(rrset_name, type, &block)
         if rrset_name.sub(/\.\Z/, '') !~ /#{Regexp.escape(@name.sub(/\.\Z/, ''))}\Z/i

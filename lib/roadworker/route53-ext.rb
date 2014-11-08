@@ -1,6 +1,43 @@
-require 'aws-sdk'
+require 'aws-sdk-v1'
 
 module AWS
+  module Core
+    class Client
+
+      # PTF:
+      class << self
+        alias load_api_config_orig load_api_config
+
+        def load_api_config(api_version)
+          yaml = load_api_config_orig(api_version)
+
+          if service_name == 'Route53'
+            rewrite_api(yaml)
+          end
+
+          return yaml
+        end
+
+        private
+
+        def rewrite_api(yaml)
+          # XXX: Fix aws-sdk 1.5.8 bug
+          get_hosted_zone = yaml[:operations].find {|h| h[:name] == 'GetHostedZone' }
+          vpcs = get_hosted_zone[:outputs][:children]['VPCs']
+
+          if vpcs
+            vpc = vpcs[:children]['VPC']
+
+            if vpc[:rename] == :vp_cs
+              vpc[:rename] = :vpcs
+            end
+          end
+        end
+      end # of class method
+
+    end # Client
+  end # Core
+
   class Route53
 
     # http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
@@ -9,6 +46,7 @@ module AWS
       's3-website-us-west-2.amazonaws.com'      => 'Z3BJ6K6RIION7M',
       's3-website-us-west-1.amazonaws.com'      => 'Z2F56UZL2M1ACD',
       's3-website-eu-west-1.amazonaws.com'      => 'Z1BKCTXD74EZPE',
+      's3-website.eu-central-1.amazonaws.com'   => 'Z21DNDUVLTQW6Q',
       's3-website-ap-southeast-1.amazonaws.com' => 'Z3O0J2DXBE1FTB',
       's3-website-ap-southeast-2.amazonaws.com' => 'Z1WCIGYICN2BYD',
       's3-website-ap-northeast-1.amazonaws.com' => 'Z2M4EHUR26P7ZW',

@@ -77,12 +77,47 @@ module Roadworker
 
       expected.each do |keys, expected_zone|
         name = keys[0]
-        actual_zone = actual.delete(keys) || @route53.hosted_zones.create(name)
+
+        if @options.target_zone
+          next unless name =~ @options.target_zone
+        end
+
+        actual_zone = actual.delete(keys) || @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
+        walk_vpcs(expected_zone, actual_zone)
         walk_rrsets(expected_zone, actual_zone)
       end
 
       actual.each do |keys, zone|
+        name = keys[0]
+
+        if @options.target_zone
+          next unless name =~ @options.target_zone
+        end
+
         zone.delete
+      end
+    end
+
+    def walk_vpcs(expected_zone, actual_zone)
+      expected_vpcs = expected_zone.vpcs || []
+      actual_vpcs = actual_zone.vpcs || []
+
+      if not expected_vpcs.empty? and actual_vpcs.empty?
+        log(:warn, "Cannot associate VPC to public zone", :yellow, expected_zone.name)
+      else
+        (expected_vpcs - actual_vpcs).each do |vpc|
+          actual_zone.associate_vpc(vpc)
+        end
+
+        unexpected_vpcs = actual_vpcs - expected_vpcs
+
+        if unexpected_vpcs.length.nonzero? and actual_vpcs.length - unexpected_vpcs.length < 1
+          log(:warn, "Private zone requires one or more of VPCs", :yellow, expected_zone.name)
+        else
+          unexpected_vpcs.each do |vpc|
+            actual_zone.disassociate_vpc(vpc)
+          end
+        end
       end
     end
 

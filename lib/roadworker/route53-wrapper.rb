@@ -44,32 +44,45 @@ module Roadworker
 
       def each
         Collection.batch(@hosted_zones) do |zone|
-          yield(HostedZoneWrapper.new(zone, @options))
+          yield(HostedZoneWrapper.new(zone, zone.vpcs, @options))
         end
       end
 
       def create(name, opts = {})
-        log(:info, 'Create HostedZone', :cyan, name)
+        if vpc = opts[:vpc]
+          vpcs = [vpc]
+        else
+          vpcs = []
+          opts.delete(:vpc)
+        end
+
+        logmsg = 'Create HostedZone'
+        logmsg << " #{vpc.inspect}"
+        log(:info, logmsg, :cyan, name)
 
         if @options.dry_run
-          zone = OpenStruct.new({:name => name, :rrsets => []}.merge(opts))
+          opts.delete(:vpc)
+          zone = OpenStruct.new({:name => name, :rrsets => [], :vpcs => vpcs}.merge(opts))
         else
           zone = @hosted_zones.create(name, opts)
           @options.hosted_zone_name = name
           @options.updated = true
         end
 
-        HostedZoneWrapper.new(zone, @options)
+        HostedZoneWrapper.new(zone, vpcs, @options)
       end
     end # HostedZoneCollection
 
     class HostedZoneWrapper
       include Roadworker::Log
 
-      def initialize(hosted_zone, options)
+      def initialize(hosted_zone, vpcs, options)
         @hosted_zone = hosted_zone
+        @vpcs = vpcs
         @options = options
       end
+
+      attr_reader :vpcs
 
       def resource_record_sets
         ResourceRecordSetCollectionWrapper.new(@hosted_zone.rrsets, @hosted_zone, @options)
@@ -91,6 +104,33 @@ module Roadworker
         else
           log(:info, 'Undefined HostedZone (pass `--force` if you want to remove)', :yellow, @hosted_zone.name)
         end
+      end
+
+      def delete
+        if @options.force
+          log(:info, 'Delete HostedZone', :red, @hosted_zone.name)
+
+          self.rrsets.each do |record|
+            record.delete
+          end
+
+          unless @options.dry_run
+            @hosted_zone.delete
+            @options.updated = true
+          end
+        else
+          log(:info, 'Undefined HostedZone (pass `--force` if you want to remove)', :yellow, @hosted_zone.name)
+        end
+      end
+
+      def associate_vpc(vpc)
+        log(:info, "Associate #{vpc.inspect}", :green, @hosted_zone.name)
+        @hosted_zone.associate_vpc(vpc) unless @options.dry_run
+      end
+
+      def disassociate_vpc(vpc)
+        log(:info, "Disassociate #{vpc.inspect}", :red, @hosted_zone.name)
+        @hosted_zone.disassociate_vpc(vpc) unless @options.dry_run
       end
 
       private

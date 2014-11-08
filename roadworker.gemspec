@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   #spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "aws-sdk", ">= 1.55.0", "< 2.0.0"
+  spec.add_dependency "aws-sdk-v1", ">= 1.58.0"
   spec.add_dependency "term-ansicolor"
   spec.add_dependency "net-dns2", "~> 0.8.6"
   spec.add_dependency "uuid"
@@ -28,6 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", "~> 2.14.1"
   spec.add_development_dependency "rspec-instafail"
-  spec.add_development_dependency "rubydns"
+  spec.add_development_dependency "rubydns", "~> 0.8.5"
   spec.add_development_dependency "coveralls"
 end
