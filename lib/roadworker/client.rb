@@ -102,12 +102,22 @@ module Roadworker
       expected_vpcs = expected_zone.vpcs || []
       actual_vpcs = actual_zone.vpcs || []
 
-      (expected_vpcs - actual_vpcs).each do |vpc|
-        actual_zone.associate_vpc(vpc)
-      end
+      if not expected_vpcs.empty? and actual_vpcs.empty?
+        log(:warn, "Cannot associate VPC to public zone", :yellow, expected_zone.name)
+      else
+        (expected_vpcs - actual_vpcs).each do |vpc|
+          actual_zone.associate_vpc(vpc)
+        end
 
-      (actual_vpcs - expected_vpcs).each do |vpc|
-        actual_zone.disassociate_vpc(vpc)
+        unexpected_vpcs = actual_vpcs - expected_vpcs
+
+        if unexpected_vpcs.length.nonzero? and actual_vpcs.length - unexpected_vpcs.length < 1
+          log(:warn, "Private zone requires one or more of VPCs", :yellow, expected_zone.name)
+        else
+          unexpected_vpcs.each do |vpc|
+            actual_zone.disassociate_vpc(vpc)
+          end
+        end
       end
     end
 
