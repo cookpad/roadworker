@@ -49,8 +49,12 @@ module Roadworker
       end
 
       def create(name, opts = {})
-        vpc = opts[:vpc]
-        vpcs = vpc ? [vpc] : []
+        if vpc = opts[:vpc]
+          vpcs = [vpc]
+        else
+          vpcs = []
+          opts.delete(:vpc)
+        end
 
         logmsg = 'Create HostedZone'
         logmsg << " #{vpc.inspect}"
