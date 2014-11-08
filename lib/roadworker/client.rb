@@ -99,8 +99,8 @@ module Roadworker
     end
 
     def walk_vpcs(expected_zone, actual_zone)
-      expected_vpcs = expected_zone.vpcs
-      actual_vpcs = actual_zone.vpcs
+      expected_vpcs = expected_zone.vpcs || []
+      actual_vpcs = actual_zone.vpcs || []
 
       (expected_vpcs - actual_vpcs).each do |vpc|
         actual_zone.associate_vpc(vpc)
