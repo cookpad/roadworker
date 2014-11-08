@@ -46,6 +46,7 @@ module AWS
       's3-website-us-west-2.amazonaws.com'      => 'Z3BJ6K6RIION7M',
       's3-website-us-west-1.amazonaws.com'      => 'Z2F56UZL2M1ACD',
       's3-website-eu-west-1.amazonaws.com'      => 'Z1BKCTXD74EZPE',
+      's3-website.eu-central-1.amazonaws.com'   => 'Z21DNDUVLTQW6Q',
       's3-website-ap-southeast-1.amazonaws.com' => 'Z3O0J2DXBE1FTB',
       's3-website-ap-southeast-2.amazonaws.com' => 'Z1WCIGYICN2BYD',
       's3-website-ap-northeast-1.amazonaws.com' => 'Z2M4EHUR26P7ZW',
