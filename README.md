@@ -58,6 +58,7 @@ Usage: roadwork [options]
     -t, --test
         --nameservers SERVERS
         --port PORT
+        --target-zone REGEXP
         --no-color
         --debug
 ```
@@ -115,6 +116,20 @@ hosted_zone "info.winebarrel.jp." do
     resource_records(
       "127.0.0.3",
       "127.0.0.4"
+    )
+  end
+end
+
+# Private HostedZone
+hosted_zone "winebarrel.local." do
+  vpc "us-east-1", "vpc-xxxxxxxx"
+  vpc "us-east-2", "vpc-xxxxxxxx"
+
+  rrset "winebarrel.local.", "A" do
+    ttl 300
+    resource_records(
+      "10.0.0.1",
+      "10.0.0.2"
     )
   end
 end
