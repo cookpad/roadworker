@@ -84,8 +84,9 @@ end
           return nil if (vpcs || []).empty?
 
           vpcs.map {|vpc|
-            vpc = vpc.inspect.sub(/\A\{/, '').sub(/\}\z/, '')
-            "vpc #{vpc}"
+            region = vpc[:vpc_region]
+            vpc_id = vpc[:vpc_id]
+            "vpc #{region.inspect}, #{vpc_id.inspect}"
           }.join("\n  ")
         end
 
