@@ -135,6 +135,21 @@ hosted_zone "winebarrel.local." do
 end
 ```
 
+### Dynamic private DNS example
+
+```ruby
+hosted_zone "us-east-1.my.local." do
+  vpc "us-east-1", "vpc-xxxxxxxx"
+
+  AWS::EC2.new(region: "us-east-1").vpcs["vpc-xxxxxxxx"].instances.each {|instance|
+    rrset "#{instance.tags.Name}.us-east-1.my.local.", "A" do
+      ttl 300
+      resource_records instance.private_ip_address
+    end
+  }
+end
+```
+
 ## Test
 
 Routefile compares the results of a query to the DNS and DSL in the test mode.
