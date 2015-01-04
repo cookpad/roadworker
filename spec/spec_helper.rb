@@ -15,6 +15,7 @@ TEST_CF = ENV['TEST_CF']
 TEST_VPC_REGION = ENV['TEST_VPC_REGION']
 TEST_VPC1 = ENV['TEST_VPC1']
 TEST_VPC2 = ENV['TEST_VPC2']
+TEST_INTERVAL = ENV['TEST_INTERVAL'].to_i
 DNS_PORT = 5300
 
 require 'rubygems'
@@ -30,6 +31,7 @@ AWS.config({
 
 RSpec.configure do |config|
   config.before(:each) {
+    sleep TEST_INTERVAL
     routefile(:force => true) { '' }
     @route53 = AWS::Route53.new
   }
