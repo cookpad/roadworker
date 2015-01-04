@@ -180,7 +180,7 @@ rescue => e
   if options[:debug]
     raise e
   else
-    $stderr.puts e
+    $stderr.puts("[ERROR] #{e.class}: #{e.message}".red)
     exit 1
   end
 end
