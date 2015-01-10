@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = "sgwr_dts@yahoo.co.jp"
   spec.description   = "Roadworker is a tool to manage Route53. It defines the state of Route53 using DSL, and updates Route53 according to DSL."
   spec.summary       = "Roadworker is a tool to manage Route53."
-  spec.homepage      = "https://github.com/winebarrel/roadworker"
+  spec.homepage      = "http://roadworker.codenize.tools"
   spec.license       = "MIT"
   spec.files         = %w(README.md) + Dir.glob('bin/**/*') + Dir.glob('lib/**/*')
 
