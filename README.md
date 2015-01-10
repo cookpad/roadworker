@@ -180,4 +180,4 @@ info.winebarrel.jp. A:
 * [RubyGems.org site](http://rubygems.org/gems/roadworker)
 
 ## Similar tools
-* [Codenize.tools](http://http://codenize.tools/)
+* [Codenize.tools](http://codenize.tools/)
