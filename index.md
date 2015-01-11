@@ -4,7 +4,7 @@ layout: default
 
 [![Gem Version](https://badge.fury.io/rb/roadworker.svg)](http://badge.fury.io/rb/roadworker)
 [![Build Status](https://travis-ci.org/winebarrel/roadworker.svg?branch=master)](https://travis-ci.org/winebarrel/roadworker)
-[![Coverage Status](https://coveralls.io/repos/winebarrel/roadworker/badge.svg?branch=master)](https://coveralls.io/r/winebarrel/roadworker?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/winebarrel/roadworker.svg)](https://coveralls.io/r/winebarrel/roadworker?branch=master)
 
 **Notice**
 
