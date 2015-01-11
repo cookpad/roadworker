@@ -4,6 +4,7 @@ email: sgwr_dts@yahoo.co.jp
 description: "Roadworker is a tool to manage Route53. It defines the state of Route53 using DSL, and updates Route53 according to DSL."
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://roadworker.codenize.tools/"
+github_url: "https://github.com/winebarrel/roadworker"
 twitter_username: sgwr_dts
 github_username:  winebarrel
 
