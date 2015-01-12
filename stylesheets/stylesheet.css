@@ -369,7 +369,9 @@ Full-Width Styles
   background: #212121;
 }
 
-
+.gray {
+  color: gray;
+}
 
 /*******************************************************************************
 Small Device Styles
