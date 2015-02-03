@@ -53,5 +53,37 @@ EOS
         expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
       }
     end
+
+    context 'non target' do
+      it {
+        routefile(:target_zone => /xwinebarrelx/) do
+<<-EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "web server 1"
+    weight 100
+    ttl 456
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "www.winebarrel.jp", "A" do
+    set_identifier "web server 2"
+    weight 50
+    ttl 456
+    resource_records(
+      "127.0.0.3",
+      "127.0.0.4"
+    )
+  end
+end
+EOS
+        end
+
+        expect(@route53.hosted_zones.to_a).to be_empty
+      }
+    end
   end
 end
