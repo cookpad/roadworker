@@ -1,11 +1,3 @@
-require 'roadworker/string-ext'
-require 'roadworker/dsl'
-require 'roadworker/log'
-require 'roadworker/route53-wrapper'
-
-require 'logger'
-require 'ostruct'
-
 module Roadworker
   class Client
     include Roadworker::Log

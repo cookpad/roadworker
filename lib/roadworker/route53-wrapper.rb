@@ -1,10 +1,3 @@
-require 'roadworker/collection'
-require 'roadworker/log'
-require 'roadworker/route53-exporter'
-require 'roadworker/route53-ext'
-
-require 'ostruct'
-
 module Roadworker
   class Route53Wrapper
 

@@ -1,10 +1,3 @@
-require 'roadworker/dsl-converter'
-require 'roadworker/dsl-tester'
-require 'roadworker/route53-health-check'
-
-require 'ostruct'
-require 'uri'
-
 module Roadworker
   class DSL
 

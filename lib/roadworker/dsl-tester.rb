@@ -1,5 +1,3 @@
-require 'roadworker/log'
-
 require 'tempfile'
 require 'socket'
 

@@ -1,8 +1,3 @@
-require 'roadworker/collection'
-require 'roadworker/route53-health-check'
-
-require 'ostruct'
-
 module Roadworker
   class Exporter
 
