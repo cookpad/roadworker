@@ -59,6 +59,7 @@ Usage: roadwork [options]
         --nameservers SERVERS
         --port PORT
         --target-zone REGEXP
+        --exclude-zone REGEXP
         --no-color
         --debug
 ```
