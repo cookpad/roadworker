@@ -1,5 +1,3 @@
-require 'roadworker/log'
-
 require 'tempfile'
 require 'socket'
 
@@ -27,6 +25,7 @@ module Roadworker
   class DSL
     class Tester
       include Roadworker::Log
+      include Roadworker::Utils::Helper
 
       DEFAULT_NAMESERVERS = ['8.8.8.8', '8.8.4.4']
       ASTERISK_PREFIX = 'asterisk-of-wildcard'
@@ -283,9 +282,7 @@ module Roadworker
         record_list = {}
 
         dsl.hosted_zones.each do |zone|
-          if @options.target_zone
-            next unless zone.name =~ @options.target_zone
-          end
+          next unless matched_zone?(zone.name)
 
           zone.rrsets.each do |record|
             key = [record.name, record.type]

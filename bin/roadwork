@@ -58,6 +58,7 @@ ARGV.options do |opt|
     opt.on(''  , '--nameservers SERVERS', Array) {|v| options[:nameservers]        = v             }
     opt.on(''  , '--port PORT', Integer)         {|v| options[:port]               = v             }
     opt.on(''  , '--target-zone REGEXP')         {|v| options[:target_zone]        = Regexp.new(v) }
+    opt.on(''  , '--exclude-zone REGEXP')        {|v| options[:exclude_zone]       = Regexp.new(v) }
     opt.on(''  , '--no-color')                   {    options[:color]              = false         }
     opt.on(''  , '--debug')                      {    options[:debug]              = true          }
     opt.parse!

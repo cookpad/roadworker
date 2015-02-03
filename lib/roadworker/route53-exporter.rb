@@ -1,10 +1,6 @@
-require 'roadworker/collection'
-require 'roadworker/route53-health-check'
-
-require 'ostruct'
-
 module Roadworker
   class Exporter
+    include Roadworker::Utils::Helper
 
     class << self
       def export(route53)
@@ -32,11 +28,7 @@ module Roadworker
     def export_hosted_zones(hosted_zones)
       Collection.batch(@options.route53.hosted_zones) do |zone|
         zone_h = item_to_hash(zone, :name, :vpcs)
-
-        if @options.target_zone
-          next unless zone_h[:name] =~ @options.target_zone
-        end
-
+        next unless matched_zone?(zone.name)
         hosted_zones << zone_h
 
         rrsets = []

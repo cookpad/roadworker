@@ -1,14 +1,7 @@
-require 'roadworker/string-ext'
-require 'roadworker/dsl'
-require 'roadworker/log'
-require 'roadworker/route53-wrapper'
-
-require 'logger'
-require 'ostruct'
-
 module Roadworker
   class Client
     include Roadworker::Log
+    include Roadworker::Utils::Helper
 
     def initialize(options = {})
       @options = OpenStruct.new(options)
@@ -77,11 +70,7 @@ module Roadworker
 
       expected.each do |keys, expected_zone|
         name = keys[0]
-
-        if @options.target_zone
-          next unless name =~ @options.target_zone
-        end
-
+        next unless matched_zone?(name)
         actual_zone = actual.delete(keys) || @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
         walk_vpcs(expected_zone, actual_zone)
         walk_rrsets(expected_zone, actual_zone)
@@ -89,11 +78,7 @@ module Roadworker
 
       actual.each do |keys, zone|
         name = keys[0]
-
-        if @options.target_zone
-          next unless name =~ @options.target_zone
-        end
-
+        next unless matched_zone?(name)
         zone.delete
       end
     end

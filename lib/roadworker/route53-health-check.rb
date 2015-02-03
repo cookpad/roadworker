@@ -1,6 +1,3 @@
-require 'uri'
-require 'uuid'
-
 module Roadworker
   class HealthCheck
 
