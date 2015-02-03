@@ -10,6 +10,7 @@ require 'roadworker/route53-ext'
 
 require 'roadworker/version'
 require 'roadworker/log'
+require 'roadworker/utils'
 
 require 'roadworker/client'
 require 'roadworker/collection'
@@ -19,4 +20,3 @@ require 'roadworker/dsl-tester'
 require 'roadworker/route53-exporter'
 require 'roadworker/route53-health-check'
 require 'roadworker/route53-wrapper'
-require 'roadworker/utils'
