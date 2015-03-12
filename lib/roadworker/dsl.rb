@@ -2,9 +2,9 @@ module Roadworker
   class DSL
 
     class << self
-      def define(source, path)
+      def define(source, path, lineno = 1)
         self.new(path) do
-          eval(source, binding)
+          eval(source, binding, path, lineno)
         end
       end
 
