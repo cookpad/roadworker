@@ -35,7 +35,7 @@ export AWS_SECRET_ACCESS_KEY='...'
 roadwork -e -o Routefile
 vi Routefile
 roadwork -a --dry-run
-roudwork -a
+roadwork -a
 ```
 
 ## Help
