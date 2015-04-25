@@ -138,7 +138,7 @@ end
 EOS
         end
 
-        expect(updated).to be_false
+        expect(updated).to be_falsey
 
         zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
         expect(zones.length).to eq(2)
@@ -293,7 +293,7 @@ end
 EOS
         end
 
-        expect(updated).to be_false
+        expect(updated).to be_falsey
 
         zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
         expect(zones.length).to eq(2)
@@ -449,7 +449,7 @@ end
 EOS
         end
 
-        expect(updated).to be_true
+        expect(updated).to be_truthy
 
         zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
         expect(zones.length).to eq(3)
@@ -602,7 +602,7 @@ end
 EOS
         end
 
-        expect(updated).to be_true
+        expect(updated).to be_truthy
 
         zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
         expect(zones.length).to eq(2)
@@ -735,7 +735,7 @@ end
 EOS
         end
 
-        expect(updated).to be_true
+        expect(updated).to be_truthy
 
         zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
         expect(zones.length).to eq(3)
