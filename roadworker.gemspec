@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "net-dns2", "~> 0.8.6"
   spec.add_dependency "uuid"
   spec.add_dependency "systemu"
-  spec.add_development_dependency "bundler", "~> 1.3"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", "~> 2.14.1"
   spec.add_development_dependency "rspec-instafail"
