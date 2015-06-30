@@ -40,12 +40,7 @@ module Roadworker
     end
 
     def hosted_zone(name, &block)
-      if (hz = @result.hosted_zones.find {|i| i.name == name })
-        @result.hosted_zones.reject! {|i| i.name == name }
-        @result.hosted_zones << HostedZone.new(name, hz.rrsets, &block).result
-      else
-        @result.hosted_zones << HostedZone.new(name, [], &block).result
-      end
+      @result.hosted_zones << HostedZone.new(name, [], &block).result
     end
 
     class HostedZone

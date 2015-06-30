@@ -65,13 +65,15 @@ module Roadworker
     end
 
     def walk_hosted_zones(dsl)
-      expected = collection_to_hash(dsl.hosted_zones, :name)
-      actual   = collection_to_hash(@route53.hosted_zones, :name)
+      expected = collection_to_hash(dsl.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.empty?] }
+      actual   = collection_to_hash(@route53.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.empty?] }
 
       expected.each do |keys, expected_zone|
         name = keys[0]
         next unless matched_zone?(name)
-        actual_zone = actual.delete(keys) || @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
+        actual_zone = actual.delete(keys)
+        actual_zone ||= @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
+
         walk_vpcs(expected_zone, actual_zone)
         walk_rrsets(expected_zone, actual_zone)
       end
@@ -140,15 +142,23 @@ module Roadworker
       hash = {}
 
       collection.each do |item|
-        key_list = keys.map do |k|
-          value = item.send(k)
-          (k == :name && value) ? value.downcase.sub(/\.\Z/, '') : value
+        if block_given?
+          key_list = yield(item)
+        else
+          key_list = keys.map do |k|
+            value = item.send(k)
+            (k == :name && value) ? normalize_name(value) : value
+          end
         end
 
         hash[key_list] = item
       end
 
       return hash
+    end
+
+    def normalize_name(name)
+      name.downcase.sub(/\.\Z/, '')
     end
 
   end # Client
