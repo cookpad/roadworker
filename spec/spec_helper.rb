@@ -32,7 +32,7 @@ AWS.config({
 RSpec.configure do |config|
   config.before(:each) {
     sleep TEST_INTERVAL
-    routefile(:force => true) { '' }
+    cleanup_route53
     @route53 = AWS::Route53.new
   }
 
@@ -145,4 +145,23 @@ end
 
 def debug?
   ENV['DEBUG'] == '1'
+end
+
+def cleanup_route53
+  r53 = AWS::Route53.new
+  r53.hosted_zones.each do |hz|
+    hz_name = hz.name.sub(/\.\z/, '')
+
+    until hz.resource_record_sets.map(&:type).sort == %w(NS SOA)
+      hz.resource_record_sets.each do |rrset|
+        rrset_name = rrset.name.sub(/\.\z/, '')
+
+        unless rrset_name == hz_name and %w(NS SOA).include?(rrset.type)
+          rrset.delete
+        end
+      end
+    end
+
+    hz.delete
+  end
 end
