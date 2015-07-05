@@ -98,7 +98,7 @@ module Roadworker
 
         unexpected_vpcs = actual_vpcs - expected_vpcs
 
-        if unexpected_vpcs.length.nonzero? and actual_vpcs.length - unexpected_vpcs.length < 1
+        if unexpected_vpcs.length.nonzero? and expected_vpcs.length.zero?
           log(:warn, "Private zone requires one or more of VPCs", :yellow, expected_zone.name)
         else
           unexpected_vpcs.each do |vpc|
