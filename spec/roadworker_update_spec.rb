@@ -496,7 +496,7 @@ EOS
         a = rrsets['www2.winebarrel.jp.', 'A']
         expect(a.name).to eq("www2.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => zone.id,
+          :hosted_zone_id => zone.id.sub(%r!^/hostedzone/!, ''),
           :dns_name => 'www.winebarrel.jp.',
           :evaluate_target_health => false,
         ))
