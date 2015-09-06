@@ -16,6 +16,7 @@ env:
   - TEST_VPC1=vpc-18f5097d
   - TEST_VPC2=vpc-e5f50980
   - TEST_INTERVAL=3
+  - AWS_REGION=ap-northeast-1
 addons:
   apt:
     packages:
