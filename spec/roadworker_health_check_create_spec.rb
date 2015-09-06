@@ -38,19 +38,20 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(2)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP_STR_MATCH',
@@ -59,15 +60,15 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 5,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP_STR_MATCH',
@@ -76,7 +77,7 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 10,
-          })
+          ))
         }
       end
 
@@ -117,19 +118,20 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(2)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTPS_STR_MATCH',
@@ -138,15 +140,15 @@ EOS
             :search_string => '123',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 443,
             :type => 'HTTPS_STR_MATCH',
@@ -155,7 +157,7 @@ EOS
             :search_string => '123',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
         }
       end
 
@@ -196,19 +198,20 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(2)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :port => 80,
             :type => 'HTTP_STR_MATCH',
             :resource_path => '/path',
@@ -216,15 +219,15 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 5,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :port => 80,
             :type => 'HTTP_STR_MATCH',
             :resource_path => '/path',
@@ -232,7 +235,7 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 10,
-          })
+          ))
         }
       end
 
@@ -273,41 +276,42 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(1)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP',
             :resource_path => '/path',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP',
             :resource_path => '/path',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
         }
       end
 
@@ -348,39 +352,40 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(1)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
         }
       end
 
@@ -421,39 +426,40 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(1)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :fully_qualified_domain_name => 'example.com',
             :port => 80,
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :fully_qualified_domain_name => 'example.com',
             :port => 80,
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
         }
       end
 
@@ -493,27 +499,28 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(1)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
@@ -560,19 +567,20 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(2)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Primary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP',
@@ -580,21 +588,21 @@ EOS
             :fully_qualified_domain_name => 'example.com',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 3306,
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
         }
       end
 
@@ -623,13 +631,14 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(3)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(0)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "Secondary"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('Secondary')
           expect(a1.failover).to eq('SECONDARY')
@@ -676,19 +685,20 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(2)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "w100"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "w100"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('w100')
           expect(a1.weight).to eq(100)
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP',
@@ -696,21 +706,21 @@ EOS
             :fully_qualified_domain_name => 'example.com',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "w50"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "w50"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('w50')
           expect(a2.weight).to eq(50)
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 3306,
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
         }
       end
 
@@ -751,19 +761,20 @@ EOS
           expect(zone.name).to eq("winebarrel.jp.")
           expect(zone.resource_record_set_count).to eq(4)
 
-          expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-          expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+          rrsets = fetch_rrsets(@route53, zone.id)
+          expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+          expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(2)
 
-          a1 = zone.rrsets['www.winebarrel.jp.', 'A', "jp"]
+          a1 = rrsets['www.winebarrel.jp.', 'A', "jp"]
           expect(a1.name).to eq("www.winebarrel.jp.")
           expect(a1.set_identifier).to eq('jp')
           expect(a1.region).to eq('ap-northeast-1')
           expect(a1.ttl).to eq(456)
           expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
-          expect(check_list[a1.health_check_id]).to eq({
+          expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP',
@@ -771,21 +782,21 @@ EOS
             :fully_qualified_domain_name => 'example.com',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
 
-          a2 = zone.rrsets['www.winebarrel.jp.', 'A', "us"]
+          a2 = rrsets['www.winebarrel.jp.', 'A', "us"]
           expect(a2.name).to eq("www.winebarrel.jp.")
           expect(a2.set_identifier).to eq('us')
           expect(a2.region).to eq('us-east-1')
           expect(a2.ttl).to eq(456)
           expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
-          expect(check_list[a2.health_check_id]).to eq({
+          expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
             :ip_address => '192.0.43.10',
             :port => 3306,
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
-          })
+          ))
         }
       end
     end

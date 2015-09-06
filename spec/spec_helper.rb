@@ -153,6 +153,28 @@ def fetch_hosted_zones(route53)
   zones
 end
 
+class RRSets
+  def initialize(rrsets)
+    @rrsets = rrsets
+  end
+
+  def [](name, type, set_identifier = nil)
+    @rrsets.find do |rrset|
+      rrset.name == name && rrset.type == type && rrset.set_identifier == set_identifier
+    end
+  end
+end
+
+def fetch_rrsets(route53, hosted_zone_id)
+  rrsets = []
+  route53.list_resource_record_sets(hosted_zone_id: hosted_zone_id).each do |page|
+    page.resource_record_sets.each do |rrset|
+      rrsets << rrset
+    end
+  end
+  RRSets.new(rrsets)
+end
+
 def debug?
   ENV['DEBUG'] == '1'
 end
@@ -163,8 +185,8 @@ def cleanup_route53
     hz_name = hz.name.sub(/\.\z/, '')
 
     changes = []
-    until hz.resource_record_sets.map(&:type).sort == %w(NS SOA)
-      hz.resource_record_sets.each do |rrset|
+    r53.list_resource_record_sets(hosted_zone_id: hz.id).each do |page|
+      page.resource_record_sets.each do |rrset|
         rrset_name = rrset.name.sub(/\.\z/, '')
 
         unless rrset_name == hz_name and %w(NS SOA).include?(rrset.type)
@@ -174,7 +196,7 @@ def cleanup_route53
     end
 
     unless changes.empty?
-      r53.change_resource_records(hosted_zone_id: hz.id, change_batch: { changes: changes })
+      r53.change_resource_record_sets(hosted_zone_id: hz.id, change_batch: { changes: changes })
     end
     r53.delete_hosted_zone(id: hz.id)
   end
