@@ -1,7 +1,7 @@
 describe Roadworker::Client do
   context 'empty' do
     it  {
-      expect(@route53.hosted_zones.to_a).to be_empty
+      expect(fetch_hosted_zones(@route53).to be_empty
     }
   end
 
@@ -15,7 +15,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -43,7 +43,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -76,7 +76,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -105,7 +105,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -137,7 +137,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -169,7 +169,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -201,7 +201,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -241,7 +241,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -294,7 +294,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -348,7 +348,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -391,7 +391,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -425,7 +425,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -458,7 +458,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -488,7 +488,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -521,7 +521,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -554,7 +554,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -588,7 +588,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -625,7 +625,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]

@@ -140,7 +140,7 @@ EOS
 
         expect(updated).to be_falsey
 
-        zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
+        zones = fetch_hosted_zones(@route53).sort_by {|i| i.name }
         expect(zones.length).to eq(2)
 
         info_zone = zones[0]
@@ -295,7 +295,7 @@ EOS
 
         expect(updated).to be_falsey
 
-        zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
+        zones = fetch_hosted_zones(@route53).sort_by {|i| i.name }
         expect(zones.length).to eq(2)
 
         info_zone = zones[0]
@@ -451,7 +451,7 @@ EOS
 
         expect(updated).to be_truthy
 
-        zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
+        zones = fetch_hosted_zones(@route53).sort_by {|i| i.name }
         expect(zones.length).to eq(3)
 
         ptr_zone = zones[0]
@@ -604,7 +604,7 @@ EOS
 
         expect(updated).to be_truthy
 
-        zones = @route53.hosted_zones.to_a.sort_by {|i| i.name }
+        zones = fetch_hosted_zones(@route53).sort_by {|i| i.name }
         expect(zones.length).to eq(2)
 
         ptr_zone = zones[0]

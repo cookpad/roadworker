@@ -32,7 +32,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -81,7 +81,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -130,7 +130,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -175,7 +175,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -216,7 +216,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -260,7 +260,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -308,7 +308,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -356,7 +356,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -404,7 +404,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -468,7 +468,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -549,7 +549,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -631,7 +631,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -691,7 +691,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -738,7 +738,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -787,7 +787,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -830,7 +830,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -879,7 +879,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -925,7 +925,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -976,7 +976,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -1029,7 +1029,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -1077,7 +1077,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
@@ -1125,7 +1125,7 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
