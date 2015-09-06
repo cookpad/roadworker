@@ -1,7 +1,7 @@
 describe Roadworker::Client do
   context 'empty' do
     it  {
-      expect(fetch_hosted_zones(@route53).to be_empty
+      expect(fetch_hosted_zones(@route53)).to be_empty
     }
   end
 
