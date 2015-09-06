@@ -49,7 +49,7 @@ module Roadworker
           path = nil
         end
 
-        config = {}
+        config = Aws::Route53::Types::HealthCheckConfig.new
 
         {
           :port          => url.port,
@@ -60,9 +60,9 @@ module Roadworker
         }
 
         if url.host =~ /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\Z/
-          config[:ip_address] = url.host
+          config.ip_address = url.host
         else
-          config[:fully_qualified_domain_name] = url.host
+          config.fully_qualified_domain_name = url.host
         end
 
         return config
@@ -81,7 +81,7 @@ module Roadworker
 
       while is_truncated
         opts = next_marker ? {:marker => next_marker} : {}
-        response = @route53.client.list_health_checks(opts)
+        response = @route53.list_health_checks(opts)
 
         response[:health_checks].each do |check|
           check_list[check[:id]] = check[:health_check_config]
@@ -98,7 +98,7 @@ module Roadworker
           health_check_id, config = self.find {|hcid, elems| elems == attrs }
 
           unless health_check_id
-            response = @route53.client.create_health_check({
+            response = @route53.create_health_check({
               :caller_reference    => UUID.new.generate,
               :health_check_config => attrs,
             })
@@ -116,24 +116,22 @@ module Roadworker
     end
 
     def gc(options = {})
-      AWS.memoize {
-        check_list = health_checks
-        return if check_list.empty?
+      check_list = health_checks
+      return if check_list.empty?
 
-        if (logger = options[:logger])
-          logger.info('Clean HealthChecks (pass `--no-health-check-gc` if you do not want to clean)')
-        end
+      if (logger = options[:logger])
+        logger.info('Clean HealthChecks (pass `--no-health-check-gc` if you do not want to clean)')
+      end
 
-        @route53.hosted_zones.each do |zone|
-          zone.rrsets.each do |record|
-            check_list.delete(record.health_check_id)
-          end
+      Collection.batch(@route53.list_hosted_zones, :hosted_zones) do |zone|
+        Collection.batch(@route53.list_resource_record_sets(hosted_zone_id: zone.id), :resource_record_sets) do |record|
+          check_list.delete(record.health_check_id)
         end
+      end
 
-        check_list.each do |health_check_id, config|
-          @route53.client.delete_health_check(:health_check_id  => health_check_id)
-        end
-      }
+      check_list.each do |health_check_id, config|
+        @route53.delete_health_check(:health_check_id  => health_check_id)
+      end
     end
 
   end # HealthCheck

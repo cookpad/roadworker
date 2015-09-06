@@ -71,13 +71,13 @@ ARGV.options do |opt|
       credentials_opts = {}
       credentials_opts[:profile_name] = profile_name if profile_name
       credentials_opts[:path] = credentials_path if credentials_path
-      provider = AWS::Core::CredentialProviders::SharedCredentialFileProvider.new(credentials_opts)
+      provider = Aws::SharedCredentials.new(credentials_opts)
       aws_opts[:credential_provider] = provider
     elsif (access_key and !secret_key) or (!access_key and secret_key) or mode.nil?
       puts opt.help
       exit 1
     end
-    AWS.config(aws_opts)
+    Aws.config.update(aws_opts)
   rescue => e
     $stderr.puts e
     exit 1
@@ -85,7 +85,7 @@ ARGV.options do |opt|
 end
 
 if options[:debug]
-  AWS.config(
+  Aws.config.update(
     :http_wire_trace => true,
     :logger => options[:logger]
   )
