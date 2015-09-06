@@ -70,7 +70,7 @@ module Roadworker
           raise "Invalid VPC ID: #{vpc_id}"
         end
 
-        vpc_h = {:vpc_region => vpc_region.to_s, :vpc_id => vpc_id.to_s}
+        vpc_h = Aws::Route53::Types::VPC.new(:vpc_region => vpc_region.to_s, :vpc_id => vpc_id.to_s)
 
         if @result.vpcs.include?(vpc_h)
           raise "VPC is already defined: #{vpc_h.inspect}"
@@ -120,7 +120,7 @@ module Roadworker
         end
 
         def dns_name(value, options = {})
-          options = AWS::Route53.normalize_dns_name_options(options)
+          options = Aws::Route53.normalize_dns_name_options(options)
           @result.dns_name = [value, options]
         end
 
@@ -159,12 +159,12 @@ module Roadworker
             end
           end
 
-          if config[:search_string]
-            config[:type] += '_STR_MATCH'
+          if config.search_string
+            config.type += '_STR_MATCH'
           end
 
-          config[:request_interval]  ||= 30
-          config[:failure_threshold] ||= 3
+          config.request_interval  ||= 30
+          config.failure_threshold ||= 3
 
           @result.health_check = config
         end
@@ -174,7 +174,7 @@ module Roadworker
             raise "Duplicate ResourceRecords: #{values.join(', ')}"
           end
 
-          @result.resource_records = [values].flatten.map {|i| {:value => i} }
+          @result.resource_records = [values].flatten.map {|i| Aws::Route53::Types::ResourceRecord.new(:value => i) }
         end
 
       end # ResourceRecordSet

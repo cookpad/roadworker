@@ -7,7 +7,7 @@ module Roadworker
       @options = OpenStruct.new(options)
       @options.logger ||= Logger.new($stdout)
       String.colorize = @options.color
-      @options.route53 = AWS::Route53.new
+      @options.route53 = Aws::Route53::Client.new
       @health_checks = HealthCheck.health_checks(@options.route53, :extended => true)
       @options.health_checks = @health_checks
       @route53 = Route53Wrapper.new(@options)
@@ -20,10 +20,8 @@ module Roadworker
       if dsl.hosted_zones.empty? and not @options.force
         log(:warn, "Nothing is defined (pass `--force` if you want to remove)", :yellow)
       else
-        AWS.memoize {
-          walk_hosted_zones(dsl)
-          updated = @options.updated
-        }
+        walk_hosted_zones(dsl)
+        updated = @options.updated
       end
 
       if updated and not @options.no_health_check_gc
@@ -34,7 +32,7 @@ module Roadworker
     end
 
     def export
-      exported = AWS.memoize { @route53.export }
+      exported = @route53.export
 
       if block_given?
         yield(exported, DSL.method(:convert))

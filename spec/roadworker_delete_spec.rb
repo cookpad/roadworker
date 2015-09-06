@@ -20,17 +20,18 @@ EOS
       it {
         routefile { '' }
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        a = zone.rrsets['www.winebarrel.jp.', 'A']
+        a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
         expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -57,7 +58,7 @@ EOS
       it {
         routefile(:force => true) { '' }
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(0)
       }
     end
@@ -102,17 +103,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -159,17 +161,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -212,17 +215,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -265,17 +269,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -318,17 +323,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -372,17 +378,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -451,22 +458,23 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(4)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
-        a2 = zone.rrsets['www.winebarrel.jp.', 'A', "web server 2"]
+        a2 = rrsets['www.winebarrel.jp.', 'A', "web server 2"]
         expect(a2.name).to eq("www.winebarrel.jp.")
         expect(a2.set_identifier).to eq('web server 2')
         expect(a2.weight).to eq(50)
@@ -527,17 +535,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -606,22 +615,23 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(4)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
-        a1 = zone.rrsets['www.winebarrel.jp.', 'A', "web server 1"]
+        a1 = rrsets['www.winebarrel.jp.', 'A', "web server 1"]
         expect(a1.name).to eq("www.winebarrel.jp.")
         expect(a1.set_identifier).to eq('web server 1')
         expect(a1.ttl).to eq(456)
@@ -683,17 +693,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -741,17 +752,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -795,17 +807,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -852,17 +865,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -900,17 +914,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("333.222.111.in-addr.arpa.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['333.222.111.in-addr.arpa.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['333.222.111.in-addr.arpa.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['333.222.111.in-addr.arpa.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['333.222.111.in-addr.arpa.', 'SOA'].ttl).to eq(900)
 
-        ptr = zone.rrsets['555.333.222.111.in-addr.arpa.', 'PTR']
+        ptr = rrsets['555.333.222.111.in-addr.arpa.', 'PTR']
         expect(ptr.name).to eq("555.333.222.111.in-addr.arpa.")
         expect(ptr.ttl).to eq(123)
         expect(rrs_list(ptr.resource_records.sort_by {|i| i.to_s })).to eq(["www2.winebarrel.jp"])
@@ -957,17 +972,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -1011,17 +1027,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -1069,17 +1086,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
@@ -1126,17 +1144,18 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        info = zone.rrsets['info.winebarrel.jp.', 'A']
+        info = rrsets['info.winebarrel.jp.', 'A']
         expect(info.name).to eq("info.winebarrel.jp.")
         expect(info.ttl).to eq(123)
         expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])

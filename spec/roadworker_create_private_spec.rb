@@ -19,22 +19,24 @@ end
 EOS
         end
 
-        zones = @route53.hosted_zones.to_a
+        zones = fetch_hosted_zones(@route53)
         expect(zones.length).to eq(1)
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
         expect(zone.resource_record_set_count).to eq(3)
 
-        expect(zone.rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
-        expect(zone.rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
-        expect(zone.vpcs).to match_array [
-          {:vpc_region => TEST_VPC_REGION, :vpc_id => TEST_VPC1},
-          {:vpc_region => TEST_VPC_REGION, :vpc_id => TEST_VPC2},
+        vpcs = @route53.get_hosted_zone(id: zone.id).vp_cs
+        expect(vpcs).to match_array [
+          Aws::Route53::Types::VPC.new(:vpc_region => TEST_VPC_REGION, :vpc_id => TEST_VPC1),
+          Aws::Route53::Types::VPC.new(:vpc_region => TEST_VPC_REGION, :vpc_id => TEST_VPC2),
         ]
 
-        a = zone.rrsets['www.winebarrel.jp.', 'A']
+        a = fetch_rrsets(@route53, zone.id)['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
         expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
