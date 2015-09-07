@@ -14,6 +14,7 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 * `>= 0.4.3` compare resource records ignoring the order.
 * `>= 0.5.5`
   * **Disable Divided HostedZone**
+  * **Use aws-sdk v2** [PR#20](https://github.com/winebarrel/roadworker/pull/20)
 
 ## Installation
 
