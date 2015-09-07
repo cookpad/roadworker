@@ -4,9 +4,9 @@ Roadworker is a tool to manage Route53.
 
 It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 
-[![Gem Version](https://badge.fury.io/rb/roadworker.png)](http://badge.fury.io/rb/roadworker)
+[![Gem Version](https://badge.fury.io/rb/roadworker.svg)](http://badge.fury.io/rb/roadworker)
 [![Build Status](https://travis-ci.org/winebarrel/roadworker.svg?branch=master)](https://travis-ci.org/winebarrel/roadworker)
-[![Coverage Status](https://coveralls.io/repos/winebarrel/roadworker/badge.png?branch=master)](https://coveralls.io/r/winebarrel/roadworker?branch=master)
+[![Coverage Status](https://coveralls.io/repos/winebarrel/roadworker/badge.svg?branch=master&service=github)](https://coveralls.io/github/winebarrel/roadworker?branch=master)
 
 **Notice**
 
