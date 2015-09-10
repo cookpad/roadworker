@@ -253,13 +253,13 @@ module Roadworker
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if (expected and !actual) or (!expected and actual)
-            log(:info, "  set #{attribute}=#{expected.inspect}" , :green)
+            log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(actual, expected, :color => @options.color, :indent => '    '), false)
             unless @options.dry_run
               self.send(:"#{attribute}=", expected)
             end
           elsif expected and actual
             if expected != actual
-              log(:info, "  set #{attribute}=#{expected.inspect}" , :green)
+              log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(actual, expected, :color => @options.color, :indent => '    '), false)
               unless @options.dry_run
                 self.send(:"#{attribute}=", expected)
               end
