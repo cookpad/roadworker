@@ -25,6 +25,7 @@ module Aws
         dst = {}
 
         {
+          :hosted_zone_id         => false,
           :evaluate_target_health => false,
         }.each do |key, defalut_value|
           dst[key] = src[key] || false
@@ -40,7 +41,7 @@ module Aws
 
         if name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
           region = $1.downcase
-          alias_target = elb_dns_name_to_alias_target(name, region)
+          alias_target = elb_dns_name_to_alias_target(name, region, options)
 
           # XXX:
           alias_target.merge(options)
@@ -58,7 +59,7 @@ module Aws
 
       private
 
-      def elb_dns_name_to_alias_target(name, region)
+      def elb_dns_name_to_alias_target(name, region, options)
         elb = Aws::ElasticLoadBalancing::Client.new(:region => region)
 
         load_balancer = nil
@@ -72,7 +73,15 @@ module Aws
         end
 
         unless load_balancer
-          raise "Cannot find ELB: #{name}"
+          if options[:hosted_zone_id]
+            return {
+              :hosted_zone_id => options[:hosted_zone_id],
+              :dns_name       => name,
+              :evaluate_target_health => false, # XXX:
+            }
+          else
+            raise "Cannot find ELB: #{name}"
+          end
         end
 
         {
