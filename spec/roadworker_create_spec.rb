@@ -162,6 +162,39 @@ EOS
       }
     end
 
+    context 'A(Alias) record (with hosted_zone_id)' do
+      it {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp", "A" do
+    dns_name TEST_ELB, :hosted_zone_id => "Z2YN17T5R711GT"
+  end
+end
+EOS
+        end
+
+        zones = fetch_hosted_zones(@route53)
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(3)
+
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        a = rrsets['www.winebarrel.jp.', 'A']
+        expect(a.name).to eq("www.winebarrel.jp.")
+        expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
+          :hosted_zone_id => "Z2YN17T5R711GT",
+          :dns_name => TEST_ELB,
+          :evaluate_target_health => true,
+        ))
+      }
+    end
+
     context 'A(Alias) record (S3)' do
       it {
         routefile do
