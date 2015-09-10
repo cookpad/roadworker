@@ -25,7 +25,6 @@ module Aws
         dst = {}
 
         {
-          :hosted_zone_id         => false,
           :evaluate_target_health => false,
         }.each do |key, defalut_value|
           dst[key] = src[key] || false
