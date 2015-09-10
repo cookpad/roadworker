@@ -60,35 +60,35 @@ module Aws
       private
 
       def elb_dns_name_to_alias_target(name, region, options)
-        elb = Aws::ElasticLoadBalancing::Client.new(:region => region)
+        if options[:hosted_zone_id]
+          {
+            :hosted_zone_id => options[:hosted_zone_id],
+            :dns_name       => name,
+            :evaluate_target_health => false, # XXX:
+          }
+        else
+          elb = Aws::ElasticLoadBalancing::Client.new(:region => region)
 
-        load_balancer = nil
-        elb.describe_load_balancers.each do |page|
-          page.load_balancer_descriptions.each do |lb|
-            if lb.dns_name == name
-              load_balancer = lb
+          load_balancer = nil
+          elb.describe_load_balancers.each do |page|
+            page.load_balancer_descriptions.each do |lb|
+              if lb.dns_name == name
+                load_balancer = lb
+              end
             end
+            break if load_balancer
           end
-          break if load_balancer
-        end
 
-        unless load_balancer
-          if options[:hosted_zone_id]
-            return {
-              :hosted_zone_id => options[:hosted_zone_id],
-              :dns_name       => name,
-              :evaluate_target_health => false, # XXX:
-            }
-          else
+          unless load_balancer
             raise "Cannot find ELB: #{name}"
           end
-        end
 
-        {
-          :hosted_zone_id         => load_balancer.canonical_hosted_zone_name_id,
-          :dns_name               => load_balancer.dns_name,
-          :evaluate_target_health => false, # XXX:
-        }
+          {
+            :hosted_zone_id         => load_balancer.canonical_hosted_zone_name_id,
+            :dns_name               => load_balancer.dns_name,
+            :evaluate_target_health => false, # XXX:
+          }
+        end
       end
 
       def s3_dns_name_to_alias_target(name, region, hosted_zone_id)
