@@ -15,6 +15,7 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 * `>= 0.5.5`
   * **Disable Divided HostedZone**
   * **Use aws-sdk v2** [PR#20](https://github.com/winebarrel/roadworker/pull/20)
+  * Support Cross Account ELB Alias [PR#21](https://github.com/winebarrel/roadworker/pull/21)
 
 ## Installation
 

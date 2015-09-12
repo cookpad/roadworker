@@ -1,11 +1,14 @@
 require 'logger'
 require 'ostruct'
 require 'socket'
+require 'pp'
 require 'tempfile'
 require 'uri'
 require 'uuid'
+require 'diffy'
 
 require 'roadworker/string-ext'
+require 'roadworker/struct-ext'
 require 'roadworker/route53-ext'
 
 require 'roadworker/version'
