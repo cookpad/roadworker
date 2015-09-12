@@ -24,20 +24,21 @@ module Roadworker
     end
 
     def hosted_zones
-      HostedZoneCollectionWrapper.new(@options.route53.hosted_zones, @options)
+      HostedZoneCollectionWrapper.new(@options.route53.list_hosted_zones, @options)
     end
 
     class HostedZoneCollectionWrapper
       include Roadworker::Log
 
-      def initialize(hosted_zones, options)
-        @hosted_zones = hosted_zones
+      def initialize(hosted_zones_response, options)
+        @hosted_zones_response = hosted_zones_response
         @options = options
       end
 
       def each
-        Collection.batch(@hosted_zones) do |zone|
-          yield(HostedZoneWrapper.new(zone, zone.vpcs, @options))
+        Collection.batch(@hosted_zones_response, :hosted_zones) do |zone|
+          resp = @options.route53.get_hosted_zone(id: zone.id)
+          yield(HostedZoneWrapper.new(resp.hosted_zone, resp.vp_cs, @options))
         end
       end
 
@@ -57,7 +58,14 @@ module Roadworker
           opts.delete(:vpc)
           zone = OpenStruct.new({:name => name, :rrsets => [], :vpcs => vpcs}.merge(opts))
         else
-          zone = @hosted_zones.create(name, opts)
+          params = {
+            name: name,
+            caller_reference: "CreateHostedZone by roadworker #{Roadworker::VERSION}, #{name}, #{Time.now.httpdate}",
+          }
+          if vpc
+            params[:vpc] = vpc
+          end
+          zone = @options.route53.create_hosted_zone(params).hosted_zone
           @options.hosted_zone_name = name
           @options.updated = true
         end
@@ -78,7 +86,7 @@ module Roadworker
       attr_reader :vpcs
 
       def resource_record_sets
-        ResourceRecordSetCollectionWrapper.new(@hosted_zone.rrsets, @hosted_zone, @options)
+        ResourceRecordSetCollectionWrapper.new(@hosted_zone, @options)
       end
       alias rrsets resource_record_sets
 
@@ -91,24 +99,7 @@ module Roadworker
           end
 
           unless @options.dry_run
-            @hosted_zone.delete
-            @options.updated = true
-          end
-        else
-          log(:info, 'Undefined HostedZone (pass `--force` if you want to remove)', :yellow, @hosted_zone.name)
-        end
-      end
-
-      def delete
-        if @options.force
-          log(:info, 'Delete HostedZone', :red, @hosted_zone.name)
-
-          self.rrsets.each do |record|
-            record.delete
-          end
-
-          unless @options.dry_run
-            @hosted_zone.delete
+            @options.route53.delete_hosted_zone(id: @hosted_zone.id)
             @options.updated = true
           end
         else
@@ -118,12 +109,22 @@ module Roadworker
 
       def associate_vpc(vpc)
         log(:info, "Associate #{vpc.inspect}", :green, @hosted_zone.name)
-        @hosted_zone.associate_vpc(vpc) unless @options.dry_run
+        unless @options.dry_run
+          @options.route53.associate_vpc_with_hosted_zone(
+            hosted_zone_id: @hosted_zone.id,
+            vpc: vpc,
+          )
+        end
       end
 
       def disassociate_vpc(vpc)
         log(:info, "Disassociate #{vpc.inspect}", :red, @hosted_zone.name)
-        @hosted_zone.disassociate_vpc(vpc) unless @options.dry_run
+        unless @options.dry_run
+          @options.route53.disassociate_vpc_from_hosted_zone(
+            hosted_zone_id: @hosted_zone.id,
+            vpc: vpc,
+          )
+        end
       end
 
       private
@@ -136,15 +137,16 @@ module Roadworker
     class ResourceRecordSetCollectionWrapper
       include Roadworker::Log
 
-      def initialize(resource_record_sets, hosted_zone, options)
-        @resource_record_sets = resource_record_sets
+      def initialize(hosted_zone, options)
         @hosted_zone = hosted_zone
         @options = options
       end
 
       def each
-        Collection.batch(@resource_record_sets) do |record|
-          yield(ResourceRecordSetWrapper.new(record, @hosted_zone, @options))
+        if @hosted_zone.id
+          Collection.batch(@options.route53.list_resource_record_sets(hosted_zone_id: @hosted_zone.id), :resource_record_sets) do |record|
+            yield(ResourceRecordSetWrapper.new(record, @hosted_zone, @options))
+          end
         end
       end
 
@@ -158,7 +160,10 @@ module Roadworker
         if @options.dry_run
           record = expected_record
         else
-          opts = {}
+          resource_record_set_params = {
+            name: name,
+            type: type,
+          }
 
           Route53Wrapper::RRSET_ATTRS.each do |attribute|
             value = expected_record.send(attribute)
@@ -168,20 +173,30 @@ module Roadworker
             when :dns_name
               attribute = :alias_target
               dns_name, dns_name_opts = value
-              value = AWS::Route53.dns_name_to_alias_target(dns_name, dns_name_opts, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
+              value = Aws::Route53.dns_name_to_alias_target(dns_name, dns_name_opts, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
             when :health_check
               attribute = :health_check_id
               value = @options.health_checks.find_or_create(value)
             end
 
-            opts[attribute] = value
+            resource_record_set_params[attribute] = value
           end
 
-          record = @resource_record_sets.create(name, type, opts)
+          @options.route53.change_resource_record_sets(
+            hosted_zone_id: @hosted_zone.id,
+            change_batch: {
+              changes: [
+                {
+                  action: 'CREATE',
+                  resource_record_set: resource_record_set_params,
+                },
+              ],
+            },
+          )
           @options.updated = true
         end
 
-        ResourceRecordSetWrapper.new(record, @hosted_zone, @options)
+        ResourceRecordSetWrapper.new(expected_record, @hosted_zone, @options)
       end
     end # ResourceRecordSetCollectionWrapper
 
@@ -196,10 +211,10 @@ module Roadworker
 
       def eql?(expected_record)
         Route53Wrapper::RRSET_ATTRS_WITH_TYPE.all? do |attribute|
-          expected = expected_record.send(attribute)
+          expected = expected_record.public_send(attribute)
           expected = expected.sort_by {|i| i.to_s } if expected.kind_of?(Array)
           expected = nil if expected.kind_of?(Array) && expected.empty?
-          actual = self.send(attribute)
+          actual = self.public_send(attribute)
           actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
@@ -228,6 +243,7 @@ module Roadworker
 
         log(:info, 'Update ResourceRecordSet', :green, &log_id_proc)
 
+        resource_record_set_prev = @resource_record_set.dup
         Route53Wrapper::RRSET_ATTRS_WITH_TYPE.each do |attribute|
           expected = expected_record.send(attribute)
           expected = expected.sort_by {|i| i.to_s } if expected.kind_of?(Array)
@@ -237,18 +253,36 @@ module Roadworker
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if (expected and !actual) or (!expected and actual)
-            log(:info, "  set #{attribute}=#{expected.inspect}" , :green)
-            self.send(:"#{attribute}=", expected) unless @options.dry_run
+            log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(actual, expected, :color => @options.color, :indent => '    '), false)
+            unless @options.dry_run
+              self.send(:"#{attribute}=", expected)
+            end
           elsif expected and actual
             if expected != actual
-              log(:info, "  set #{attribute}=#{expected.inspect}" , :green)
-              self.send(:"#{attribute}=", expected) unless @options.dry_run
+              log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(actual, expected, :color => @options.color, :indent => '    '), false)
+              unless @options.dry_run
+                self.send(:"#{attribute}=", expected)
+              end
             end
           end
         end
 
         unless @options.dry_run
-          @resource_record_set.update
+          @options.route53.change_resource_record_sets(
+            hosted_zone_id: @hosted_zone.id,
+            change_batch: {
+              changes: [
+                {
+                  action: 'DELETE',
+                  resource_record_set: resource_record_set_prev,
+                },
+                {
+                  action: 'CREATE',
+                  resource_record_set: @resource_record_set,
+                },
+              ],
+            },
+          )
           @options.updated = true
         end
       end
@@ -267,7 +301,17 @@ module Roadworker
         end
 
         unless @options.dry_run
-          @resource_record_set.delete
+          @options.route53.change_resource_record_sets(
+            hosted_zone_id: @hosted_zone.id,
+            change_batch: {
+              changes: [
+                {
+                  action: 'DELETE',
+                  resource_record_set: @resource_record_set,
+                },
+              ],
+            },
+          )
           @options.updated = true
         end
       end
@@ -284,7 +328,7 @@ module Roadworker
         if dns_name
           [
             dns_name,
-            AWS::Route53.normalize_dns_name_options(alias_target),
+            Aws::Route53.normalize_dns_name_options(alias_target),
           ]
         else
           nil
@@ -294,7 +338,7 @@ module Roadworker
       def dns_name=(value)
         if value
           dns_name, dns_name_opts = value
-          @resource_record_set.alias_target = AWS::Route53.dns_name_to_alias_target(dns_name, dns_name_opts, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
+          @resource_record_set.alias_target = Aws::Route53.dns_name_to_alias_target(dns_name, dns_name_opts, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
         else
           @resource_record_set.alias_target = nil
         end

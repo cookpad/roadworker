@@ -26,15 +26,16 @@ module Roadworker
     private
 
     def export_hosted_zones(hosted_zones)
-      Collection.batch(@options.route53.hosted_zones) do |zone|
-        zone_h = item_to_hash(zone, :name, :vpcs)
+      Collection.batch(@options.route53.list_hosted_zones, :hosted_zones) do |zone|
         next unless matched_zone?(zone.name)
+        resp = @options.route53.get_hosted_zone(id: zone.id)
+        zone_h = { name: zone.name, vpcs: resp.vp_cs }
         hosted_zones << zone_h
 
         rrsets = []
         zone_h[:rrsets] = rrsets
 
-        Collection.batch(zone.rrsets) do |record|
+        Collection.batch(@options.route53.list_resource_record_sets(hosted_zone_id: zone.id), :resource_record_sets) do |record|
           if record.name == zone.name and %w(SOA NS).include?(record.type) and not @options.with_soa_ns
             next
           end
@@ -78,7 +79,7 @@ module Roadworker
       h = {}
 
       attrs.each do |attribute|
-        value = item.send(attribute)
+        value = item.public_send(attribute)
         h[attribute] = value if value
       end
 

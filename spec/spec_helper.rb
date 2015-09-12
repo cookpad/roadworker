@@ -24,7 +24,7 @@ require 'fileutils'
 require 'logger'
 require 'rubydns'
 
-AWS.config({
+Aws.config.update({
   :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
   :secret_access_key => (ENV['TEST_AWS_SECRET_ACCESS_KEY'] || 'tiger'),
 })
@@ -33,7 +33,7 @@ RSpec.configure do |config|
   config.before(:each) {
     sleep TEST_INTERVAL
     cleanup_route53
-    @route53 = AWS::Route53.new
+    @route53 = Aws::Route53::Client.new
   }
 
   config.after(:all) do
@@ -130,7 +130,7 @@ def fetch_health_checks(route53)
 
   while is_truncated
     opts = next_marker ? {:marker => next_marker} : {}
-    response = @route53.client.list_health_checks(opts)
+    response = @route53.list_health_checks(opts)
 
     response[:health_checks].each do |check|
       check_list[check[:id]] = check[:health_check_config]
@@ -143,25 +143,61 @@ def fetch_health_checks(route53)
   return check_list
 end
 
+def fetch_hosted_zones(route53)
+  zones = []
+  route53.list_hosted_zones.each do |page|
+    page.hosted_zones.each do |zone|
+      zones << zone
+    end
+  end
+  zones
+end
+
+class RRSets
+  def initialize(rrsets)
+    @rrsets = rrsets
+  end
+
+  def [](name, type, set_identifier = nil)
+    @rrsets.find do |rrset|
+      rrset.name == name && rrset.type == type && rrset.set_identifier == set_identifier
+    end
+  end
+end
+
+def fetch_rrsets(route53, hosted_zone_id)
+  rrsets = []
+  route53.list_resource_record_sets(hosted_zone_id: hosted_zone_id).each do |page|
+    page.resource_record_sets.each do |rrset|
+      rrsets << rrset
+    end
+  end
+  RRSets.new(rrsets)
+end
+
 def debug?
   ENV['DEBUG'] == '1'
 end
 
 def cleanup_route53
-  r53 = AWS::Route53.new
-  r53.hosted_zones.each do |hz|
+  r53 = Aws::Route53::Client.new
+  fetch_hosted_zones(r53).each do |hz|
     hz_name = hz.name.sub(/\.\z/, '')
 
-    until hz.resource_record_sets.map(&:type).sort == %w(NS SOA)
-      hz.resource_record_sets.each do |rrset|
+    changes = []
+    r53.list_resource_record_sets(hosted_zone_id: hz.id).each do |page|
+      page.resource_record_sets.each do |rrset|
         rrset_name = rrset.name.sub(/\.\z/, '')
 
         unless rrset_name == hz_name and %w(NS SOA).include?(rrset.type)
-          rrset.delete
+          changes << { action: 'DELETE', resource_record_set: rrset }
         end
       end
     end
 
-    hz.delete
+    unless changes.empty?
+      r53.change_resource_record_sets(hosted_zone_id: hz.id, change_batch: { changes: changes })
+    end
+    r53.delete_hosted_zone(id: hz.id)
   end
 end

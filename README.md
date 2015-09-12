@@ -4,14 +4,18 @@ Roadworker is a tool to manage Route53.
 
 It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 
-[![Gem Version](https://badge.fury.io/rb/roadworker.png)](http://badge.fury.io/rb/roadworker)
+[![Gem Version](https://badge.fury.io/rb/roadworker.svg)](http://badge.fury.io/rb/roadworker)
 [![Build Status](https://travis-ci.org/winebarrel/roadworker.svg?branch=master)](https://travis-ci.org/winebarrel/roadworker)
-[![Coverage Status](https://coveralls.io/repos/winebarrel/roadworker/badge.png?branch=master)](https://coveralls.io/r/winebarrel/roadworker?branch=master)
+[![Coverage Status](https://coveralls.io/repos/winebarrel/roadworker/badge.svg?branch=master&service=github)](https://coveralls.io/github/winebarrel/roadworker?branch=master)
 
 **Notice**
 
 * Roadworker cannot update TTL of two or more same weighted A records (with different SetIdentifier) after creation.
 * `>= 0.4.3` compare resource records ignoring the order.
+* `>= 0.5.5`
+  * **Disable Divided HostedZone**
+  * **Use aws-sdk v2** [PR#20](https://github.com/winebarrel/roadworker/pull/20)
+  * Support Cross Account ELB Alias [PR#21](https://github.com/winebarrel/roadworker/pull/21)
 
 ## Installation
 

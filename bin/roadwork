@@ -71,13 +71,13 @@ ARGV.options do |opt|
       credentials_opts = {}
       credentials_opts[:profile_name] = profile_name if profile_name
       credentials_opts[:path] = credentials_path if credentials_path
-      provider = AWS::Core::CredentialProviders::SharedCredentialFileProvider.new(credentials_opts)
+      provider = Aws::SharedCredentials.new(credentials_opts)
       aws_opts[:credential_provider] = provider
     elsif (access_key and !secret_key) or (!access_key and secret_key) or mode.nil?
       puts opt.help
       exit 1
     end
-    AWS.config(aws_opts)
+    Aws.config.update(aws_opts)
   rescue => e
     $stderr.puts e
     exit 1
@@ -85,7 +85,7 @@ ARGV.options do |opt|
 end
 
 if options[:debug]
-  AWS.config(
+  Aws.config.update(
     :http_wire_trace => true,
     :logger => options[:logger]
   )
@@ -108,7 +108,11 @@ begin
 
       client.export do |exported, converter|
         exported[:hosted_zones].each do |zone|
-          route_file = File.join(File.dirname(output_file), "#{zone[:name].sub(/\.\Z/, '')}.route")
+          route_file_basename = zone[:name].sub(/\.\Z/, '')
+          route_file_basename << '.privte' unless zone[:vpcs].empty?
+          route_file_basename << '.route'
+
+          route_file = File.join(File.dirname(output_file), route_file_basename)
           requires << route_file
 
           logger.info("  write `#{route_file}`")

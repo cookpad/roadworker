@@ -1,7 +1,7 @@
-require 'aws-sdk-v1'
+require 'aws-sdk'
 
-module AWS
-  class Route53
+module Aws
+  module Route53
 
     # http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
     S3_WEBSITE_ENDPOINTS = {
@@ -40,7 +40,7 @@ module AWS
 
         if name =~ /([^.]+)\.elb\.amazonaws.com\Z/i
           region = $1.downcase
-          alias_target = elb_dns_name_to_alias_target(name, region)
+          alias_target = elb_dns_name_to_alias_target(name, region, options)
 
           # XXX:
           alias_target.merge(options)
@@ -58,22 +58,36 @@ module AWS
 
       private
 
-      def elb_dns_name_to_alias_target(name, region)
-        elb = AWS::ELB.new(:region => region)
+      def elb_dns_name_to_alias_target(name, region, options)
+        if options[:hosted_zone_id]
+          {
+            :hosted_zone_id => options[:hosted_zone_id],
+            :dns_name       => name,
+            :evaluate_target_health => false, # XXX:
+          }
+        else
+          elb = Aws::ElasticLoadBalancing::Client.new(:region => region)
 
-        load_balancer = elb.load_balancers.find do |lb|
-          lb.dns_name == name
+          load_balancer = nil
+          elb.describe_load_balancers.each do |page|
+            page.load_balancer_descriptions.each do |lb|
+              if lb.dns_name == name
+                load_balancer = lb
+              end
+            end
+            break if load_balancer
+          end
+
+          unless load_balancer
+            raise "Cannot find ELB: #{name}"
+          end
+
+          {
+            :hosted_zone_id         => load_balancer.canonical_hosted_zone_name_id,
+            :dns_name               => load_balancer.dns_name,
+            :evaluate_target_health => false, # XXX:
+          }
         end
-
-        unless load_balancer
-          raise "Cannot find ELB: #{name}"
-        end
-
-        {
-          :hosted_zone_id         => load_balancer.canonical_hosted_zone_name_id,
-          :dns_name               => load_balancer.dns_name,
-          :evaluate_target_health => false, # XXX:
-        }
       end
 
       def s3_dns_name_to_alias_target(name, region, hosted_zone_id)

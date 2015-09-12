@@ -2,15 +2,9 @@ module Roadworker
   class Collection
 
     class << self
-      def batch(collection)
-        if collection.respond_to?(:each_batch)
-          collection.each_batch do |batch|
-            batch.each do |item|
-              yield(item)
-            end
-          end
-        else
-          collection.each do |item|
+      def batch(pageable_response, collection_name)
+        pageable_response.each do |response|
+          response.public_send(collection_name).each do |item|
             yield(item)
           end
         end
