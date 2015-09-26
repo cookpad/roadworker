@@ -35,7 +35,7 @@ module Roadworker
               config = HealthCheck.config_to_hash(@health_checks[value])
               hc_args = config[:url].sub(/\A(https?)_str_match:/) { $1 + ':' }.inspect
 
-              [:host, :search_string, :request_interval, :failure_threshold].each do |key|
+              [:host, :search_string, :request_interval, :failure_threshold, :resource_path].each do |key|
                 if config[key]
                   hc_args << ", :#{key} => #{config[key].inspect}"
                 end

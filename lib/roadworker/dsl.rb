@@ -143,6 +143,7 @@ module Roadworker
               :search_string     => :search_string,
               :request_interval  => :request_interval,
               :failure_threshold => :failure_threshold,
+              :resource_path     => :resource_path,
             }.each do |option_key, config_key|
               config[config_key] = options[option_key] if options[option_key]
             end
@@ -153,6 +154,7 @@ module Roadworker
                 :search_string,
                 :request_interval,
                 :failure_threshold,
+                :resource_path,
               ][i]
 
               config[key] = value

@@ -20,6 +20,7 @@ module Roadworker
         search_string     = config[:search_string]
         request_interval  = config[:request_interval]
         failure_threshold = config[:failure_threshold]
+        resource_path     = config[:resource_path]
 
         ulr = nil
 
@@ -38,6 +39,7 @@ module Roadworker
           :search_string     => search_string,
           :request_interval  => request_interval,
           :failure_threshold => failure_threshold,
+          :resource_path     => resource_path,
         }
       end
 
