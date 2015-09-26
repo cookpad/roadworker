@@ -72,7 +72,7 @@ ARGV.options do |opt|
       credentials_opts[:profile_name] = profile_name if profile_name
       credentials_opts[:path] = credentials_path if credentials_path
       provider = Aws::SharedCredentials.new(credentials_opts)
-      aws_opts[:credential_provider] = provider
+      aws_opts[:credentials] = provider
     elsif (access_key and !secret_key) or (!access_key and secret_key) or mode.nil?
       puts opt.help
       exit 1
