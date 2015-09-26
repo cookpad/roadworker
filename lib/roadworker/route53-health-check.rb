@@ -11,36 +11,44 @@ module Roadworker
       end
 
       def config_to_hash(config)
-        ipaddr = config[:ip_address]
-        port   = config[:port]
-        type   = config[:type].downcase
-        path   = config[:resource_path]
-        fqdn   = config[:fully_qualified_domain_name]
-        fqdn   = fqdn.downcase if fqdn
-        search_string     = config[:search_string]
-        request_interval  = config[:request_interval]
-        failure_threshold = config[:failure_threshold]
-        resource_path     = config[:resource_path]
+        type = config[:type].downcase
 
-        ulr = nil
-
-        if ipaddr
-          url = "#{type}://#{ipaddr}:#{port}"
+        if type == 'calculated'
+          hash = {:calculated => config[:child_health_checks]}
         else
-          url = "#{type}://#{fqdn}:#{port}"
-          fqdn = nil
+          ipaddr = config[:ip_address]
+          port   = config[:port]
+          path   = config[:resource_path]
+          fqdn   = config[:fully_qualified_domain_name]
+          fqdn   = fqdn.downcase if fqdn
+
+          if ipaddr
+            url = "#{type}://#{ipaddr}:#{port}"
+          else
+            url = "#{type}://#{fqdn}:#{port}"
+            fqdn = nil
+          end
+
+          url << path if path && path != '/'
+
+          hash = {
+            :url  => url,
+            :host => fqdn,
+          }
         end
 
-        url << path if path && path != '/'
+        [
+          :search_string,
+          :request_interval,
+          :health_threshold,
+          :failure_threshold,
+          :measure_latency,
+          :inverted,
+        ].each do |key|
+          hash[key] = config[key] unless config[key].nil?
+        end
 
-        {
-          :url               => url,
-          :host              => fqdn,
-          :search_string     => search_string,
-          :request_interval  => request_interval,
-          :failure_threshold => failure_threshold,
-          :resource_path     => resource_path,
-        }
+        hash
       end
 
       def parse_url(url)
@@ -48,7 +56,7 @@ module Roadworker
         path = url.path
 
         if path.nil? or path.empty? or path == '/'
-          path = nil
+          path = '/'
         end
 
         config = Aws::Route53::Types::HealthCheckConfig.new
@@ -122,12 +130,18 @@ module Roadworker
       return if check_list.empty?
 
       if (logger = options[:logger])
-        logger.info('Clean HealthChecks (pass `--no-health-check-gc` if you do not want to clean)')
+        logger.info('Clean HealthChecks')
       end
 
       Collection.batch(@route53.list_hosted_zones, :hosted_zones) do |zone|
         Collection.batch(@route53.list_resource_record_sets(hosted_zone_id: zone.id), :resource_record_sets) do |record|
-          check_list.delete(record.health_check_id)
+          health_check = check_list.delete(record.health_check_id)
+
+          if health_check and health_check.type == 'CALCULATED'
+            health_check.child_health_checks.each do |child|
+              check_list.delete(child)
+            end
+          end
         end
       end
 

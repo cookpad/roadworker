@@ -33,10 +33,23 @@ module Roadworker
               end
             when :health_check_id
               config = HealthCheck.config_to_hash(@health_checks[value])
-              hc_args = config[:url].sub(/\A(https?)_str_match:/) { $1 + ':' }.inspect
 
-              [:host, :search_string, :request_interval, :failure_threshold, :resource_path].each do |key|
-                if config[key]
+              if config[:calculated]
+                hc_args = ":calculated => #{config[:calculated].inspect}"
+              else
+                hc_args = config[:url].sub(/\A(https?)_str_match:/) { $1 + ':' }.inspect
+              end
+
+              [
+                :host,
+                :search_string,
+                :request_interval,
+                :health_threshold,
+                :failure_threshold,
+                :measure_latency,
+                :inverted,
+              ].each do |key|
+                unless config[key].nil?
                   hc_args << ", :#{key} => #{config[key].inspect}"
                 end
               end

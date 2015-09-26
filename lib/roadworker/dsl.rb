@@ -132,41 +132,36 @@ module Roadworker
           @result.failover = value
         end
 
-        def health_check(url, *options)
-          config = HealthCheck.parse_url(url)
-
-          if options.length == 1 and options.first.kind_of?(Hash)
-            options = options.first
-
-            {
-              :host              => :fully_qualified_domain_name,
-              :search_string     => :search_string,
-              :request_interval  => :request_interval,
-              :failure_threshold => :failure_threshold,
-              :resource_path     => :resource_path,
-            }.each do |option_key, config_key|
-              config[config_key] = options[option_key] if options[option_key]
+        def health_check(url, options = {})
+          if url.kind_of?(Hash)
+            if url.include?(:calculated)
+              config = Aws::Route53::Types::HealthCheckConfig.new
+              config[:type] = 'CALCULATED'
+              config[:child_health_checks] = url.delete(:calculated)
+              options = url
+            else
+              raise ArgumentError, "wrong arguments: #{url.inspect}"
             end
           else
-            options.each_with_index do |value, i|
-              key = [
-                :fully_qualified_domain_name,
-                :search_string,
-                :request_interval,
-                :failure_threshold,
-                :resource_path,
-              ][i]
+            config = HealthCheck.parse_url(url)
+            config[:child_health_checks] = []
+          end
 
-              config[key] = value
-            end
+          {
+            :host              => :fully_qualified_domain_name,
+            :search_string     => :search_string,
+            :request_interval  => :request_interval,
+            :health_threshold  => :health_threshold,
+            :failure_threshold => :failure_threshold,
+            :measure_latency   => :measure_latency,
+            :inverted          => :inverted
+          }.each do |option_key, config_key|
+            config[config_key] = options[option_key] unless options[option_key].nil?
           end
 
           if config.search_string
             config.type += '_STR_MATCH'
           end
-
-          config.request_interval  ||= 30
-          config.failure_threshold ||= 3
 
           @result.health_check = config
         end
