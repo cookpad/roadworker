@@ -154,7 +154,7 @@ module Roadworker
         end
       end
 
-      check_list.each do |health_check_id, config|
+      check_list.sort_by {|hc_id, hc| hc.type == 'CALCULATED' ? 0 : 1 }.each do |health_check_id, config|
         @route53.delete_health_check(:health_check_id  => health_check_id)
       end
     end
