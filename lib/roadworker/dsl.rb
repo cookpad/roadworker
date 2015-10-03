@@ -133,6 +133,10 @@ module Roadworker
         end
 
         def health_check(url, options = {})
+          unless options.kind_of?(Hash)
+            raise TypeError, "wrong argument type #{options.inspect} (expected Hash)"
+          end
+
           if url.kind_of?(Hash)
             if url.include?(:calculated)
               config = Aws::Route53::Types::HealthCheckConfig.new

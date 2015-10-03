@@ -60,6 +60,9 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 5,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -77,6 +80,9 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 10,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -140,6 +146,9 @@ EOS
             :search_string => '123',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -157,6 +166,9 @@ EOS
             :search_string => '123',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -219,6 +231,9 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 5,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -235,6 +250,9 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 10,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -296,6 +314,9 @@ EOS
             :resource_path => '/path',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -311,6 +332,9 @@ EOS
             :resource_path => '/path',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -371,6 +395,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -385,6 +412,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -445,6 +475,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -459,6 +492,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -516,8 +552,12 @@ EOS
             :ip_address => '192.0.43.10',
             :port => 80,
             :type => 'HTTP',
+            :resource_path => '/',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -538,7 +578,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "Primary"
     failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path", 'example.com'
+    health_check "http://192.0.43.10:80/path", :host => 'example.com'
     ttl 456
     resource_records(
       "127.0.0.1",
@@ -588,6 +628,9 @@ EOS
             :fully_qualified_domain_name => 'example.com',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -602,6 +645,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -656,7 +702,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "w100"
     weight 100
-    health_check "http://192.0.43.10:80/path", 'example.com'
+    health_check "http://192.0.43.10:80/path", :host => 'example.com'
     ttl 456
     resource_records(
       "127.0.0.1",
@@ -706,6 +752,9 @@ EOS
             :fully_qualified_domain_name => 'example.com',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "w50"]
@@ -720,6 +769,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -732,7 +784,7 @@ hosted_zone "winebarrel.jp" do
   rrset "www.winebarrel.jp", "A" do
     set_identifier "jp"
     region 'ap-northeast-1'
-    health_check "http://192.0.43.10:80/path", 'example.com'
+    health_check "http://192.0.43.10:80/path", :host => 'example.com'
     ttl 456
     resource_records(
       "127.0.0.1",
@@ -782,6 +834,9 @@ EOS
             :fully_qualified_domain_name => 'example.com',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "us"]
@@ -796,6 +851,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
