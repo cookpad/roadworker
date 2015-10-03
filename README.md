@@ -20,6 +20,7 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
   * Disable HealthCheck GC (pass `--health-check-gc` option if enable)
   * Support Calculated Health Checks
   * Support New Health Check attributes
+  * Add template feature
 
 ## Installation
 
@@ -171,6 +172,25 @@ hosted_zone "us-east-1.my.local." do
       resource_records instance.private_ip_address
     end
   }
+end
+```
+
+### Use template
+
+```ruby
+template('default_rrset') do
+  rrset context.name + '.' + context.hosted_zone_name, "A" do
+    ttl context.ttl
+    resource_records(
+      "127.0.0.1"
+    )
+  end
+end
+
+hosted_zone "winebarrel.jp." do
+  context.ttl = 100
+  include_template 'default_rrset', name: 'www'
+  include_template 'default_rrset', name: 'www2'
 end
 ```
 

@@ -692,5 +692,64 @@ EOS
         expect(rrs_list(ns.resource_records.sort_by {|i| i.to_s })).to eq(["ns.winebarrel.jp", "ns2.winebarrel.jp"])
       }
     end
+
+    context 'Use template' do
+      it {
+        routefile do
+<<EOS
+template "default_rrset" do
+  rrset context.name + "." + context.hosted_zone_name, "A" do
+    ttl context.ttl
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+end
+
+hosted_zone "winebarrel.jp" do
+  context.ttl = 100
+
+  rrset "www.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  include_template "default_rrset", :name => 'www2'
+  include_template "default_rrset", :name => 'www3'
+end
+EOS
+        end
+
+        zones = fetch_hosted_zones(@route53)
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(5)
+
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        a = rrsets['www.winebarrel.jp.', 'A']
+        expect(a.name).to eq("www.winebarrel.jp.")
+        expect(a.ttl).to eq(123)
+        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+
+        a2 = rrsets['www2.winebarrel.jp.', 'A']
+        expect(a2.name).to eq("www2.winebarrel.jp.")
+        expect(a2.ttl).to eq(100)
+        expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+
+        a3 = rrsets['www3.winebarrel.jp.', 'A']
+        expect(a3.name).to eq("www3.winebarrel.jp.")
+        expect(a3.ttl).to eq(100)
+        expect(rrs_list(a3.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+      }
+    end
   end
 end
