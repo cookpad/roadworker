@@ -90,6 +90,9 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 5,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -107,6 +110,9 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 10,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -199,6 +205,9 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 5,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -215,6 +224,9 @@ EOS
             :search_string => '123',
             :request_interval => 10,
             :failure_threshold => 10,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -306,6 +318,9 @@ EOS
             :resource_path => '/path',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -320,6 +335,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -411,6 +429,9 @@ EOS
             :resource_path => '/path2',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -425,6 +446,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -554,6 +578,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -645,6 +672,9 @@ EOS
             :resource_path => '/path',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "w50"]
@@ -659,6 +689,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -750,6 +783,9 @@ EOS
             :resource_path => '/path',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "us"]
@@ -764,6 +800,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
