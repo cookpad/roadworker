@@ -97,6 +97,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -197,6 +200,9 @@ EOS
             :type => 'TCP',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -298,6 +304,9 @@ EOS
             :resource_path => '/path',
             :request_interval => 30,
             :failure_threshold => 3,
+            :measure_latency => false,
+            :inverted => false,
+            :child_health_checks => [],
           ))
         }
       end
@@ -417,7 +426,7 @@ EOS
         }
 
         it {
-          routefile(:no_health_check_gc => true) do
+          routefile(:health_check_gc => false) do
 <<EOS
 hosted_zone "winebarrel.jp" do
   rrset "info.winebarrel.jp", "A" do
