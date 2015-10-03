@@ -20,6 +20,7 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
   * Disable HealthCheck GC (pass `--health-check-gc` option if enable)
   * Support Calculated Health Checks
   * Support New Health Check attributes
+  * Add template feature
 
 ## Installation
 
