@@ -118,7 +118,7 @@ module Roadworker
             end
 
             response = @route53.create_health_check({
-              :caller_reference    => UUID.new.generate,
+              :caller_reference    => "roadworker #{Roadworker::VERSION} #{UUID.new.generate}",
               :health_check_config => attrs,
             })
 
