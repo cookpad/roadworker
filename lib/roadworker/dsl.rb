@@ -1,5 +1,6 @@
 module Roadworker
   class DSL
+    include Roadworker::TemplateHelper
 
     class << self
       def define(source, path, lineno = 1)
@@ -22,7 +23,17 @@ module Roadworker
     def initialize(path, &block)
       @path = path
       @result = OpenStruct.new({:hosted_zones => []})
+
+      @context = Hashie::Mash.new(
+        :path => path,
+        :templates => {}
+      )
+
       instance_eval(&block)
+    end
+
+    def template(name, &block)
+      @context.templates[name.to_s] = block
     end
 
     private
@@ -40,14 +51,17 @@ module Roadworker
     end
 
     def hosted_zone(name, &block)
-      @result.hosted_zones << HostedZone.new(name, [], &block).result
+      @result.hosted_zones << HostedZone.new(@context, name, [], &block).result
     end
 
     class HostedZone
+      include Roadworker::TemplateHelper
+
       attr_reader :result
 
-      def initialize(name, rrsets = [], &block)
+      def initialize(context, name, rrsets = [], &block)
         @name = name
+        @context = context.merge(:hosted_zone_name => name)
 
         @result = OpenStruct.new({
           :name => name,
@@ -84,14 +98,21 @@ module Roadworker
           raise "Invalid ResourceRecordSet Name: #{rrset_name}"
         end
 
-        @result.resource_record_sets << ResourceRecordSet.new(rrset_name, type, &block).result
+        @result.resource_record_sets << ResourceRecordSet.new(@context, rrset_name, type, &block).result
       end
       alias rrset resource_record_set
 
       class ResourceRecordSet
+        include Roadworker::TemplateHelper
+
         attr_reader :result
 
-        def initialize(name, type, &block)
+        def initialize(context, name, type, &block)
+          @context = context.merge(
+            :rrset_name => name,
+            :rrset_type => type
+          )
+
           @result = OpenStruct.new({
             :name => name,
             :type => type,
