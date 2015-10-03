@@ -189,8 +189,8 @@ end
 
 hosted_zone "winebarrel.jp." do
   context.ttl = 100
-  include_template 'default_rrset', name: 'www'
-  include_template 'default_rrset', name: 'www2'
+  include_template "default_rrset", :name => "www"
+  include_template "default_rrset", :name => "www2"
 end
 ```
 
