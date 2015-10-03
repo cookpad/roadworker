@@ -58,7 +58,7 @@ Usage: roadwork [options]
     -f, --file FILE
         --dry-run
         --force
-        --no-health-check-gc
+        --health-check-gc
     -e, --export
     -o, --output FILE
         --split
