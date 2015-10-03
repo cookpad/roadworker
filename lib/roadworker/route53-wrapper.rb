@@ -59,8 +59,8 @@ module Roadworker
           zone = OpenStruct.new({:name => name, :rrsets => [], :vpcs => vpcs}.merge(opts))
         else
           params = {
-            name: name,
-            caller_reference: "CreateHostedZone by roadworker #{Roadworker::VERSION}, #{name}, #{Time.now.httpdate}",
+            :name => name,
+            :caller_reference => "roadworker #{Roadworker::VERSION} #{UUID.new.generate}",
           }
           if vpc
             params[:vpc] = vpc

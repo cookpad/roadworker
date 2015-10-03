@@ -16,6 +16,10 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
   * **Disable Divided HostedZone**
   * **Use aws-sdk v2** [PR#20](https://github.com/winebarrel/roadworker/pull/20)
   * Support Cross Account ELB Alias [PR#21](https://github.com/winebarrel/roadworker/pull/21)
+* `>= 0.5.6`
+  * Disable HealthCheck GC (pass `--health-check-gc` option if enable)
+  * Support Calculated Health Checks
+  * Support New Health Check attributes
 
 ## Installation
 
@@ -54,7 +58,7 @@ Usage: roadwork [options]
     -f, --file FILE
         --dry-run
         --force
-        --no-health-check-gc
+        --health-check-gc
     -e, --export
     -o, --output FILE
         --split
@@ -137,6 +141,21 @@ hosted_zone "winebarrel.local." do
       "10.0.0.2"
     )
   end
+end
+```
+
+### Calculated Health Checks
+
+```ruby
+rrset "zzz.info.winebarrel.jp", "A" do
+  set_identifier "Secondary"
+  failover "SECONDARY"
+  health_check :calculated => ["07c03a45-5b69-4044-9ec3-016cd8e5f74b", "bba4d1ea-27c2-4d0c-a249-c857a3e46d88"], :health_threshold => 1, :inverted => false
+  ttl 456
+  resource_records(
+    "127.0.0.3",
+    "127.0.0.4"
+  )
 end
 ```
 
