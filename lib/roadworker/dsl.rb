@@ -163,6 +163,13 @@ module Roadworker
             config.type += '_STR_MATCH'
           end
 
+          if config[:type] != 'CALCULATED'
+            config[:request_interval]  ||= 30
+            config[:failure_threshold] ||= 3
+            config[:measure_latency]   ||= false
+            config[:inverted]          ||= false
+          end
+
           @result.health_check = config
         end
 

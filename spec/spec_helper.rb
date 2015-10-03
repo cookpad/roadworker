@@ -107,7 +107,12 @@ def routefile(options = {})
 
   begin
     open(tempfile, 'wb') {|f| f.puts(yield) }
-    options = {:logger => Logger.new(debug? ? $stdout : '/dev/null')}.merge(options)
+
+    options = {
+      :logger => Logger.new(debug? ? $stdout : '/dev/null'),
+      :health_check_gc => true
+    }.merge(options)
+
     client = Roadworker::Client.new(options)
     updated = client.apply(tempfile)
     sleep ENV['TEST_DELAY'].to_f

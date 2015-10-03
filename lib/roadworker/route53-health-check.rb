@@ -53,17 +53,22 @@ module Roadworker
 
       def parse_url(url)
         url = URI.parse(url)
+        type = url.scheme.upcase
         path = url.path
 
-        if path.nil? or path.empty? or path == '/'
-          path = '/'
+        if type =~ /\AHTTP/
+          if path.nil? or path.empty?
+            path = '/'
+          end
+        else
+          path = nil
         end
 
         config = Aws::Route53::Types::HealthCheckConfig.new
 
         {
           :port          => url.port,
-          :type          => url.scheme.upcase,
+          :type          => type,
           :resource_path => path,
         }.each {|key, value|
           config[key] = value if value
@@ -108,6 +113,10 @@ module Roadworker
           health_check_id, config = self.find {|hcid, elems| elems == attrs }
 
           unless health_check_id
+            if attrs[:child_health_checks] and attrs[:child_health_checks].empty?
+              attrs[:child_health_checks] = nil
+            end
+
             response = @route53.create_health_check({
               :caller_reference    => UUID.new.generate,
               :health_check_config => attrs,

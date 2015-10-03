@@ -32,7 +32,6 @@ options = {
   :with_soa_ns => false,
   :color       => true,
   :debug       => false,
-  :no_health_check_gc => true,
 }
 
 ARGV.options do |opt|
@@ -50,7 +49,7 @@ ARGV.options do |opt|
     opt.on('-f', '--file FILE')                  {|v| file                         = v             }
     opt.on('',   '--dry-run')                    {    options[:dry_run]            = true          }
     opt.on(''  , '--force')                      {    options[:force]              = true          }
-    opt.on('',   '--health-check-gc')            {    options[:no_health_check_gc] = false         }
+    opt.on('',   '--health-check-gc')            {    options[:health_check_gc]    = true          }
     opt.on('-e', '--export')                     {    mode                         = :export       }
     opt.on('-o', '--output FILE')                {|v| output_file                  = v             }
     opt.on('',   '--split')                      {    split                        = true          }
