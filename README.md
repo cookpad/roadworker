@@ -178,8 +178,8 @@ end
 ### Use template
 
 ```ruby
-template('default_rrset') do
-  rrset context.name + '.' + context.hosted_zone_name, "A" do
+template "default_rrset" do
+  rrset context.name + "." + context.hosted_zone_name, "A" do
     ttl context.ttl
     resource_records(
       "127.0.0.1"
