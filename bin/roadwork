@@ -109,7 +109,7 @@ begin
       client.export do |exported, converter|
         exported[:hosted_zones].each do |zone|
           route_file_basename = zone[:name].sub(/\.\Z/, '')
-          route_file_basename << '.privte' unless zone[:vpcs].empty?
+          route_file_basename << '.private' unless zone[:vpcs].empty?
           route_file_basename << '.route'
 
           route_file = File.join(File.dirname(output_file), route_file_basename)
