@@ -40,6 +40,7 @@ ARGV.options do |opt|
     secret_key = nil
     profile_name = nil
     credentials_path = nil
+    region = 'us-east-1' # refer to http://docs.aws.amazon.com/ja_jp/general/latest/gr/rande.html#r53_region
 
     opt.on('-p', '--profile PROFILE_NAME')       {|v| profile_name                 = v             }
     opt.on(''  , '--credentials-path PATH')      {|v| credentials_path             = v             }
@@ -77,6 +78,7 @@ ARGV.options do |opt|
       puts opt.help
       exit 1
     end
+    aws_opts[:region] = region
     Aws.config.update(aws_opts)
   rescue => e
     $stderr.puts e
