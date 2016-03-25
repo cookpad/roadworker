@@ -266,14 +266,24 @@ EOS
         routefile do
 <<EOS
 hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
+  rrset "winebarrel.jp", "A" do
     ttl 123
+    resource_records(
+      "10.0.0.1",
+      "10.0.0.2",
+    )
+  end
+  rrset "alias.winebarrel.jp", "A" do
+    dns_name "winebarrel.jp."
+  end
+
+  rrset "www.winebarrel.jp", "A" do
+    ttl 456
     resource_records(
       "127.0.0.1",
       "127.0.0.2"
     )
   end
-
   rrset "www2.winebarrel.jp", "A" do
     dns_name "www.winebarrel.jp."
   end
@@ -292,9 +302,22 @@ EOS
         expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
         expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
+        a = rrsets['winebarrel.jp.', 'A']
+        expect(a.name).to eq("winebarrel.jp.")
+        expect(a.ttl).to eq(123)
+        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["10.0.0.1", "10.0.0.2"])
+
+        a = rrsets['alias.winebarrel.jp.', 'A']
+        expect(a.name).to eq("alias.winebarrel.jp.")
+        expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
+          :hosted_zone_id => zone.id.sub(%r!^/hostedzone/!, ''),
+          :dns_name => 'winebarrel.jp.',
+          :evaluate_target_health => false,
+        ))
+
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
-        expect(a.ttl).to eq(123)
+        expect(a.ttl).to eq(456)
         expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
         a = rrsets['www2.winebarrel.jp.', 'A']
