@@ -49,7 +49,7 @@ module Aws
           s3_dns_name_to_alias_target(name, region, s3_hosted_zone_id)
         elsif name =~ /\.cloudfront\.net\Z/i
           cf_dns_name_to_alias_target(name)
-        elsif name =~ /\.#{Regexp.escape(hosted_zone_name)}\Z/i
+        elsif name =~ /#{Regexp.escape(hosted_zone_name)}\Z/i
           this_hz_dns_name_to_alias_target(name, hosted_zone_id)
         else
           raise "Invalid DNS Name: #{name}"
