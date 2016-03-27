@@ -865,8 +865,15 @@ EOS
         }
 
         it {
-          sleep 3
-          check_list = fetch_health_checks(@route53)
+          check_list = nil
+          sleep 10
+
+          60.times do
+            check_list = fetch_health_checks(@route53)
+            break if check_list.length == 2
+            sleep 1
+          end
+
           health_check_ids.concat(check_list.keys)
 
           routefile do
