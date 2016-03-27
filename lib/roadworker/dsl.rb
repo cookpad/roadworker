@@ -51,10 +51,10 @@ module Roadworker
     end
 
     def hosted_zone(name, &block)
-      @result.hosted_zones << HostedZone.new(@context, name, [], &block).result
+      @result.hosted_zones << Hostedzone.new(@context, name, [], &block).result
     end
 
-    class HostedZone
+    class Hostedzone
       include Roadworker::TemplateHelper
 
       attr_reader :result
@@ -94,7 +94,7 @@ module Roadworker
       end
 
       def resource_record_set(rrset_name, type, &block)
-        if rrset_name.sub(/\.\Z/, '') !~ /#{Regexp.escape(@name.sub(/\.\Z/, ''))}\Z/i
+        if rrset_name.sub(/\.\z/, '') !~ /#{Regexp.escape(@name.sub(/\.\Z/, ''))}\Z/i
           raise "Invalid ResourceRecordSet Name: #{rrset_name}"
         end
 
@@ -208,7 +208,7 @@ module Roadworker
 
       end # ResourceRecordSet
 
-    end # HostedZone
+    end # Hostedzone
 
   end # DSL
 end # RoadWorker

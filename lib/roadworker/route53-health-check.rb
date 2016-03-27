@@ -74,7 +74,7 @@ module Roadworker
           config[key] = value if value
         }
 
-        if url.host =~ /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\Z/
+        if url.host =~ /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/
           config.ip_address = url.host
         else
           config.fully_qualified_domain_name = url.host

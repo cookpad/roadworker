@@ -95,8 +95,8 @@ module Roadworker
 
             case type
             when 'NS', 'PTR', 'MX', 'CNAME', 'SRV'
-              expected_value = expected_value.map {|i| i.downcase.sub(/\.\Z/, '') }
-              actual_value = actual_value.map {|i| i.downcase.sub(/\.\Z/, '') }
+              expected_value = expected_value.map {|i| i.downcase.sub(/\.\z/, '') }
+              actual_value = actual_value.map {|i| i.downcase.sub(/\.\z/, '') }
             when 'TXT', 'SPF'
               # see https://github.com/bluemonk/net-dns/blob/651dc1006d9ee0c167fa515e4b9d2494af415ae9/lib/net/dns/rr/txt.rb#L46
               expected_value = expected_value.map {|i| i.scan(/(?:\\\\|(?:\\"|(?:[^\\"]|[^"])))*"((?:\\\\|(?:\\"|(?:\\"|(?:[^\\"]|[^"]))))*)"/).join(' ').gsub(/\\(.)/) { $1 }.strip }
@@ -118,20 +118,20 @@ module Roadworker
 
             if fetch_dns_name(record.dns_name)
               # A(Alias)
-              case fetch_dns_name(record.dns_name).sub(/\.\Z/, '')
+              case fetch_dns_name(record.dns_name).sub(/\.\z/, '')
               when /\.elb\.amazonaws\.com/i
                 is_same = response.answer.all? {|a|
                   response_query_ptr = query(a.value, 'PTR', error_messages)
 
                   if response_query_ptr
                     response_query_ptr.answer.all? do |ptr|
-                      ptr.value =~ /\.compute\.amazonaws\.com\.\Z/
+                      ptr.value =~ /\.compute\.amazonaws\.com\.\z/
                     end
                   else
                     false
                   end
                 }
-              when /\As3-website-(?:[^.]+)\.amazonaws\.com\Z/
+              when /\As3-website-(?:[^.]+)\.amazonaws\.com\z/
                 response_answer_ip_1_2 = response.answer.map {|a| a.value.split('.').slice(0, 2) }.uniq
 
                 # try 3 times
@@ -148,13 +148,13 @@ module Roadworker
                     response_answer_ip_1_2.include?(ip.split('.').slice(0, 2))
                   }
                 end
-              when /\.cloudfront\.net\Z/
+              when /\.cloudfront\.net\z/
                 is_same = response.answer.all? {|a|
                   response_query_ptr = query(a.value, 'PTR', error_messages)
 
                   if response_query_ptr
                     response_query_ptr.answer.all? do |ptr|
-                      ptr.value =~ /\.cloudfront\.net\.\Z/
+                      ptr.value =~ /\.cloudfront\.net\.\z/
                     end
                   end
                 }
@@ -184,9 +184,9 @@ module Roadworker
             if asterisk_answers
               asterisk_answers.each do |ast_key, answers|
                 ast_name = ast_key[0]
-                ast_regex = Regexp.new('\A' + ast_name.sub(/\.\Z/, '').gsub('.', '\.').gsub('*', '.+') + '\Z')
+                ast_regex = Regexp.new('\A' + ast_name.sub(/\.\z/, '').gsub('.', '\.').gsub('*', '.+') + '\Z')
 
-                if ast_regex =~ name.sub(/\.\Z/, '') and actual_value.any? {|i| answers.include?(i) }
+                if ast_regex =~ name.sub(/\.\z/, '') and actual_value.any? {|i| answers.include?(i) }
                   warning_messages << "#{name} #{type}: same as `#{ast_name}`"
                 end
               end
@@ -252,8 +252,8 @@ module Roadworker
       def fix_srv_host(query_name, host)
         if (host || '').strip.empty?
           query_name
-        elsif host =~ /\x1A\Z/
-          host = host.sub(/\x1A\Z/, '')
+        elsif host =~ /\x1A\z/
+          host = host.sub(/\x1A\z/, '')
           query_name = query_name.split('.')
           query_name.slice!(0, host.count('.'))
           host + query_name.join('.')
@@ -295,7 +295,7 @@ module Roadworker
       end
 
       def asterisk_to_anyname(name)
-        rand_str = (("a".."z").to_a + ("A".."Z").to_a + (0..9).to_a).shuffle[0..7].join
+        rand_str = (("a".."z").to_a + ("A".."z").to_a + (0..9).to_a).shuffle[0..7].join
         name.gsub('*', "#{ASTERISK_PREFIX}-#{rand_str}")
       end
 

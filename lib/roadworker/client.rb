@@ -156,7 +156,7 @@ module Roadworker
     end
 
     def normalize_name(name)
-      name.downcase.sub(/\.\Z/, '')
+      name.downcase.sub(/\.\z/, '')
     end
 
   end # Client

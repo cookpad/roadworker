@@ -58,11 +58,11 @@ module Roadworker
             when :dns_name
               if value.kind_of?(Array) and value.length > 1
                 dns_name_opts = value.pop
-                value = value.inspect.sub(/\A\[/, '').sub(/\]\Z/, '')
-                dns_name_opts = dns_name_opts.inspect.sub(/\A\{/, '').sub(/\}\Z/, '')
+                value = value.inspect.sub(/\A\[/, '').sub(/\]\z/, '')
+                dns_name_opts = dns_name_opts.inspect.sub(/\A\{/, '').sub(/\}\z/, '')
                 "#{key} #{value}, #{dns_name_opts}"
               else
-                value = [value].flatten.inspect.sub(/\A\[/, '').sub(/\]\Z/, '')
+                value = [value].flatten.inspect.sub(/\A\[/, '').sub(/\]\z/, '')
                 "#{key} #{value}"
               end
             else
