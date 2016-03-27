@@ -48,6 +48,7 @@ module Roadworker
                 :failure_threshold,
                 :measure_latency,
                 :inverted,
+                :enable_sni,
               ].each do |key|
                 unless config[key].nil?
                   hc_args << ", :#{key} => #{config[key].inspect}"

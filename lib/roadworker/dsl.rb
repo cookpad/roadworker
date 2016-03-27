@@ -179,7 +179,8 @@ module Roadworker
             :health_threshold  => :health_threshold,
             :failure_threshold => :failure_threshold,
             :measure_latency   => :measure_latency,
-            :inverted          => :inverted
+            :inverted          => :inverted,
+            :enable_sni        => :enable_sni,
           }.each do |option_key, config_key|
             config[config_key] = options[option_key] unless options[option_key].nil?
           end

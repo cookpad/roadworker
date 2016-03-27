@@ -44,6 +44,7 @@ module Roadworker
           :failure_threshold,
           :measure_latency,
           :inverted,
+          :enable_sni,
         ].each do |key|
           hash[key] = config[key] unless config[key].nil?
         end
