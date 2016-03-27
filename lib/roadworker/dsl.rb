@@ -194,6 +194,7 @@ module Roadworker
             config[:failure_threshold] ||= 3
             config[:measure_latency]   ||= false
             config[:inverted]          ||= false
+            config[:enable_sni]        ||= false
           end
 
           @result.health_check = config

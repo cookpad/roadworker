@@ -100,6 +100,7 @@ EOS
             :measure_latency => false,
             :inverted => false,
             :child_health_checks => [],
+            :enable_sni => false,
           ))
         }
       end
@@ -203,6 +204,7 @@ EOS
             :measure_latency => false,
             :inverted => false,
             :child_health_checks => [],
+            :enable_sni => false,
           ))
         }
       end
@@ -307,6 +309,7 @@ EOS
             :measure_latency => false,
             :inverted => false,
             :child_health_checks => [],
+            :enable_sni => false,
           ))
         }
       end
