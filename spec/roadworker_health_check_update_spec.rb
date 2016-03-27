@@ -862,12 +862,13 @@ hosted_zone "winebarrel.jp" do
 end
 EOS
           end
-
-          check_list = fetch_health_checks(@route53)
-          health_check_ids.concat(check_list.keys)
         }
 
         it {
+          sleep 3
+          check_list = fetch_health_checks(@route53)
+          health_check_ids.concat(check_list.keys)
+
           routefile do
 <<EOS
 hosted_zone "winebarrel.jp" do
@@ -919,7 +920,7 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(4)
+          expect(check_list.length).to eq(2)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
