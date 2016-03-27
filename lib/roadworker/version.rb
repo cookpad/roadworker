@@ -1,3 +1,3 @@
 module Roadworker
-  VERSION = "0.5.6.beta4"
+  VERSION = "0.5.6.beta5"
 end
