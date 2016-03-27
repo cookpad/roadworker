@@ -296,7 +296,7 @@ EOS
 
         zone = zones[0]
         expect(zone.name).to eq("winebarrel.jp.")
-        expect(zone.resource_record_set_count).to eq(4)
+        expect(zone.resource_record_set_count).to eq(6)
 
         rrsets = fetch_rrsets(@route53, zone.id)
         expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
