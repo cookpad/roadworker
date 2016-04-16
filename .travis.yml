@@ -4,12 +4,11 @@ sudo: false
 rvm:
 - 2.0.0
 script:
-- bundle install
 - bundle exec rake
 env:
   global:
-  - secure: "XK84WmzdaJFUioArq0/we5pUj3OM9wvFQtfMa60RhbcQT8iJsHQygbfPhWfiC6znzCxsD14kjxvIinLNgSvU4gh6uqAWWvdmira/WFgZdXjqe+93/nC7eKdsqpwUiAShdXHE3x3fWgk1JRiJaKt8YN1tYbQZ8zUWDXSku58qxUo="
-  - secure: "RckPdhktD6hM/8/0Pht/c3pv8CsdIdhwrkelpCBOkwTxddughG4iVeTXOhrgGHdL7Qc3vpyDIaomDZhNHl92a0LWB7ZDxPb8w6pf+5l7OsoNUbQun9jQxXzDozy9BHEldq7JxJJQoAB5EYiTM/ADxn0aSrTeQ4O37RFPUL0Xo7A="
+  - TEST_AWS_ACCESS_KEY_ID=AKIAIGY3QFZA5LBYEDJA
+  - TEST_AWS_SECRET_ACCESS_KEY=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
   - TEST_ELB=roadworker-1619064454.ap-northeast-1.elb.amazonaws.com.
   - TEST_CF=dwq5bksfxh5xn.cloudfront.net.
   - TEST_DELAY=0.3
