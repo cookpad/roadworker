@@ -101,6 +101,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -205,6 +206,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -310,6 +312,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end

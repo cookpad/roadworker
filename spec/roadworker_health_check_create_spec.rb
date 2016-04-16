@@ -44,7 +44,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(2)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -65,6 +64,7 @@ EOS
             :inverted => true,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -86,6 +86,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -132,7 +133,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(2)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -153,6 +153,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -174,6 +175,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -220,7 +222,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(2)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -240,6 +241,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -260,6 +262,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -306,7 +309,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(1)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -325,6 +327,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -344,6 +347,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -390,7 +394,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(1)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -408,6 +411,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -426,6 +430,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -472,7 +477,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(1)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -490,6 +494,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -508,6 +513,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -553,7 +559,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(1)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -572,6 +577,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -626,7 +632,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(2)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -646,6 +651,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -664,6 +670,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -696,9 +703,6 @@ EOS
           rrsets = fetch_rrsets(@route53, zone.id)
           expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
-
-          check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(0)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -752,7 +756,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(2)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "w100"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -772,6 +775,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "w50"]
@@ -790,6 +794,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -836,7 +841,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(2)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "jp"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -856,6 +860,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "us"]
@@ -874,6 +879,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
         }
       end
@@ -966,7 +972,6 @@ EOS
           expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
           check_list = fetch_health_checks(@route53)
-          expect(check_list.length).to eq(2)
 
           a1 = rrsets['www.winebarrel.jp.', 'A', "Primary"]
           expect(a1.name).to eq("www.winebarrel.jp.")
@@ -985,6 +990,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -1004,6 +1010,7 @@ EOS
             :inverted => false,
             :child_health_checks => [],
             :enable_sni => false,
+            :regions => [],
           ))
 
           a3 = rrsets['www2.winebarrel.jp.', 'A', "Primary"]
@@ -1023,6 +1030,7 @@ EOS
             :measure_latency => nil,
             :inverted => false,
             :child_health_checks => health_check_ids,
+            :regions => [],
           ))
         }
       end

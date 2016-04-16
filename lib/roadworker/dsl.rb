@@ -181,9 +181,12 @@ module Roadworker
             :measure_latency   => :measure_latency,
             :inverted          => :inverted,
             :enable_sni        => :enable_sni,
+            :regions           => :regions,
           }.each do |option_key, config_key|
             config[config_key] = options[option_key] unless options[option_key].nil?
           end
+
+          config[:regions] ||= []
 
           if config.search_string
             config.type += '_STR_MATCH'
