@@ -252,6 +252,17 @@ module Roadworker
           actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
+          # XXX: Fix for diff
+          if attribute == :health_check and actual
+            if actual[:child_health_checks].empty?
+              actual[:child_health_checks] = []
+            end
+
+            if actual[:regions].empty?
+              actual[:regions] = []
+            end
+          end
+
           if (expected and !actual) or (!expected and actual)
             log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(actual, expected, :color => @options.color, :indent => '    '), false)
             unless @options.dry_run

@@ -210,6 +210,7 @@ EOS
           :inverted => false,
           :child_health_checks => [],
           :enable_sni => false,
+          :regions => [],
         ))
 
         fo_s = rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -230,6 +231,7 @@ EOS
           :inverted => false,
           :child_health_checks => [],
           :enable_sni => false,
+          :regions => [],
         ))
       }
     end
@@ -375,6 +377,7 @@ EOS
           :inverted => false,
           :child_health_checks => [],
           :enable_sni => false,
+          :regions => [],
         ))
 
         fo_s = rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -395,6 +398,7 @@ EOS
           :inverted => false,
           :child_health_checks => [],
           :enable_sni => false,
+          :regions => [],
         ))
       }
     end
@@ -563,6 +567,7 @@ EOS
           :inverted => false,
           :child_health_checks => [],
           :enable_sni => false,
+          :regions => [],
         ))
 
         fo_s = rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -581,6 +586,7 @@ EOS
           :inverted => false,
           :child_health_checks => [],
           :enable_sni => false,
+          :regions => [],
         ))
       }
     end
