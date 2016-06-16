@@ -68,6 +68,13 @@ module Aws
         else
           elb = Aws::ElasticLoadBalancing::Client.new(:region => region)
 
+          if ( name =~ /^dualstack\./ )
+            name = name.sub( /^dualstack\./, '' )
+            pre_elb_name = 'dualstack.'
+          else
+            pre_elb_name = ''
+          end
+
           load_balancer = nil
           elb.describe_load_balancers.each do |page|
             page.load_balancer_descriptions.each do |lb|
@@ -84,7 +91,7 @@ module Aws
 
           {
             :hosted_zone_id         => load_balancer.canonical_hosted_zone_name_id,
-            :dns_name               => load_balancer.dns_name,
+            :dns_name               => pre_elb_name + load_balancer.dns_name,
             :evaluate_target_health => false, # XXX:
           }
         end
