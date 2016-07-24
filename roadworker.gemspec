@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", ">= 3.0.0"
-  spec.add_development_dependency "rspec-instafail"
+  spec.add_development_dependency "rspec-instafail", ">= 0.5.6"
   spec.add_development_dependency "rubydns", "~> 0.8.5"
   spec.add_development_dependency "coveralls"
   spec.add_development_dependency "transpec"
