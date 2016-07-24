@@ -1,5 +1,6 @@
 module Roadworker
   class DSL
+    include Roadworker::TemplateHelper
 
     class << self
       def define(source, path, lineno = 1)
@@ -22,7 +23,17 @@ module Roadworker
     def initialize(path, &block)
       @path = path
       @result = OpenStruct.new({:hosted_zones => []})
+
+      @context = Hashie::Mash.new(
+        :path => path,
+        :templates => {}
+      )
+
       instance_eval(&block)
+    end
+
+    def template(name, &block)
+      @context.templates[name.to_s] = block
     end
 
     private
@@ -40,14 +51,17 @@ module Roadworker
     end
 
     def hosted_zone(name, &block)
-      @result.hosted_zones << HostedZone.new(name, [], &block).result
+      @result.hosted_zones << Hostedzone.new(@context, name, [], &block).result
     end
 
-    class HostedZone
+    class Hostedzone
+      include Roadworker::TemplateHelper
+
       attr_reader :result
 
-      def initialize(name, rrsets = [], &block)
+      def initialize(context, name, rrsets = [], &block)
         @name = name
+        @context = context.merge(:hosted_zone_name => name)
 
         @result = OpenStruct.new({
           :name => name,
@@ -80,18 +94,25 @@ module Roadworker
       end
 
       def resource_record_set(rrset_name, type, &block)
-        if rrset_name.sub(/\.\Z/, '') !~ /#{Regexp.escape(@name.sub(/\.\Z/, ''))}\Z/i
+        if rrset_name.sub(/\.\z/, '') !~ /#{Regexp.escape(@name.sub(/\.\Z/, ''))}\Z/i
           raise "Invalid ResourceRecordSet Name: #{rrset_name}"
         end
 
-        @result.resource_record_sets << ResourceRecordSet.new(rrset_name, type, &block).result
+        @result.resource_record_sets << ResourceRecordSet.new(@context, rrset_name, type, &block).result
       end
       alias rrset resource_record_set
 
       class ResourceRecordSet
+        include Roadworker::TemplateHelper
+
         attr_reader :result
 
-        def initialize(name, type, &block)
+        def initialize(context, name, type, &block)
+          @context = context.merge(
+            :rrset_name => name,
+            :rrset_type => type
+          )
+
           @result = OpenStruct.new({
             :name => name,
             :type => type,
@@ -132,39 +153,52 @@ module Roadworker
           @result.failover = value
         end
 
-        def health_check(url, *options)
-          config = HealthCheck.parse_url(url)
+        def health_check(url, options = {})
+          unless options.kind_of?(Hash)
+            raise TypeError, "wrong argument type #{options.inspect} (expected Hash)"
+          end
 
-          if options.length == 1 and options.first.kind_of?(Hash)
-            options = options.first
-
-            {
-              :host              => :fully_qualified_domain_name,
-              :search_string     => :search_string,
-              :request_interval  => :request_interval,
-              :failure_threshold => :failure_threshold,
-            }.each do |option_key, config_key|
-              config[config_key] = options[option_key] if options[option_key]
+          if url.kind_of?(Hash)
+            if url.include?(:calculated)
+              config = Aws::Route53::Types::HealthCheckConfig.new
+              config[:type] = 'CALCULATED'
+              config[:child_health_checks] = url.delete(:calculated)
+              options = url
+            else
+              raise ArgumentError, "wrong arguments: #{url.inspect}"
             end
           else
-            options.each_with_index do |value, i|
-              key = [
-                :fully_qualified_domain_name,
-                :search_string,
-                :request_interval,
-                :failure_threshold,
-              ][i]
-
-              config[key] = value
-            end
+            config = HealthCheck.parse_url(url)
+            config[:child_health_checks] = []
           end
+
+          {
+            :host              => :fully_qualified_domain_name,
+            :search_string     => :search_string,
+            :request_interval  => :request_interval,
+            :health_threshold  => :health_threshold,
+            :failure_threshold => :failure_threshold,
+            :measure_latency   => :measure_latency,
+            :inverted          => :inverted,
+            :enable_sni        => :enable_sni,
+            :regions           => :regions,
+          }.each do |option_key, config_key|
+            config[config_key] = options[option_key] unless options[option_key].nil?
+          end
+
+          config[:regions] ||= []
 
           if config.search_string
             config.type += '_STR_MATCH'
           end
 
-          config.request_interval  ||= 30
-          config.failure_threshold ||= 3
+          if config[:type] != 'CALCULATED'
+            config[:request_interval]  ||= 30
+            config[:failure_threshold] ||= 3
+            config[:measure_latency]   ||= false
+            config[:inverted]          ||= false
+            config[:enable_sni]        ||= false
+          end
 
           @result.health_check = config
         end
@@ -179,7 +213,7 @@ module Roadworker
 
       end # ResourceRecordSet
 
-    end # HostedZone
+    end # Hostedzone
 
   end # DSL
 end # RoadWorker

@@ -11,41 +11,57 @@ module Roadworker
       end
 
       def config_to_hash(config)
-        ipaddr = config[:ip_address]
-        port   = config[:port]
-        type   = config[:type].downcase
-        path   = config[:resource_path]
-        fqdn   = config[:fully_qualified_domain_name]
-        fqdn   = fqdn.downcase if fqdn
-        search_string     = config[:search_string]
-        request_interval  = config[:request_interval]
-        failure_threshold = config[:failure_threshold]
+        type = config[:type].downcase
 
-        ulr = nil
-
-        if ipaddr
-          url = "#{type}://#{ipaddr}:#{port}"
+        if type == 'calculated'
+          hash = {:calculated => config[:child_health_checks]}
         else
-          url = "#{type}://#{fqdn}:#{port}"
-          fqdn = nil
+          ipaddr = config[:ip_address]
+          port   = config[:port]
+          path   = config[:resource_path]
+          fqdn   = config[:fully_qualified_domain_name]
+          fqdn   = fqdn.downcase if fqdn
+
+          if ipaddr
+            url = "#{type}://#{ipaddr}:#{port}"
+          else
+            url = "#{type}://#{fqdn}:#{port}"
+            fqdn = nil
+          end
+
+          url << path if path && path != '/'
+
+          hash = {
+            :url  => url,
+            :host => fqdn,
+          }
         end
 
-        url << path if path && path != '/'
+        [
+          :search_string,
+          :request_interval,
+          :health_threshold,
+          :failure_threshold,
+          :measure_latency,
+          :inverted,
+          :enable_sni,
+        ].each do |key|
+          hash[key] = config[key] unless config[key].nil?
+        end
 
-        {
-          :url               => url,
-          :host              => fqdn,
-          :search_string     => search_string,
-          :request_interval  => request_interval,
-          :failure_threshold => failure_threshold,
-        }
+        hash
       end
 
       def parse_url(url)
         url = URI.parse(url)
+        type = url.scheme.upcase
         path = url.path
 
-        if path.nil? or path.empty? or path == '/'
+        if type =~ /\AHTTP/
+          if path.nil? or path.empty?
+            path = '/'
+          end
+        else
           path = nil
         end
 
@@ -53,13 +69,13 @@ module Roadworker
 
         {
           :port          => url.port,
-          :type          => url.scheme.upcase,
+          :type          => type,
           :resource_path => path,
         }.each {|key, value|
           config[key] = value if value
         }
 
-        if url.host =~ /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\Z/
+        if url.host =~ /\A\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\z/
           config.ip_address = url.host
         else
           config.fully_qualified_domain_name = url.host
@@ -98,8 +114,16 @@ module Roadworker
           health_check_id, config = self.find {|hcid, elems| elems == attrs }
 
           unless health_check_id
+            if attrs[:child_health_checks] and attrs[:child_health_checks].empty?
+              attrs[:child_health_checks] = nil
+            end
+
+            if attrs[:regions] and attrs[:regions].empty?
+              attrs[:regions] = nil
+            end
+
             response = @route53.create_health_check({
-              :caller_reference    => UUID.new.generate,
+              :caller_reference    => "roadworker #{Roadworker::VERSION} #{UUID.new.generate}",
               :health_check_config => attrs,
             })
 
@@ -120,16 +144,22 @@ module Roadworker
       return if check_list.empty?
 
       if (logger = options[:logger])
-        logger.info('Clean HealthChecks (pass `--no-health-check-gc` if you do not want to clean)')
+        logger.info('Clean HealthChecks')
       end
 
       Collection.batch(@route53.list_hosted_zones, :hosted_zones) do |zone|
         Collection.batch(@route53.list_resource_record_sets(hosted_zone_id: zone.id), :resource_record_sets) do |record|
-          check_list.delete(record.health_check_id)
+          health_check = check_list.delete(record.health_check_id)
+
+          if health_check and health_check.type == 'CALCULATED'
+            health_check.child_health_checks.each do |child|
+              check_list.delete(child)
+            end
+          end
         end
       end
 
-      check_list.each do |health_check_id, config|
+      check_list.sort_by {|hc_id, hc| hc.type == 'CALCULATED' ? 0 : 1 }.each do |health_check_id, config|
         @route53.delete_health_check(:health_check_id  => health_check_id)
       end
     end

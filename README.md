@@ -16,6 +16,11 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
   * **Disable Divided HostedZone**
   * **Use aws-sdk v2** [PR#20](https://github.com/winebarrel/roadworker/pull/20)
   * Support Cross Account ELB Alias [PR#21](https://github.com/winebarrel/roadworker/pull/21)
+* `>= 0.5.6`
+  * Disable HealthCheck GC (pass `--health-check-gc` option if enable)
+  * Support Calculated Health Checks
+  * Support New Health Check attributes
+  * Add template feature
 
 ## Installation
 
@@ -54,7 +59,7 @@ Usage: roadwork [options]
     -f, --file FILE
         --dry-run
         --force
-        --no-health-check-gc
+        --health-check-gc
     -e, --export
     -o, --output FILE
         --split
@@ -140,6 +145,21 @@ hosted_zone "winebarrel.local." do
 end
 ```
 
+### Calculated Health Checks
+
+```ruby
+rrset "zzz.info.winebarrel.jp", "A" do
+  set_identifier "Secondary"
+  failover "SECONDARY"
+  health_check :calculated => ["07c03a45-5b69-4044-9ec3-016cd8e5f74b", "bba4d1ea-27c2-4d0c-a249-c857a3e46d88"], :health_threshold => 1, :inverted => false
+  ttl 456
+  resource_records(
+    "127.0.0.3",
+    "127.0.0.4"
+  )
+end
+```
+
 ### Dynamic private DNS example
 
 ```ruby
@@ -152,6 +172,25 @@ hosted_zone "us-east-1.my.local." do
       resource_records instance.private_ip_address
     end
   }
+end
+```
+
+### Use template
+
+```ruby
+template "default_rrset" do
+  rrset context.name + "." + context.hosted_zone_name, "A" do
+    ttl context.ttl
+    resource_records(
+      "127.0.0.1"
+    )
+  end
+end
+
+hosted_zone "winebarrel.jp." do
+  context.ttl = 100
+  include_template "default_rrset", :name => "www"
+  include_template "default_rrset", :name => "www2"
 end
 ```
 

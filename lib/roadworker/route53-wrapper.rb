@@ -24,10 +24,10 @@ module Roadworker
     end
 
     def hosted_zones
-      HostedZoneCollectionWrapper.new(@options.route53.list_hosted_zones, @options)
+      HostedzoneCollectionWrapper.new(@options.route53.list_hosted_zones, @options)
     end
 
-    class HostedZoneCollectionWrapper
+    class HostedzoneCollectionWrapper
       include Roadworker::Log
 
       def initialize(hosted_zones_response, options)
@@ -38,7 +38,7 @@ module Roadworker
       def each
         Collection.batch(@hosted_zones_response, :hosted_zones) do |zone|
           resp = @options.route53.get_hosted_zone(id: zone.id)
-          yield(HostedZoneWrapper.new(resp.hosted_zone, resp.vp_cs, @options))
+          yield(HostedzoneWrapper.new(resp.hosted_zone, resp.vp_cs, @options))
         end
       end
 
@@ -50,7 +50,7 @@ module Roadworker
           opts.delete(:vpc)
         end
 
-        logmsg = 'Create HostedZone'
+        logmsg = 'Create Hostedzone'
         logmsg << " #{vpc.inspect}"
         log(:info, logmsg, :cyan, name)
 
@@ -59,8 +59,8 @@ module Roadworker
           zone = OpenStruct.new({:name => name, :rrsets => [], :vpcs => vpcs}.merge(opts))
         else
           params = {
-            name: name,
-            caller_reference: "CreateHostedZone by roadworker #{Roadworker::VERSION}, #{name}, #{Time.now.httpdate}",
+            :name => name,
+            :caller_reference => "roadworker #{Roadworker::VERSION} #{UUID.new.generate}",
           }
           if vpc
             params[:vpc] = vpc
@@ -70,11 +70,11 @@ module Roadworker
           @options.updated = true
         end
 
-        HostedZoneWrapper.new(zone, vpcs, @options)
+        HostedzoneWrapper.new(zone, vpcs, @options)
       end
-    end # HostedZoneCollection
+    end # HostedzoneCollection
 
-    class HostedZoneWrapper
+    class HostedzoneWrapper
       include Roadworker::Log
 
       def initialize(hosted_zone, vpcs, options)
@@ -92,7 +92,7 @@ module Roadworker
 
       def delete
         if @options.force
-          log(:info, 'Delete HostedZone', :red, @hosted_zone.name)
+          log(:info, 'Delete Hostedzone', :red, @hosted_zone.name)
 
           self.rrsets.each do |record|
             record.delete
@@ -103,7 +103,7 @@ module Roadworker
             @options.updated = true
           end
         else
-          log(:info, 'Undefined HostedZone (pass `--force` if you want to remove)', :yellow, @hosted_zone.name)
+          log(:info, 'Undefined Hostedzone (pass `--force` if you want to remove)', :yellow, @hosted_zone.name)
         end
       end
 
@@ -132,7 +132,7 @@ module Roadworker
       def method_missing(method_name, *args)
         @hosted_zone.send(method_name, *args)
       end
-    end # HostedZoneWrapper
+    end # HostedzoneWrapper
 
     class ResourceRecordSetCollectionWrapper
       include Roadworker::Log
@@ -223,8 +223,18 @@ module Roadworker
           elsif expected and actual
             case attribute
             when :dns_name
-              expected[0] = expected[0].downcase.sub(/\.\Z/, '')
-              actual[0] = actual[0].downcase.sub(/\.\Z/, '')
+              expected[0] = expected[0].downcase.sub(/\.\z/, '')
+              actual[0] = actual[0].downcase.sub(/\.\z/, '')
+
+              if actual[0] =~ /\Adualstack\./i
+                log(:warn, "`dualstack` prefix is used in the actual DNS name", :yellow) do
+                  log_id = [self.name, self.type].join(' ')
+                  rrset_setid = self.set_identifier
+                  rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
+                end
+
+                actual[0].sub!(/\Adualstack\./i, '')
+              end
             end
 
             (expected == actual)
@@ -251,6 +261,17 @@ module Roadworker
           actual = self.send(attribute)
           actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
+
+          # XXX: Fix for diff
+          if attribute == :health_check and actual
+            if actual[:child_health_checks].empty?
+              actual[:child_health_checks] = []
+            end
+
+            if actual[:regions].empty?
+              actual[:regions] = []
+            end
+          end
 
           if (expected and !actual) or (!expected and actual)
             log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(actual, expected, :color => @options.color, :indent => '    '), false)
@@ -288,9 +309,9 @@ module Roadworker
       end
 
       def delete
-        if self.type =~ /\A(SOA|NS)\Z/i
-          hz_name = (@hosted_zone.name || @options.hosted_zone_name).downcase.sub(/\.\Z/, '')
-          rrs_name = @resource_record_set.name.downcase.sub(/\.\Z/, '')
+        if self.type =~ /\A(SOA|NS)\z/i
+          hz_name = (@hosted_zone.name || @options.hosted_zone_name).downcase.sub(/\.\z/, '')
+          rrs_name = @resource_record_set.name.downcase.sub(/\.\z/, '')
           return if hz_name == rrs_name
         end
 

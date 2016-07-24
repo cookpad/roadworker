@@ -234,8 +234,8 @@ EOS
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => TEST_ELB,
+          :hosted_zone_id => "Z14GRHDCWA56QT",
+          :dns_name => "dualstack." + TEST_ELB,
           :evaluate_target_health => true,
         ))
       }
@@ -279,8 +279,8 @@ EOS
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => TEST_ELB,
+          :hosted_zone_id => "Z14GRHDCWA56QT",
+          :dns_name => "dualstack." + TEST_ELB,
           :evaluate_target_health => false,
         ))
       }
@@ -328,8 +328,8 @@ EOS
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => TEST_ELB,
+          :hosted_zone_id => "Z14GRHDCWA56QT",
+          :dns_name => "dualstack." + TEST_ELB,
           :evaluate_target_health => false,
         ))
       }

@@ -40,6 +40,7 @@ ARGV.options do |opt|
     secret_key = nil
     profile_name = nil
     credentials_path = nil
+    region = 'us-east-1' # refer to http://docs.aws.amazon.com/ja_jp/general/latest/gr/rande.html#r53_region
 
     opt.on('-p', '--profile PROFILE_NAME')       {|v| profile_name                 = v             }
     opt.on(''  , '--credentials-path PATH')      {|v| credentials_path             = v             }
@@ -49,7 +50,7 @@ ARGV.options do |opt|
     opt.on('-f', '--file FILE')                  {|v| file                         = v             }
     opt.on('',   '--dry-run')                    {    options[:dry_run]            = true          }
     opt.on(''  , '--force')                      {    options[:force]              = true          }
-    opt.on('',   '--no-health-check-gc')         {    options[:no_health_check_gc] = true          }
+    opt.on('',   '--health-check-gc')            {    options[:health_check_gc]    = true          }
     opt.on('-e', '--export')                     {    mode                         = :export       }
     opt.on('-o', '--output FILE')                {|v| output_file                  = v             }
     opt.on('',   '--split')                      {    split                        = true          }
@@ -72,11 +73,12 @@ ARGV.options do |opt|
       credentials_opts[:profile_name] = profile_name if profile_name
       credentials_opts[:path] = credentials_path if credentials_path
       provider = Aws::SharedCredentials.new(credentials_opts)
-      aws_opts[:credential_provider] = provider
+      aws_opts[:credentials] = provider
     elsif (access_key and !secret_key) or (!access_key and secret_key) or mode.nil?
       puts opt.help
       exit 1
     end
+    aws_opts[:region] = region
     Aws.config.update(aws_opts)
   rescue => e
     $stderr.puts e
@@ -109,7 +111,8 @@ begin
       client.export do |exported, converter|
         exported[:hosted_zones].each do |zone|
           route_file_basename = zone[:name].sub(/\.\Z/, '')
-          route_file_basename << '.privte' unless zone[:vpcs].empty?
+          route_file_basename << ".private" unless zone[:vpcs].empty?
+          route_file_basename << ".#{zone[:vpcs].first.vpc_id}" unless zone[:vpcs].empty?
           route_file_basename << '.route'
 
           route_file = File.join(File.dirname(output_file), route_file_basename)

@@ -1,14 +1,14 @@
 language: ruby
+cache: bundler
 sudo: false
 rvm:
 - 2.0.0
 script:
-- bundle install
 - bundle exec rake
 env:
   global:
-  - secure: "NZe0Hund5w1yLOjGUKtAEGuU65VXcc7uwxXbT2P7pNL3gVXsdlVMZq7ae9jaQsH/x/q50oI+LVj6ZsLoSNDDxgPhPc1TPNxPO3U52CAbiZtWV2CeZ0DG07Hlrkoggi6djsMCWzjLMiMrXuOf0ODAxLl0Ie05fVUPL31/X4Cl/BE="
-  - secure: "M/zotCs/+c5wHpN+T5cxOC/FAZHpWbdOMoP/N4x68l6CN+Lr2mpElYZH9C+UDIaLAcZFdxCcCfmFVwfs6eR+BOpKtvm0EfRs2wmnYcfxqwTLqMBD0Z557uxbucGNYX7UBdvcHBTqd6XfpdkeohALbUITyf7LouEbJWX/erWoEjA="
+  - TEST_AWS_ACCESS_KEY_ID=AKIAJ32JRYUBWLN62FOA
+  - TEST_AWS_SECRET_ACCESS_KEY=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
   - TEST_ELB=roadworker-1619064454.ap-northeast-1.elb.amazonaws.com.
   - TEST_CF=dwq5bksfxh5xn.cloudfront.net.
   - TEST_DELAY=0.3

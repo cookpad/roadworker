@@ -58,7 +58,7 @@ hosted_zone "winebarrel.jp" do
     set_identifier "Secondary"
     failover "SECONDARY"
     ttl 456
-    health_check "http://192.0.43.10:80/path", 'example.com'
+    health_check "http://192.0.43.10:80/path", :host => 'example.com'
     resource_records(
       "127.0.0.7",
       "127.0.0.8"
@@ -128,7 +128,7 @@ hosted_zone "winebarrel.jp" do
     set_identifier "Secondary"
     failover "SECONDARY"
     ttl 456
-    health_check "http://192.0.43.10:80/path", 'example.com'
+    health_check "http://192.0.43.10:80/path", :host => 'example.com'
     resource_records(
       "127.0.0.7",
       "127.0.0.8"
@@ -172,8 +172,8 @@ EOS
         a_alias = rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
         expect(a_alias.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => TEST_ELB,
+          :hosted_zone_id => "Z14GRHDCWA56QT",
+          :dns_name => "dualstack." + TEST_ELB,
           :evaluate_target_health => false,
         ))
 
@@ -206,6 +206,11 @@ EOS
           :type => 'TCP',
           :request_interval => 30,
           :failure_threshold => 3,
+          :measure_latency => false,
+          :inverted => false,
+          :child_health_checks => [],
+          :enable_sni => false,
+          :regions => [],
         ))
 
         fo_s = rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -222,6 +227,11 @@ EOS
           :fully_qualified_domain_name => 'example.com',
           :request_interval => 30,
           :failure_threshold => 3,
+          :measure_latency => false,
+          :inverted => false,
+          :child_health_checks => [],
+          :enable_sni => false,
+          :regions => [],
         ))
       }
     end
@@ -329,8 +339,8 @@ EOS
         a_alias = rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
         expect(a_alias.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => TEST_ELB,
+          :hosted_zone_id => "Z14GRHDCWA56QT",
+          :dns_name => "dualstack." + TEST_ELB,
           :evaluate_target_health => false,
         ))
 
@@ -363,6 +373,11 @@ EOS
           :type => 'TCP',
           :request_interval => 30,
           :failure_threshold => 3,
+          :measure_latency => false,
+          :inverted => false,
+          :child_health_checks => [],
+          :enable_sni => false,
+          :regions => [],
         ))
 
         fo_s = rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -379,6 +394,11 @@ EOS
           :fully_qualified_domain_name => 'example.com',
           :request_interval => 30,
           :failure_threshold => 3,
+          :measure_latency => false,
+          :inverted => false,
+          :child_health_checks => [],
+          :enable_sni => false,
+          :regions => [],
         ))
       }
     end
@@ -424,7 +444,7 @@ hosted_zone "winebarrel.jp" do
   rrset "fo.winebarrel.jp", "A" do
     set_identifier "Primary"
     failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path", 'example.com'
+    health_check "http://192.0.43.10:80/path", :host => 'example.com'
     ttl 456
     resource_records(
       "127.0.0.1",
@@ -500,8 +520,8 @@ EOS
         a_alias = rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
         expect(a_alias.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => TEST_ELB,
+          :hosted_zone_id => "Z14GRHDCWA56QT",
+          :dns_name => "dualstack." + TEST_ELB,
           :evaluate_target_health => false,
         ))
 
@@ -543,6 +563,11 @@ EOS
           :fully_qualified_domain_name => 'example.com',
           :request_interval => 30,
           :failure_threshold => 3,
+          :measure_latency => false,
+          :inverted => false,
+          :child_health_checks => [],
+          :enable_sni => false,
+          :regions => [],
         ))
 
         fo_s = rrsets['fo.winebarrel.jp.', 'A', "Secondary"]
@@ -557,6 +582,11 @@ EOS
           :type => 'TCP',
           :request_interval => 30,
           :failure_threshold => 3,
+          :measure_latency => false,
+          :inverted => false,
+          :child_health_checks => [],
+          :enable_sni => false,
+          :regions => [],
         ))
       }
     end
@@ -643,8 +673,8 @@ EOS
         a_alias = rrsets['elb.winebarrel.jp.', 'A']
         expect(a_alias.name).to eq("elb.winebarrel.jp.")
         expect(a_alias.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2YN17T5R711GT",
-          :dns_name => TEST_ELB,
+          :hosted_zone_id => "Z14GRHDCWA56QT",
+          :dns_name => "dualstack." + TEST_ELB,
           :evaluate_target_health => false,
         ))
 

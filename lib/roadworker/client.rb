@@ -24,7 +24,7 @@ module Roadworker
         updated = @options.updated
       end
 
-      if updated and not @options.no_health_check_gc
+      if updated and @options.health_check_gc
         HealthCheck.gc(@options.route53, :logger => @options.logger)
       end
 
@@ -156,7 +156,7 @@ module Roadworker
     end
 
     def normalize_name(name)
-      name.downcase.sub(/\.\Z/, '')
+      name.downcase.sub(/\.\z/, '')
     end
 
   end # Client

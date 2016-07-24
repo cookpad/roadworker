@@ -107,7 +107,12 @@ def routefile(options = {})
 
   begin
     open(tempfile, 'wb') {|f| f.puts(yield) }
-    options = {:logger => Logger.new(debug? ? $stdout : '/dev/null')}.merge(options)
+
+    options = {
+      :logger => Logger.new(debug? ? $stdout : '/dev/null'),
+      :health_check_gc => true
+    }.merge(options)
+
     client = Roadworker::Client.new(options)
     updated = client.apply(tempfile)
     sleep ENV['TEST_DELAY'].to_f
@@ -199,5 +204,9 @@ def cleanup_route53
       r53.change_resource_record_sets(hosted_zone_id: hz.id, change_batch: { changes: changes })
     end
     r53.delete_hosted_zone(id: hz.id)
+
+    r53.list_health_checks.flat_map(&:health_checks).map(&:id).each do |health_check_id|
+      r53.delete_health_check(health_check_id: health_check_id)
+    end
   end
 end
