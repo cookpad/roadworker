@@ -105,26 +105,7 @@ module Aws
           end
 
           unless hosted_zone_id
-            elb = Aws::ElasticLoadBalancing::Client.new(:region => region)
-
-            load_balancer = nil
-            name_without_dualstack = name.sub(/\Adualstack\./i, '')
-
-            elb.describe_load_balancers.each do |page|
-              page.load_balancer_descriptions.each do |lb|
-                if lb.dns_name == name_without_dualstack
-                  load_balancer = lb
-                end
-              end
-              break if load_balancer
-            end
-
-            unless load_balancer
-              raise "Cannot find CanonicalHostedZoneNameID for `#{name}`. Please pass :hosted_zone_id"
-            end
-
-            hosted_zone_id = load_balancer.canonical_hosted_zone_name_id
-            name = load_balancer.dns_name
+            raise "Cannot find CanonicalHostedZoneNameID for `#{name}`. Please pass :hosted_zone_id"
           end
 
           {
