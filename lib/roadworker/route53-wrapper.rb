@@ -226,7 +226,7 @@ module Roadworker
               expected[0] = expected[0].downcase.sub(/\.\z/, '')
               actual[0] = actual[0].downcase.sub(/\.\z/, '')
 
-              if actual[0] =~ /\Adualstack\./i
+              if expected[0] !~ /\Adualstack\./i and actual[0] =~ /\Adualstack\./i
                 log(:warn, "`dualstack` prefix is used in the actual DNS name", :yellow) do
                   log_id = [self.name, self.type].join(' ')
                   rrset_setid = self.set_identifier
