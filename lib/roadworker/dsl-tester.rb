@@ -16,6 +16,9 @@ proc {
     $VERBOSE = nil
     Socket::AF_INET6 = Socket::AF_INET
     $VERBOSE = verbose
+  rescue Errno::EPERM
+    # XXX: nothing to do
+    # https://github.com/winebarrel/roadworker/issues/35
   end
 }.call
 
