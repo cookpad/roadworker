@@ -21,6 +21,9 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
   * Support Calculated Health Checks
   * Support New Health Check attributes
   * Add template feature
+* `>= 0.5.7`
+  * Fix for `dualstack` prefix
+  * Use constant for CanonicalHostedZoneNameID
 
 ## Installation
 
