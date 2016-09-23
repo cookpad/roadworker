@@ -298,7 +298,7 @@ module Roadworker
       end
 
       def asterisk_to_anyname(name)
-        rand_str = (("a".."z").to_a + ("A".."z").to_a + (0..9).to_a).shuffle[0..7].join
+        rand_str = (("a".."z").to_a + ("A".."Z").to_a + (0..9).to_a).shuffle[0..7].join
         name.gsub('*', "#{ASTERISK_PREFIX}-#{rand_str}")
       end
 
