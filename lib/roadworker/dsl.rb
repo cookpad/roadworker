@@ -68,6 +68,7 @@ module Roadworker
           :vpcs => [],
           :resource_record_sets => rrsets,
           :rrsets => rrsets,
+          :ignore_patterns => [],
         })
 
         instance_eval(&block)
@@ -91,6 +92,19 @@ module Roadworker
         end
 
         @result.vpcs << vpc_h
+      end
+
+      def ignore(rrset_name)
+        @result.ignore_patterns << case rrset_name
+        when Regexp
+          rrset_name
+        else 
+          rrset_name.to_s.sub(/\.\z/, '')
+        end
+      end
+
+      def ignore_under(rrset_name)
+        ignore /(\A|\.)#{Regexp.escape(rrset_name.to_s.sub(/\.\z/, ''))}\z/
       end
 
       def resource_record_set(rrset_name, type, &block)

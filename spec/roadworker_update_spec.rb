@@ -1163,5 +1163,86 @@ EOS
         expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
       }
     end
+
+    context 'ignored record' do
+      before {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "ignore.winebarrel.jp", "A" do
+    ttl 60
+    resource_records(
+      "127.0.0.1",
+    )
+  end
+
+  rrset "test.ignore.winebarrel.jp", "A" do
+    ttl 60
+    resource_records(
+      "127.0.0.1",
+    )
+  end
+
+  rrset "not-ignore.winebarrel.jp", "A" do
+    ttl 60
+    resource_records(
+      "127.0.0.1",
+    )
+  end
+end
+EOS
+        end
+      }
+
+      it {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  ignore_under "ignore.winebarrel.jp"
+
+  rrset "ignore.winebarrel.jp", "A" do
+    ttl 60
+    resource_records(
+      "127.0.0.2",
+    )
+  end
+
+  rrset "test.ignore.winebarrel.jp", "A" do
+    ttl 60
+    resource_records(
+      "127.0.0.2",
+    )
+  end
+
+  rrset "not-ignore.winebarrel.jp", "A" do
+    ttl 60
+    resource_records(
+      "127.0.0.2",
+    )
+  end
+end
+EOS
+        end
+
+        zones = fetch_hosted_zones(@route53)
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(5)
+
+        rrsets = fetch_rrsets(@route53, zone.id)
+
+        a = rrsets['ignore.winebarrel.jp.', 'A']
+        expect(rrs_list(a.resource_records)).to eq(["127.0.0.1"])
+
+        b = rrsets['test.ignore.winebarrel.jp.', 'A']
+        expect(rrs_list(b.resource_records)).to eq(["127.0.0.1"])
+
+        c = rrsets['not-ignore.winebarrel.jp.', 'A']
+        expect(rrs_list(c.resource_records)).to eq(["127.0.0.2"])
+      }
+    end
+
   end
 end
