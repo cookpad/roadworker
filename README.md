@@ -197,6 +197,20 @@ hosted_zone "winebarrel.jp." do
 end
 ```
 
+### Exclude specific records from management under Roadworker
+
+Use this if your zone contains rrsets managed by other tools, and you want to ignore them in Roadworker.
+
+```ruby
+hosted_zone "winebarrel.jp." do
+  ignore "ignore.winebarrel.jp"
+  ignore /^regexp-ignore/
+
+  # *.ignore2.winebarrel.jp and ignore2.winebarrel.jp
+  ignore_under "ignore2.winebarrel.jp"
+end
+```
+
 ## Test
 
 Routefile compares the results of a query to the DNS and DSL in the test mode.
