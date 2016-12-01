@@ -67,9 +67,12 @@ module Roadworker
                 "#{key} #{value}"
               end
             else
-              inspected_value = value.inspect
-              inspected_value.sub!(/\A{/, '').sub!(/}\z/, '') if value.kind_of?(Hash)
-              "#{key} #{inspected_value}"
+              if value.kind_of?(Aws::Route53::Types::GeoLocation)
+                replaced_value = value.to_h.to_s.sub!(/\A{/, '').sub!(/}\z/, '')
+                "#{key} #{replaced_value}"
+              else
+                "#{key} #{value.inspect}"
+              end
             end
           }.select {|i| i }.join("\n    ")
 
