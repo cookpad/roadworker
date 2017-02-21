@@ -122,6 +122,13 @@ module Roadworker
           actual_record = actual.delete([name, actual_type, set_identifier])
         end
 
+        if expected_zone.ignore_patterns.any? { |pattern| pattern === name }
+          log(:warn, "Ignoring defined record in DSL, because it is ignored record", :yellow) do
+            "#{name} #{type}" + (set_identifier ? " (#{set_identifier})" : '')
+          end
+          next
+        end
+
         if actual_record
           unless actual_record.eql?(expected_record)
             actual_record.update(expected_record)
@@ -132,6 +139,11 @@ module Roadworker
       end
 
       actual.each do |keys, record|
+        name = keys[0]
+        if expected_zone.ignore_patterns.any? { |pattern| pattern === name }
+          next
+        end
+        
         record.delete
       end
     end
