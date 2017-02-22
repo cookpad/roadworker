@@ -13,8 +13,11 @@ module Roadworker
       def config_to_hash(config)
         type = config[:type].downcase
 
-        if type == 'calculated'
+        case type
+        when 'calculated'
           hash = {:calculated => config[:child_health_checks]}
+        when 'cloudwatch_metric'
+          hash = {:cloudwatch_metric => config[:alarm_identifier].to_h}
         else
           ipaddr = config[:ip_address]
           port   = config[:port]
@@ -45,6 +48,7 @@ module Roadworker
           :measure_latency,
           :inverted,
           :enable_sni,
+          :insufficient_data_health_status,
         ].each do |key|
           hash[key] = config[key] unless config[key].nil?
         end
