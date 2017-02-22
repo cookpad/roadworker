@@ -24,6 +24,8 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 * `>= 0.5.7`
   * Fix for `dualstack` prefix
   * Use constant for CanonicalHostedZoneNameID
+* `>= 0.5.8`
+  * Support CloudWatch Metrics Health Check
 
 ## Installation
 
