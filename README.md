@@ -163,6 +163,21 @@ rrset "zzz.info.winebarrel.jp", "A" do
 end
 ```
 
+### Cloudwatch Metric Health Checks
+
+```ruby
+rrset "zzz.info.winebarrel.jp", "A" do
+  set_identifier "Secondary"
+  failover "SECONDARY"
+  health_check :cloudwatch_metric => {:region=>"ap-northeast-1", :name=>"MyCheck"}, :inverted => false, :insufficient_data_health_status => "LastKnownStatus"
+  ttl 456
+  resource_records(
+    "127.0.0.3",
+    "127.0.0.4"
+  )
+end
+```
+
 ### Dynamic private DNS example
 
 ```ruby

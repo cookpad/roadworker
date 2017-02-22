@@ -36,6 +36,8 @@ module Roadworker
 
               if config[:calculated]
                 hc_args = ":calculated => #{config[:calculated].inspect}"
+              elsif config[:cloudwatch_metric]
+                hc_args = ":cloudwatch_metric => #{config[:cloudwatch_metric].inspect}"
               else
                 hc_args = config[:url].sub(/\A(https?)_str_match:/) { $1 + ':' }.inspect
               end
@@ -49,6 +51,7 @@ module Roadworker
                 :measure_latency,
                 :inverted,
                 :enable_sni,
+                :insufficient_data_health_status,
               ].each do |key|
                 unless config[key].nil?
                   hc_args << ", :#{key} => #{config[key].inspect}"

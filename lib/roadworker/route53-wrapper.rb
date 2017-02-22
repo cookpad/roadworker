@@ -222,6 +222,10 @@ module Roadworker
             true
           elsif expected and actual
             case attribute
+            when :health_check
+              if actual[:alarm_identifier]
+                actual[:alarm_identifier] = actual[:alarm_identifier].to_h
+              end
             when :dns_name
               expected[0] = expected[0].downcase.sub(/\.\z/, '')
               actual[0] = actual[0].downcase.sub(/\.\z/, '')
@@ -264,11 +268,11 @@ module Roadworker
 
           # XXX: Fix for diff
           if attribute == :health_check and actual
-            if actual[:child_health_checks].empty?
+            if (actual[:child_health_checks] || []).empty?
               actual[:child_health_checks] = []
             end
 
-            if actual[:regions].empty?
+            if (actual[:regions] || []).empty?
               actual[:regions] = []
             end
           end
