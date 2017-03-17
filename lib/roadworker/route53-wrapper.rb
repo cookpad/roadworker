@@ -217,6 +217,7 @@ module Roadworker
           actual = self.public_send(attribute)
           actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
+          actual = actual.to_h if actual.kind_of?(Struct)
 
           if !expected and !actual
             true
@@ -265,6 +266,7 @@ module Roadworker
           actual = self.send(attribute)
           actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
+          actual = actual.to_h if actual.kind_of?(Struct)
 
           # XXX: Fix for diff
           if attribute == :health_check and actual
