@@ -24,6 +24,8 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 * `>= 0.5.7`
   * Fix for `dualstack` prefix
   * Use constant for CanonicalHostedZoneNameID
+* `>= 0.5.9`
+  * Support CloudWatch Metrics Health Check
 
 ## Installation
 
@@ -155,6 +157,21 @@ rrset "zzz.info.winebarrel.jp", "A" do
   set_identifier "Secondary"
   failover "SECONDARY"
   health_check :calculated => ["07c03a45-5b69-4044-9ec3-016cd8e5f74b", "bba4d1ea-27c2-4d0c-a249-c857a3e46d88"], :health_threshold => 1, :inverted => false
+  ttl 456
+  resource_records(
+    "127.0.0.3",
+    "127.0.0.4"
+  )
+end
+```
+
+### Cloudwatch Metric Health Checks
+
+```ruby
+rrset "zzz.info.winebarrel.jp", "A" do
+  set_identifier "Secondary"
+  failover "SECONDARY"
+  health_check :cloudwatch_metric => {:region=>"ap-northeast-1", :name=>"MyCheck"}, :inverted => false, :insufficient_data_health_status => "LastKnownStatus"
   ttl 456
   resource_records(
     "127.0.0.3",

@@ -178,6 +178,12 @@ module Roadworker
               config[:type] = 'CALCULATED'
               config[:child_health_checks] = url.delete(:calculated)
               options = url
+            elsif url.include?(:cloudwatch_metric)
+              config = Aws::Route53::Types::HealthCheckConfig.new
+              config[:type] = 'CLOUDWATCH_METRIC'
+              config[:alarm_identifier] = url.delete(:cloudwatch_metric)
+              config[:child_health_checks] = [] 
+              options = url
             else
               raise ArgumentError, "wrong arguments: #{url.inspect}"
             end
@@ -196,6 +202,7 @@ module Roadworker
             :inverted          => :inverted,
             :enable_sni        => :enable_sni,
             :regions           => :regions,
+            :insufficient_data_health_status => :insufficient_data_health_status,
           }.each do |option_key, config_key|
             config[config_key] = options[option_key] unless options[option_key].nil?
           end
@@ -206,7 +213,13 @@ module Roadworker
             config.type += '_STR_MATCH'
           end
 
-          if config[:type] != 'CALCULATED'
+          case config[:type]
+          when 'CALCULATED'
+            # nothing to do
+          when 'CLOUDWATCH_METRIC'
+            config[:inverted] ||= false
+            config[:insufficient_data_health_status] ||= 'LastKnownStatus'
+          else
             config[:request_interval]  ||= 30
             config[:failure_threshold] ||= 3
             config[:measure_latency]   ||= false

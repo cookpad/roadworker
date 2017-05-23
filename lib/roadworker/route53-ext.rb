@@ -50,6 +50,22 @@ module Aws
     # http://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html
     CF_HOSTED_ZONE_ID = 'Z2FDTNDATAQYW2'
 
+    # http://docs.aws.amazon.com/general/latest/gr/rande.html#elasticbeanstalk_region
+    ELASTIC_BEANSTALK_HOSTED_ZONE_NAME_IDS = {
+      'ap-northeast-1' => 'Z1R25G3KIG2GBW',
+      'ap-northeast-2' => 'Z3JE5OI70TWKCP',
+      'ap-south-1'     => 'Z18NTBI3Y7N9TZ',
+      'ap-southeast-1' => 'Z16FZ9L249IFLT',
+      'ap-southeast-2' => 'Z2PCDNR3VC2G1N',
+      'eu-central-1'   => 'Z1FRNW7UH4DEZJ',
+      'eu-west-1'      => 'Z2NYPWQ7DFZAZH',
+      'sa-east-1'      => 'Z10X7K2B4QSOFV',
+      'us-east-1'      => 'Z117KPS5GTRQ2G',
+      'us-east-2'      => 'Z14LCN19Q5QHIC',
+      'us-west-1'      => 'Z1LQECGX5PH1X',
+      'us-west-2'      => 'Z38NKT9BP95V3O',
+    }
+
     class << self
       def normalize_dns_name_options(src)
         dst = {}
@@ -81,6 +97,9 @@ module Aws
           cf_dns_name_to_alias_target(name)
         elsif name =~ /(\A|\.)#{Regexp.escape(hosted_zone_name)}\z/i
           this_hz_dns_name_to_alias_target(name, hosted_zone_id)
+        elsif name =~ /\.([^.]+)\.elasticbeanstalk\.com\z/i
+          region = $1.downcase
+          eb_dns_name_to_alias_target(name, region)
         else
           raise "Invalid DNS Name: #{name}"
         end
@@ -135,6 +154,14 @@ module Aws
       def this_hz_dns_name_to_alias_target(name, hosted_zone_id)
         {
           :hosted_zone_id         => hosted_zone_id,
+          :dns_name               => name,
+          :evaluate_target_health => false, # XXX:
+        }
+      end
+
+      def eb_dns_name_to_alias_target(name, region)
+        {
+          :hosted_zone_id         => ELASTIC_BEANSTALK_HOSTED_ZONE_NAME_IDS[region],
           :dns_name               => name,
           :evaluate_target_health => false, # XXX:
         }
