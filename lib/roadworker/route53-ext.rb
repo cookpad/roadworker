@@ -96,7 +96,7 @@ module Aws
         elsif name =~ /\.cloudfront\.net\z/i
           cf_dns_name_to_alias_target(name)
         elsif name =~ /(\A|\.)#{Regexp.escape(hosted_zone_name)}\z/i
-          this_hz_dns_name_to_alias_target(name, hosted_zone_id)
+          this_hz_dns_name_to_alias_target(name, hosted_zone_id, options)
         elsif name =~ /\.([^.]+)\.elasticbeanstalk\.com\z/i
           region = $1.downcase
           eb_dns_name_to_alias_target(name, region)
@@ -151,11 +151,11 @@ module Aws
         }
       end
 
-      def this_hz_dns_name_to_alias_target(name, hosted_zone_id)
+      def this_hz_dns_name_to_alias_target(name, hosted_zone_id, options)
         {
           :hosted_zone_id         => hosted_zone_id,
           :dns_name               => name,
-          :evaluate_target_health => false, # XXX:
+          :evaluate_target_health => options[:evaluate_target_health] || false
         }
       end
 
