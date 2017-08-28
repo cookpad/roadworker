@@ -76,4 +76,43 @@ EOS
       expect(www2.geo_location).to eq(Aws::Route53::Types::GeoLocation.new(:continent_code=>"EU"))
     }
   end
+
+  context 'when `apply` same record (with geo_location)' do
+    before {
+      routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp.", "A" do
+    set_identifier "Asia"
+    ttl 300
+    geo_location :continent_code=>"AS"
+    resource_records(
+      "127.0.0.1"
+    )
+  end
+end
+EOS
+      end
+    }
+
+    it {
+      stdout = StringIO.new
+      routefile(logger: Logger.new(stdout)) do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp.", "A" do
+    set_identifier "Asia"
+    ttl 300
+    geo_location :continent_code=>"AS"
+    resource_records(
+      "127.0.0.1"
+    )
+  end
+end
+EOS
+      end
+
+      expect(stdout.string).to eq('')
+    }
+  end
 end

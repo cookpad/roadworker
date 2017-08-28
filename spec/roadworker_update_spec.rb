@@ -1244,5 +1244,39 @@ EOS
       }
     end
 
+    context 'when `apply` same record' do
+      before {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp.", "A" do
+    ttl 300
+    resource_records(
+      "127.0.0.1"
+    )
+  end
+end
+EOS
+        end
+      }
+
+      it {
+        stdout = StringIO.new
+        routefile(logger: Logger.new(stdout)) do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "www.winebarrel.jp.", "A" do
+    ttl 300
+    resource_records(
+      "127.0.0.1"
+    )
+  end
+end
+EOS
+        end
+
+        expect(stdout.string).to eq('')
+      }
+    end
   end
 end
