@@ -72,6 +72,12 @@ module Roadworker
 
           log(:debug, 'Check DNS', :white, "#{name} #{type}")
 
+          # Check if net-dns supports the resource type
+          unless query_type(name, type, warning_messages)
+            print_warning
+            next
+          end
+
           response = query(name, type, error_messages)
 
           unless response
@@ -302,8 +308,19 @@ module Roadworker
         name.gsub('*', "#{ASTERISK_PREFIX}-#{rand_str}")
       end
 
+      def query_type(name, type, warning_messages = nil)
+        begin
+          return Net::DNS.const_get(type)
+        rescue => e
+          warning_messages << "#{name} #{type}: the resource type, #{type}, is not supported" if warning_messages
+          return nil
+        end
+      end
+
       def query(name, type, error_messages = nil)
-        ctype = Net::DNS.const_get(type)
+        ctype = query_type(name, type)
+        return nil if ctype.nil?
+
         response = nil
 
         RETRY.times do |i|
@@ -328,6 +345,10 @@ module Roadworker
 
       def print_failure
         print 'F'.intense_red unless @options.debug
+      end
+
+      def print_warning
+        print 'W'.intense_yellow unless @options.debug
       end
 
       def fetch_dns_name(dns_name)
