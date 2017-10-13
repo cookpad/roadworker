@@ -218,6 +218,10 @@ module Roadworker
           actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
+          if attribute == :geo_location and actual
+            actual = Hash[actual.each_pair.select {|k, v| not v.nil? }]
+          end
+
           if !expected and !actual
             true
           elsif expected and actual
