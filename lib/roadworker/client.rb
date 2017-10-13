@@ -63,8 +63,8 @@ module Roadworker
     end
 
     def walk_hosted_zones(dsl)
-      expected = collection_to_hash(dsl.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.map(&:vpc_id)] }
-      actual   = collection_to_hash(@route53.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.map(&:vpc_id)] }
+      expected = collection_to_hash(dsl.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.map(&:vpc_id).sort] }
+      actual   = collection_to_hash(@route53.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.map(&:vpc_id).sort] }
 
       expected.each do |keys, expected_zone|
         name = keys[0]
@@ -143,7 +143,7 @@ module Roadworker
         if expected_zone.ignore_patterns.any? { |pattern| pattern === name }
           next
         end
-        
+
         record.delete
       end
     end
