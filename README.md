@@ -183,13 +183,23 @@ end
 ### Dynamic private DNS example
 
 ```ruby
+require 'aws-sdk'
+
 hosted_zone "us-east-1.my.local." do
   vpc "us-east-1", "vpc-xxxxxxxx"
 
-  AWS::EC2.new(region: "us-east-1").vpcs["vpc-xxxxxxxx"].instances.each {|instance|
-    rrset "#{instance.tags.Name}.us-east-1.my.local.", "A" do
+  resp = Aws::EC2::Client.new(region: "us-east-1").describe_instances(filters:[{ name: 'vpc-id', values: ["vpc-xxxxxxxx"] }])
+  instances = resp.reservations.each_with_object({}) do |reservation, reservations|
+    reservations.merge!(reservation.instances.each_with_object({}) do |instance, instances|
+      instances[instance.private_ip_address] = instance.tags.find {|tag| tag['key'] == 'Name' }['value']
+    end)
+  end
+
+  instances.each {|private_ip_address, tagName|
+    tagName = instance.tags.find {|tag| tag['key'] == 'Name' }['value']
+    rrset "#{tagName}.us-east-1.my.local.", "A" do
       ttl 300
-      resource_records instance.private_ip_address
+      resource_records private_ip_address
     end
   }
 end
