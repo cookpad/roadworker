@@ -191,13 +191,13 @@ hosted_zone "us-east-1.my.local." do
   resp = Aws::EC2::Client.new(region: "us-east-1").describe_instances(filters:[{ name: 'vpc-id', values: ["vpc-xxxxxxxx"] }])
   instances = resp.reservations.each_with_object({}) do |reservation, reservations|
     reservations.merge!(reservation.instances.each_with_object({}) do |instance, instances|
-      instances[instance.private_ip_address] = instance.tags.find {|tag| tag['key'] == 'Name' }['value']
+      tag_name = instance.tags.find {|tag| tag['key'] == 'Name' }
+      instances[instance.private_ip_address] = tag_name['value'] if tag_name and tag_name['value'] != ''
     end)
   end
 
-  instances.each {|private_ip_address, tagName|
-    tagName = instance.tags.find {|tag| tag['key'] == 'Name' }['value']
-    rrset "#{tagName}.us-east-1.my.local.", "A" do
+  instances.each {|private_ip_address, tag_name|
+    rrset "#{tag_name}.us-east-1.my.local.", "A" do
       ttl 300
       resource_records private_ip_address
     end
