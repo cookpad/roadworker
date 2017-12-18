@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "aws-sdk", "~> 2.2"
   spec.add_dependency "term-ansicolor"
-  spec.add_dependency "net-dns2", "~> 0.8.6"
+  spec.add_dependency "net-dns3", "~> 0.1.0"
   spec.add_dependency "uuid"
   spec.add_dependency "systemu"
   spec.add_dependency "diffy"
