@@ -217,6 +217,7 @@ module Roadworker
           actual = self.public_send(attribute)
           actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
+          actual = actual.to_h if actual.kind_of?(Aws::Route53::Types::GeoLocation)
 
           if attribute == :geo_location and actual
             actual = Hash[actual.each_pair.select {|k, v| not v.nil? }]
@@ -269,6 +270,7 @@ module Roadworker
           actual = self.send(attribute)
           actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
+          actual = actual.to_h if actual.kind_of?(Aws::Route53::Types::GeoLocation)
 
           # XXX: Fix for diff
           if attribute == :health_check and actual
