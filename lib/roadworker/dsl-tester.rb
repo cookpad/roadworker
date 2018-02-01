@@ -134,7 +134,7 @@ module Roadworker
                     false
                   end
                 }
-              when /\As3-website-(?:[^.]+)\.amazonaws\.com\z/
+              when /\As3-website-(?:[^.]+)\.amazonaws\.com\.\z/
                 response_answer_ip_1_2 = response.answer.map {|a| a.value.split('.').slice(0, 2) }.uniq
 
                 # try 3 times
