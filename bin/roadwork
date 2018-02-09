@@ -40,10 +40,12 @@ ARGV.options do |opt|
     secret_key = nil
     profile_name = nil
     credentials_path = nil
+    role_arn = nil
     region = 'us-east-1' # refer to http://docs.aws.amazon.com/ja_jp/general/latest/gr/rande.html#r53_region
 
     opt.on('-p', '--profile PROFILE_NAME')       {|v| profile_name                 = v             }
     opt.on(''  , '--credentials-path PATH')      {|v| credentials_path             = v             }
+    opt.on(''  , '--assume-role-arn ARN')        {|v| role_arn                     = v             }
     opt.on('-k', '--access-key ACCESS_KEY')      {|v| access_key                   = v             }
     opt.on('-s', '--secret-key SECRET_KEY')      {|v| secret_key                   = v             }
     opt.on('-a', '--apply')                      {    mode                         = :apply        }
@@ -65,6 +67,7 @@ ARGV.options do |opt|
     opt.parse!
 
     aws_opts = {}
+    sts_opts = {}
     if access_key and secret_key
       aws_opts[:access_key_id] = access_key
       aws_opts[:secret_access_key] = secret_key
@@ -74,11 +77,24 @@ ARGV.options do |opt|
       credentials_opts[:path] = credentials_path if credentials_path
       provider = Aws::SharedCredentials.new(credentials_opts)
       aws_opts[:credentials] = provider
+      sts_opts[:credentials]= provider
     elsif (access_key and !secret_key) or (!access_key and secret_key) or mode.nil?
       puts opt.help
       exit 1
     end
+
     aws_opts[:region] = region
+    sts_opts[:region] = region
+
+    if role_arn
+      role_opts = {}
+      role_opts[:client] = Aws::STS::Client.new(sts_opts)
+      role_opts[:role_arn] = role_arn
+      role_opts[:role_session_name] = 'roadworker-session'
+      provider = Aws::AssumeRoleCredentials.new(role_opts)
+      aws_opts[:credentials] = provider
+    end
+
     Aws.config.update(aws_opts)
   rescue => e
     $stderr.puts e
