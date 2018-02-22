@@ -63,13 +63,23 @@ module Roadworker
     end
 
     def walk_hosted_zones(dsl)
-      expected = collection_to_hash(dsl.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.map(&:vpc_id).sort] }
-      actual   = collection_to_hash(@route53.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.map(&:vpc_id).sort] }
+      expected = collection_to_hash(dsl.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.empty?, normalize_id(i.id)] }
+      actual   = collection_to_hash(@route53.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.empty?, normalize_id(i.id)] }
 
       expected.each do |keys, expected_zone|
-        name = keys[0]
+        name, private_zone, id = keys
         next unless matched_zone?(name)
-        actual_zone = actual.delete(keys)
+        if id
+          actual_zone = actual.delete(keys)
+          unless actual_zone
+            log(:warn, "Hosted zone not found", :yellow, "#{name} (#{id})")
+            next
+          end
+        else
+          actual_keys, actual_zone = actual.find {|(n, p, _), _| n == name && p == private_zone }
+          actual.delete(actual_keys) if actual_keys
+        end
+
         actual_zone ||= @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
 
         walk_vpcs(expected_zone, actual_zone)
@@ -169,6 +179,10 @@ module Roadworker
 
     def normalize_name(name)
       name.downcase.sub(/\.\z/, '')
+    end
+
+    def normalize_id(id)
+      id.sub(%r!^/hostedzone/!, '') if id
     end
 
   end # Client
