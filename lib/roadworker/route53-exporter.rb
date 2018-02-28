@@ -29,7 +29,7 @@ module Roadworker
       Collection.batch(@options.route53.list_hosted_zones, :hosted_zones) do |zone|
         next unless matched_zone?(zone.name)
         resp = @options.route53.get_hosted_zone(id: zone.id)
-        zone_h = { name: zone.name, vpcs: resp.vp_cs }
+        zone_h = { id: zone.id, name: zone.name, vpcs: resp.vp_cs }
         hosted_zones << zone_h
 
         rrsets = []

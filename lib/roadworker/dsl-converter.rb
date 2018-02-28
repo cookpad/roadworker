@@ -88,12 +88,13 @@ module Roadworker
 
         def output_zone(zone)
           name = zone[:name].inspect
+          id = zone[:id].sub(%r!^/hostedzone/!, '').inspect
           rrsets = zone[:rrsets]
           vpcs = output_vpcs(zone[:vpcs])
           vpcs = "  #{vpcs}\n\n" if vpcs
 
           return(<<-EOS)
-hosted_zone #{name} do
+hosted_zone #{name}#{zone[:vpcs].empty? ? '' : ", #{id}"} do
 #{vpcs
 }#{rrsets.map {|i| output_rrset(i) }.join("\n").chomp}
 end

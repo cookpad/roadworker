@@ -50,8 +50,8 @@ module Roadworker
       end
     end
 
-    def hosted_zone(name, &block)
-      @result.hosted_zones << Hostedzone.new(@context, name, [], &block).result
+    def hosted_zone(name, id = nil, &block)
+      @result.hosted_zones << Hostedzone.new(@context, name, id, [], &block).result
     end
 
     class Hostedzone
@@ -59,11 +59,12 @@ module Roadworker
 
       attr_reader :result
 
-      def initialize(context, name, rrsets = [], &block)
+      def initialize(context, name, id, rrsets = [], &block)
         @name = name
         @context = context.merge(:hosted_zone_name => name)
 
         @result = OpenStruct.new({
+          :id => id,
           :name => name,
           :vpcs => [],
           :resource_record_sets => rrsets,
