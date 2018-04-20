@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   #spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "aws-sdk", "~> 2.2"
+  spec.add_dependency "aws-sdk-route53", "~> 1"
   spec.add_dependency "term-ansicolor"
   spec.add_dependency "net-dns2", "~> 0.8.6"
   spec.add_dependency "uuid"

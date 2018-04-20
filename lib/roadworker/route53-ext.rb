@@ -1,4 +1,4 @@
-require 'aws-sdk'
+require 'aws-sdk-route53'
 
 module Aws
   module Route53
