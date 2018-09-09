@@ -22,7 +22,7 @@ proc {
   end
 }.call
 
-require 'net/dns'
+require 'dnsruby'
 
 module Roadworker
   class DSL
@@ -30,6 +30,7 @@ module Roadworker
       include Roadworker::Log
       include Roadworker::Utils::Helper
 
+      DEFAULT_CONFIG_FILE = '/etc/resolv.conf'
       DEFAULT_NAMESERVERS = ['8.8.8.8', '8.8.4.4']
       ASTERISK_PREFIX = 'asterisk-of-wildcard'
       RETRY = 3
@@ -87,11 +88,9 @@ module Roadworker
             actual_value = response.answer.map {|i|
               case type
               when 'TXT', 'SPF'
-                i.txt
-              when 'SRV'
-                [i.priority, i.weight, i.port, fix_srv_host(name, i.host)].join(' ')
+                i.data
               else
-                i.value
+                i.rdata_to_string
               end
             }.map {|i| i.strip }.sort
             actual_ttls = response.answer.map {|i| i.ttl }
@@ -225,7 +224,7 @@ module Roadworker
           response = query(name, type)
 
           if response
-            asterisk_answers[key] = response.answer.map {|i| (%w(TXT SPF).include?(type) ? i.txt : i.value).strip }
+            asterisk_answers[key] = response.answer.map {|i| (%w(TXT SPF).include?(type) ? i.data : i.rdata_to_string).strip }
           end
         end
 
@@ -269,16 +268,14 @@ module Roadworker
         resolver_opts = {}
         resolver_opts[:port] = @options.port if @options.port
 
-        if File.exist?(Net::DNS::Resolver::Defaults[:config_file])
-          resolver_opts[:nameservers] = @options.nameservers if @options.nameservers
-          Net::DNS::Resolver.new(resolver_opts)
-        else
-          Tempfile.open(File.basename(__FILE__)) do |f|
-            resolver_opts.updated(:config_file => f.path, :nameservers => DEFAULT_NAMESERVERS)
-            resolver_opts[:nameservers] = @options.nameservers if @options.nameservers
-            Net::DNS::Resolver.new(resolver_opts)
-          end
+        unless File.exist?(DEFAULT_CONFIG_FILE)
+          resolver_opts[:nameservers] = DEFAULT_NAMESERVERS
         end
+
+        resolver_opts[:nameservers] = @options.nameservers if @options.nameservers
+        resolver = Dnsruby::Resolver.new(resolver_opts)
+        resolver.do_caching = false
+        resolver
       end
 
       def fetch_records(dsl)
@@ -303,12 +300,11 @@ module Roadworker
       end
 
       def query(name, type, error_messages = nil)
-        ctype = Net::DNS.const_get(type)
         response = nil
 
         RETRY.times do |i|
           begin
-            response = @resolver.query(name, ctype)
+            response = @resolver.query(name, type)
             break
           rescue => e
             if (i + 1) < RETRY
