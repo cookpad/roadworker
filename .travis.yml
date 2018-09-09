@@ -2,7 +2,7 @@ language: ruby
 cache: bundler
 sudo: false
 rvm:
-- 2.1.10
+- 2.3
 script:
 - bundle exec rake
 env:
