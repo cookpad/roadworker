@@ -117,11 +117,13 @@ module Roadworker
             log(:debug, "  #{logmsg_expected}\n  #{logmsg_actual}", :white)
 
             is_same = false
+            check_ttl = true
 
             if fetch_dns_name(record.dns_name)
               # A(Alias)
               case fetch_dns_name(record.dns_name).sub(/\.\z/, '')
               when /\.elb\.amazonaws\.com/i
+                check_ttl = false
                 is_same = response.answer.all? {|a|
                   response_query_ptr = query(a.value, 'PTR', error_messages)
 
@@ -134,6 +136,7 @@ module Roadworker
                   end
                 }
               when /\As3-website-(?:[^.]+)\.amazonaws\.com\z/
+                check_ttl = false
                 response_answer_ip_1_2 = response.answer.map {|a| a.value.split('.').slice(0, 2) }.uniq
 
                 # try 3 times
@@ -151,6 +154,7 @@ module Roadworker
                   }
                 end
               when /\.cloudfront\.net\z/
+                check_ttl = false
                 is_same = response.answer.all? {|a|
                   response_query_ptr = query(a.value, 'PTR', error_messages)
 
@@ -175,7 +179,7 @@ module Roadworker
               is_same = (expected_value == actual_value)
             end
 
-            if is_same
+            if is_same && check_ttl
               unless actual_ttls.all? {|i| i <= expected_ttl }
                 is_same = false
               end
