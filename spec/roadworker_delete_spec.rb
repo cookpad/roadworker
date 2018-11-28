@@ -341,6 +341,60 @@ EOS
       }
     end
 
+    context 'A(Alias) record (API Gateway)' do
+      before {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "info.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+
+  rrset "apigw.winebarrel.jp", "A" do
+    dns_name TEST_APIGW
+  end
+end
+EOS
+        end
+      }
+
+      it {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "info.winebarrel.jp", "A" do
+    ttl 123
+    resource_records(
+      "127.0.0.1",
+      "127.0.0.2"
+    )
+  end
+end
+EOS
+        end
+
+        zones = fetch_hosted_zones(@route53)
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(3)
+
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        info = rrsets['info.winebarrel.jp.', 'A']
+        expect(info.name).to eq("info.winebarrel.jp.")
+        expect(info.ttl).to eq(123)
+        expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+      }
+    end
+
 
     context 'A(Alias) record (This HostedZone)' do
       before {

@@ -261,6 +261,39 @@ EOS
       }
     end
 
+    context 'A(Alias) record (API Gateway)' do
+      it {
+        routefile do
+<<EOS
+hosted_zone "winebarrel.jp" do
+  rrset "apigw.winebarrel.jp", "A" do
+    dns_name TEST_APIGW
+  end
+end
+EOS
+        end
+
+        zones = fetch_hosted_zones(@route53)
+        expect(zones.length).to eq(1)
+
+        zone = zones[0]
+        expect(zone.name).to eq("winebarrel.jp.")
+        expect(zone.resource_record_set_count).to eq(3)
+
+        rrsets = fetch_rrsets(@route53, zone.id)
+        expect(rrsets['winebarrel.jp.', 'NS'].ttl).to eq(172800)
+        expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
+
+        a = rrsets['apigw.winebarrel.jp.', 'A']
+        expect(a.name).to eq("apigw.winebarrel.jp.")
+        expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
+          :hosted_zone_id => "Z1YSHQZHG15GKL",
+          :dns_name => TEST_APIGW,
+          :evaluate_target_health => false,
+        ))
+      }
+    end
+
     context 'A(Alias) record (This HostedZone)' do
       it {
         routefile do
