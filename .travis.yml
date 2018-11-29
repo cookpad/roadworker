@@ -11,6 +11,7 @@ env:
   - TEST_AWS_SECRET_ACCESS_KEY=5xoTPeHNXy20gxNdip5yHGA4Tctw50BTUxs++E+0
   - TEST_ELB=roadworker-1619064454.ap-northeast-1.elb.amazonaws.com.
   - TEST_CF=dwq5bksfxh5xn.cloudfront.net.
+  - TEST_APIGW=$$PLEASE_FILL_IT$$
   - TEST_DELAY=0.3
   - TEST_VPC_REGION=ap-northeast-1
   - TEST_VPC1=vpc-18f5097d
