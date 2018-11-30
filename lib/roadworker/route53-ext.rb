@@ -121,7 +121,7 @@ module Aws
           region = $1.downcase
           eb_dns_name_to_alias_target(name, region)
         elsif name =~ /\.execute-api\.([^.]+)\.amazonaws\.com\z/i
-          apigw_dns_name_to_alias_target(name, hosted_zone_id, options)
+          apigw_dns_name_to_alias_target(name, region, hosted_zone_id)
         else
           raise "Invalid DNS Name: #{name}"
         end
