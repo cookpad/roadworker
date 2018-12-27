@@ -123,6 +123,9 @@ module Aws
         elsif name =~ /\.execute-api\.([^.]+)\.amazonaws\.com\z/i
           region = $1.downcase
           apigw_dns_name_to_alias_target(name, region, hosted_zone_id)
+        elsif name =~ /\.([^.]+)\.vpce\.amazonaws\.com\z/i
+          region = $1.downcase
+          vpce_dns_name_to_alias_target(name, region, hosted_zone_id)
         else
           raise "Invalid DNS Name: #{name}"
         end
@@ -193,6 +196,14 @@ module Aws
       def eb_dns_name_to_alias_target(name, region)
         {
           :hosted_zone_id         => ELASTIC_BEANSTALK_HOSTED_ZONE_NAME_IDS[region],
+          :dns_name               => name,
+          :evaluate_target_health => false, # XXX:
+        }
+      end
+
+      def vpce_dns_name_to_alias_target(name, region, hosted_zone_id)
+        {
+          :hosted_zone_id         => hosted_zone_id,
           :dns_name               => name,
           :evaluate_target_health => false, # XXX:
         }
