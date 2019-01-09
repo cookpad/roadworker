@@ -50,6 +50,7 @@ module Roadworker
                 :failure_threshold,
                 :measure_latency,
                 :inverted,
+                :disabled,
                 :enable_sni,
                 :insufficient_data_health_status,
               ].each do |key|
