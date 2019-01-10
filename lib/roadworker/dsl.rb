@@ -201,6 +201,7 @@ module Roadworker
             :failure_threshold => :failure_threshold,
             :measure_latency   => :measure_latency,
             :inverted          => :inverted,
+            :disabled          => :disabled,
             :enable_sni        => :enable_sni,
             :regions           => :regions,
             :insufficient_data_health_status => :insufficient_data_health_status,
@@ -225,6 +226,7 @@ module Roadworker
             config[:failure_threshold] ||= 3
             config[:measure_latency]   ||= false
             config[:inverted]          ||= false
+            config[:disabled]          ||= false
             config[:enable_sni]        ||= false
           end
 
