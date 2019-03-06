@@ -19,6 +19,7 @@ module Aws
       's3-website-us-west-2.amazonaws.com'      => 'Z3BJ6K6RIION7M',
     }
 
+    # https://docs.aws.amazon.com/general/latest/gr/rande.html#elb_region
     CANONICAL_HOSTED_ZONE_NAME_IDS = {
       'ap-northeast-1' => 'Z2YN17T5R711GT',
       #'ap-northeast-2' => '',
@@ -46,6 +47,29 @@ module Aws
       'us-west-1'      => 'Z368ELLRRE2KJ0',
       'us-west-2'      => 'Z1H1FL5HABSF5',
    }
+
+    # https://docs.aws.amazon.com/general/latest/gr/rande.html#elb_region
+    NLB_CANONICAL_HOSTED_ZONE_NAME_IDS = {
+      'us-east-2' => 'ZLMOA37VPKANP',
+      'us-east-1' => 'Z26RNL4JYFTOTI',
+      'us-west-1' => 'Z24FKFUX50B4VW',
+      'us-west-2' => 'Z18D5FSROUN65G',
+      'ap-south-1' => '  ZVDDRBQ08TROA',
+      # 'ap-northeast-3' => '',
+      'ap-northeast-2' => 'ZIBE1TIR4HY56',
+      'ap-southeast-1' => 'ZKVM4W9LS7TM',
+      'ap-southeast-2' => 'ZCT6FZBF4DROD',
+      'ap-northeast-1' => 'Z31USIVHYNEOWT',
+      'ca-central-1' => 'Z2EPGBW3API2WT',
+      # 'cn-north-1' => '',
+      # 'cn-northwest-1' => '',
+      'eu-central-1' => 'Z3F0SRJ5LGBH90',
+      'eu-west-1' => 'Z2IFOLAFXWLO4F',
+      'eu-west-2' => 'ZD4D7Y8KGAS4G',
+      'eu-west-3' => 'Z1CMS0P5QUZ6D5',
+      'eu-north-1' => 'Z1UDT6IFJ4EJM',
+      'sa-east-1' => 'ZTK26PT1VY4CU',
+    }
 
     # http://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html
     CF_HOSTED_ZONE_ID = 'Z2FDTNDATAQYW2'
@@ -105,11 +129,16 @@ module Aws
         options ||= {}
 
         if name =~ /([^.]+)\.elb\.amazonaws.com\z/i
+          # CLB or ALB
           region = $1.downcase
           alias_target = elb_dns_name_to_alias_target(name, region, options)
 
           # XXX:
           alias_target.merge(options)
+        elsif name =~ /\.elb\.([^.]+)\.amazonaws\.com\z/i
+          # NLB
+          region = $1.downcase
+          alias_target = nlb_dns_name_to_alias_target(name, region, options)
         elsif (s3_hosted_zone_id = S3_WEBSITE_ENDPOINTS[name.downcase]) and name =~ /\As3-website-([^.]+)\.amazonaws\.com\z/i
           region = $1.downcase
           s3_dns_name_to_alias_target(name, region, s3_hosted_zone_id)
@@ -156,6 +185,19 @@ module Aws
             :evaluate_target_health => false, # XXX:
           }
         end
+      end
+
+      def nlb_dns_name_to_alias_target(name, region, options)
+        hosted_zone_id = options[:hosted_zone_id] || NLB_CANONICAL_HOSTED_ZONE_NAME_IDS[region]
+        unless hosted_zone_id
+          raise "Cannot find hosted zone id for `#{name}` (region: #{region}). Please pass :hosted_zone_id option"
+        end
+
+        {
+          hosted_zone_id: hosted_zone_id,
+          dns_name: name,
+          evaluate_target_health: false, # XXX:
+        }
       end
 
       def s3_dns_name_to_alias_target(name, region, hosted_zone_id)
