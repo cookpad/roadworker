@@ -212,10 +212,10 @@ module Roadworker
       def eql?(expected_record)
         Route53Wrapper::RRSET_ATTRS_WITH_TYPE.all? do |attribute|
           expected = expected_record.public_send(attribute)
-          expected = expected.sort_by {|i| i.to_s } if expected.kind_of?(Array)
+          expected = sort_rrset_values(attribute, expected) if expected.kind_of?(Array)
           expected = nil if expected.kind_of?(Array) && expected.empty?
           actual = self.public_send(attribute)
-          actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
+          actual = sort_rrset_values(attribute, actual) if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if attribute == :geo_location and actual
@@ -383,6 +383,21 @@ module Roadworker
       end
 
       private
+
+      def sort_rrset_values(attribute, values)
+        sort_lambda =
+          case attribute
+          when :resource_records
+            # After aws-sdk-core v3.44.1, Aws::Route53::Types::ResourceRecord#to_s returns filtered string
+            # like "{:value=>\"[FILTERED]\"}" (cf. https://github.com/aws/aws-sdk-ruby/pull/1941).
+            # To keep backward compatibility, sort by the value of resource record explicitly.
+            lambda { |i| i[:value] }
+          else
+            lambda { |i| i.to_s }
+          end
+
+        values.sort_by(&sort_lambda)
+      end
 
       def method_missing(method_name, *args)
         @resource_record_set.send(method_name, *args)
