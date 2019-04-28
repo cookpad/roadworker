@@ -10,22 +10,7 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 
 **Notice**
 
-* Roadworker cannot update TTL of two or more same weighted A records (with different SetIdentifier) after creation.
-* `>= 0.4.3` compare resource records ignoring the order.
-* `>= 0.5.5`
-  * **Disable Divided HostedZone**
-  * **Use aws-sdk v2** [PR#20](https://github.com/winebarrel/roadworker/pull/20)
-  * Support Cross Account ELB Alias [PR#21](https://github.com/winebarrel/roadworker/pull/21)
-* `>= 0.5.6`
-  * Disable HealthCheck GC (pass `--health-check-gc` option if enable)
-  * Support Calculated Health Checks
-  * Support New Health Check attributes
-  * Add template feature
-* `>= 0.5.7`
-  * Fix for `dualstack` prefix
-  * Use constant for CanonicalHostedZoneNameID
-* `>= 0.5.9`
-  * Support CloudWatch Metrics Health Check
+Roadworker cannot update TTL of two or more same weighted A records (with different SetIdentifier) after creation.
 
 ## Installation
 
