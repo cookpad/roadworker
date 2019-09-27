@@ -152,7 +152,7 @@ module Roadworker
 
       def create(name, type, expected_record)
         log(:info, 'Create ResourceRecordSet', :cyan) do
-          log_id = [name, type].join(' ')
+          log_id = [expected_record.name, expected_record.type].join(' ')
           rrset_setid = expected_record.set_identifier
           rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
         end
