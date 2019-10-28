@@ -63,8 +63,8 @@ module Roadworker
     end
 
     def walk_hosted_zones(dsl)
-      expected = collection_to_hash(dsl.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.empty?, normalize_id(i.id)] }
-      actual   = collection_to_hash(@route53.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.empty?, normalize_id(i.id)] }
+      expected = collection_to_hash(dsl.hosted_zones) {|i| [i.name, i.vpcs.empty?, normalize_id(i.id)] }
+      actual   = collection_to_hash(@route53.hosted_zones) {|i| [i.name, i.vpcs.empty?, normalize_id(i.id)] }
 
       expected.each do |keys, expected_zone|
         name, private_zone, id = keys
@@ -127,12 +127,10 @@ module Roadworker
 
         actual_record = actual.delete(keys)
 
-        if not actual_record and %w(A CNAME).include?(type)
-          actual_type = (type == 'A' ? 'CNAME' : 'A')
-          actual_record = actual.delete([name, actual_type, set_identifier])
-        end
-
-        if expected_zone.ignore_patterns.any? { |pattern| pattern === name }
+        # XXX: normalization should be happen on DSL as much as possible, but ignore_patterns expect no trailing dot
+        # and to keep backward compatibility, removing then dot when checking ignored_patterns.
+        name_for_ignore_patterns = name.sub(/\.\z/, '')
+        if expected_zone.ignore_patterns.any? { |pattern| pattern === name_for_ignore_patterns }
           log(:warn, "Ignoring defined record in DSL, because it is ignored record", :yellow) do
             "#{name} #{type}" + (set_identifier ? " (#{set_identifier})" : '')
           end
@@ -148,8 +146,10 @@ module Roadworker
         end
       end
 
-      actual.each do |keys, record|
-        name = keys[0]
+      actual.each do |(name, _type, _set_identifier), record|
+        # XXX: normalization should be happen on DSL as much as possible, but ignore_patterns expect no trailing dot
+        # and to keep backward compatibility, removing then dot when checking ignored_patterns.
+        name = name.sub(/\.\z/, '')
         if expected_zone.ignore_patterns.any? { |pattern| pattern === name }
           next
         end
@@ -166,8 +166,7 @@ module Roadworker
           key_list = yield(item)
         else
           key_list = keys.map do |k|
-            value = item.send(k)
-            (k == :name && value) ? normalize_name(value) : value
+             item.send(k)
           end
         end
 
@@ -175,10 +174,6 @@ module Roadworker
       end
 
       return hash
-    end
-
-    def normalize_name(name)
-      name.downcase.sub(/\.\z/, '')
     end
 
     def normalize_id(id)
