@@ -42,6 +42,14 @@ module Roadworker
       end
     end
 
+    def inspect
+      "#<#{self.class.name}: #{operations.size} operations>"
+    end
+
+    def to_s
+      inspect
+    end
+
     private
 
     def dispatch_batch!(route53, batch, i, total)
@@ -166,6 +174,14 @@ module Roadworker
 
       def diff!(dry_run: false)
         raise NotImplementedError
+      end
+
+      def inspect
+        "#<#{self.class.name} @changes=#{changes.inspect}>"
+      end
+
+      def to_s
+        inspect
       end
 
       private
