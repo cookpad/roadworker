@@ -111,7 +111,7 @@ module Roadworker
       end
 
       def ignore_under(rrset_name)
-        ignore /(\A|\.)#{Regexp.escape(rrset_name.to_s.sub(/\.\z/, ''))}\z/
+        ignore(/(\A|\.)#{Regexp.escape(rrset_name.to_s.sub(/\.\z/, ''))}\z/)
       end
 
       def resource_record_set(rrset_name, type, &block)
