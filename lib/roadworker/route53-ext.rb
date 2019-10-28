@@ -160,6 +160,21 @@ module Aws
         end
       end
 
+      def sort_rrset_values(attribute, values)
+        sort_lambda =
+          case attribute
+          when :resource_records
+            # After aws-sdk-core v3.44.1, Aws::Route53::Types::ResourceRecord#to_s returns filtered string
+            # like "{:value=>\"[FILTERED]\"}" (cf. https://github.com/aws/aws-sdk-ruby/pull/1941).
+            # To keep backward compatibility, sort by the value of resource record explicitly.
+            lambda { |i| i[:value] }
+          else
+            lambda { |i| i.to_s }
+          end
+
+        values.sort_by(&sort_lambda)
+      end
+
       private
 
       def elb_dns_name_to_alias_target(name, region, options)

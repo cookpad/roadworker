@@ -17,6 +17,7 @@ require 'roadworker/log'
 require 'roadworker/utils'
 require 'roadworker/template-helper'
 
+require 'roadworker/batch'
 require 'roadworker/client'
 require 'roadworker/collection'
 require 'roadworker/dsl'

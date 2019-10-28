@@ -116,15 +116,16 @@ module Roadworker
       end
     end
 
+    # @param [OpenStruct] expected_zone Roadworker::DSL::Hostedzone#result
+    # @param [Roadworker::Route53Wrapper::HostedzoneWrapper] actual_zone
     def walk_rrsets(expected_zone, actual_zone)
+      change_batch = Batch.new(actual_zone, health_checks: @options.health_checks, logger: @options.logger, dry_run: @options.dry_run)
+
       expected = collection_to_hash(expected_zone.rrsets, :name, :type, :set_identifier)
-      actual   = collection_to_hash(actual_zone.rrsets, :name, :type, :set_identifier)
+      actual   = actual_zone.rrsets.to_h.dup
 
       expected.each do |keys, expected_record|
-        name = keys[0]
-        type = keys[1]
-        set_identifier = keys[2]
-
+        name, type, set_identifier = keys
         actual_record = actual.delete(keys)
 
         # XXX: normalization should be happen on DSL as much as possible, but ignore_patterns expect no trailing dot
@@ -139,10 +140,10 @@ module Roadworker
 
         if actual_record
           unless actual_record.eql?(expected_record)
-            actual_record.update(expected_record)
+            change_batch.update(expected_record)
           end
         else
-          actual_record = actual_zone.rrsets.create(name, type, expected_record)
+          change_batch.create(expected_record)
         end
       end
 
@@ -154,8 +155,10 @@ module Roadworker
           next
         end
 
-        record.delete
+        change_batch.delete(record)
       end
+
+      change_batch.request!(@options.route53)
     end
 
     def collection_to_hash(collection, *keys)

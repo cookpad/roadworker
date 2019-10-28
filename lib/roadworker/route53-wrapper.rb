@@ -86,9 +86,14 @@ module Roadworker
       attr_reader :vpcs
 
       def resource_record_sets
-        ResourceRecordSetCollectionWrapper.new(@hosted_zone, @options)
+        @resource_record_sets ||= ResourceRecordSetCollectionWrapper.new(@hosted_zone, @options)
       end
       alias rrsets resource_record_sets
+
+      # @return [Roadworker::Route53Wrapper::ResourceRecordSetWrapper]
+      def find_resource_record_set(name, type, set_identifier)
+        resource_record_sets.to_h[[name, type, set_identifier]]
+      end
 
       def delete
         if @options.force
@@ -142,61 +147,24 @@ module Roadworker
         @options = options
       end
 
+      # @return [Hash<Array<(String,String,String)>, Roadworker::Route53Wrapper::ResourceRecordSetWrapper>]
+      def to_h
+        return @hash if defined? @hash
+        @hash = {}
+
+        self.each do |item|
+          @hash[[item.name, item.type, item.set_identifier]] = item
+        end
+
+        @hash
+      end
+
       def each
         if @hosted_zone.id
           Collection.batch(@options.route53.list_resource_record_sets(hosted_zone_id: @hosted_zone.id), :resource_record_sets) do |record|
             yield(ResourceRecordSetWrapper.new(record, @hosted_zone, @options))
           end
         end
-      end
-
-      def create(name, type, expected_record)
-        log(:info, 'Create ResourceRecordSet', :cyan) do
-          log_id = [name, type].join(' ')
-          rrset_setid = expected_record.set_identifier
-          rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
-        end
-
-        if @options.dry_run
-          record = expected_record
-        else
-          resource_record_set_params = {
-            name: name,
-            type: type,
-          }
-
-          Route53Wrapper::RRSET_ATTRS.each do |attribute|
-            value = expected_record.send(attribute)
-            next unless value
-
-            case attribute
-            when :dns_name
-              attribute = :alias_target
-              dns_name, dns_name_opts = value
-              value = Aws::Route53.dns_name_to_alias_target(dns_name, dns_name_opts, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
-            when :health_check
-              attribute = :health_check_id
-              value = @options.health_checks.find_or_create(value)
-            end
-
-            resource_record_set_params[attribute] = value
-          end
-
-          @options.route53.change_resource_record_sets(
-            hosted_zone_id: @hosted_zone.id,
-            change_batch: {
-              changes: [
-                {
-                  action: 'CREATE',
-                  resource_record_set: resource_record_set_params,
-                },
-              ],
-            },
-          )
-          @options.updated = true
-        end
-
-        ResourceRecordSetWrapper.new(expected_record, @hosted_zone, @options)
       end
     end # ResourceRecordSetCollectionWrapper
 
@@ -212,10 +180,10 @@ module Roadworker
       def eql?(expected_record)
         Route53Wrapper::RRSET_ATTRS_WITH_TYPE.all? do |attribute|
           expected = expected_record.public_send(attribute)
-          expected = sort_rrset_values(attribute, expected) if expected.kind_of?(Array)
+          expected = Aws::Route53.sort_rrset_values(attribute, expected) if expected.kind_of?(Array)
           expected = nil if expected.kind_of?(Array) && expected.empty?
           actual = self.public_send(attribute)
-          actual = sort_rrset_values(attribute, actual) if actual.kind_of?(Array)
+          actual = Aws::Route53.sort_rrset_values(attribute, actual) if actual.kind_of?(Array)
           actual = nil if actual.kind_of?(Array) && actual.empty?
 
           if attribute == :geo_location and actual
@@ -252,99 +220,6 @@ module Roadworker
         end
       end
 
-      def update(expected_record)
-        log_id_proc = proc do
-          log_id = [self.name, self.type].join(' ')
-          rrset_setid = self.set_identifier
-          rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
-        end
-
-        log(:info, 'Update ResourceRecordSet', :green, &log_id_proc)
-
-        resource_record_set_prev = @resource_record_set.dup
-        Route53Wrapper::RRSET_ATTRS_WITH_TYPE.each do |attribute|
-          expected = expected_record.send(attribute)
-          expected = expected.sort_by {|i| i.to_s } if expected.kind_of?(Array)
-          expected = nil if expected.kind_of?(Array) && expected.empty?
-          actual = self.send(attribute)
-          actual = actual.sort_by {|i| i.to_s } if actual.kind_of?(Array)
-          actual = nil if actual.kind_of?(Array) && actual.empty?
-
-          # XXX: Fix for diff
-          if attribute == :health_check and actual
-            if (actual[:child_health_checks] || []).empty?
-              actual[:child_health_checks] = []
-            end
-
-            if (actual[:regions] || []).empty?
-              actual[:regions] = []
-            end
-          end
-
-          if (expected and !actual) or (!expected and actual)
-            log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(actual, expected, :color => @options.color, :indent => '    '), false)
-            unless @options.dry_run
-              self.send(:"#{attribute}=", expected)
-            end
-          elsif expected and actual
-            if expected != actual
-              log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(actual, expected, :color => @options.color, :indent => '    '), false)
-              unless @options.dry_run
-                self.send(:"#{attribute}=", expected)
-              end
-            end
-          end
-        end
-
-        unless @options.dry_run
-          @options.route53.change_resource_record_sets(
-            hosted_zone_id: @hosted_zone.id,
-            change_batch: {
-              changes: [
-                {
-                  action: 'DELETE',
-                  resource_record_set: resource_record_set_prev,
-                },
-                {
-                  action: 'CREATE',
-                  resource_record_set: @resource_record_set,
-                },
-              ],
-            },
-          )
-          @options.updated = true
-        end
-      end
-
-      def delete
-        if self.type =~ /\A(SOA|NS)\z/i
-          hz_name = (@hosted_zone.name || @options.hosted_zone_name).downcase.sub(/\.\z/, '')
-          rrs_name = @resource_record_set.name.downcase.sub(/\.\z/, '')
-          return if hz_name == rrs_name
-        end
-
-        log(:info, 'Delete ResourceRecordSet', :red) do
-          log_id = [self.name, self.type].join(' ')
-          rrset_setid = self.set_identifier
-          rrset_setid ? (log_id + " (#{rrset_setid})") : log_id
-        end
-
-        unless @options.dry_run
-          @options.route53.change_resource_record_sets(
-            hosted_zone_id: @hosted_zone.id,
-            change_batch: {
-              changes: [
-                {
-                  action: 'DELETE',
-                  resource_record_set: @resource_record_set,
-                },
-              ],
-            },
-          )
-          @options.updated = true
-        end
-      end
-
       def name
         value = @resource_record_set.name
         value ? value.gsub("\\052", '*') : value
@@ -364,40 +239,11 @@ module Roadworker
         end
       end
 
-      def dns_name=(value)
-        if value
-          dns_name, dns_name_opts = value
-          @resource_record_set.alias_target = Aws::Route53.dns_name_to_alias_target(dns_name, dns_name_opts, @hosted_zone.id, @hosted_zone.name || @options.hosted_zone_name)
-        else
-          @resource_record_set.alias_target = nil
-        end
-      end
-
       def health_check
         @options.health_checks[@resource_record_set.health_check_id]
       end
 
-      def health_check=(check)
-        health_check_id = check ? @options.health_checks.find_or_create(check) : nil
-        @resource_record_set.health_check_id = health_check_id
-      end
-
       private
-
-      def sort_rrset_values(attribute, values)
-        sort_lambda =
-          case attribute
-          when :resource_records
-            # After aws-sdk-core v3.44.1, Aws::Route53::Types::ResourceRecord#to_s returns filtered string
-            # like "{:value=>\"[FILTERED]\"}" (cf. https://github.com/aws/aws-sdk-ruby/pull/1941).
-            # To keep backward compatibility, sort by the value of resource record explicitly.
-            lambda { |i| i[:value] }
-          else
-            lambda { |i| i.to_s }
-          end
-
-        values.sort_by(&sort_lambda)
-      end
 
       def method_missing(method_name, *args)
         @resource_record_set.send(method_name, *args)
