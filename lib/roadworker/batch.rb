@@ -35,11 +35,22 @@ module Roadworker
     # @param [Aws::Route53::Client] route53
     def request!(route53)
       sorted_operations = operations.sort_by(&:sort_key)
-      changes = sorted_operations.flat_map(&:changes)
+
+      batches = slice_operations(sorted_operations)
+      batches.each_with_index do |batch, i|
+        dispatch_batch!(route53, batch, i, batches.size)
+      end
+    end
+
+    private
+
+    def dispatch_batch!(route53, batch, i, total)
+      changes = batch.flat_map(&:changes)
       return if changes.empty?
 
-      log(:info, "=== Change batch: #{hosted_zone.name} | #{hosted_zone.id}#{hosted_zone.vpcs.empty? ? '' : ' - private'}", :bold)
-      sorted_operations.each do |operation|
+      page = total > 1 ? " | #{i+1}/#{total}" : nil
+      log(:info, "=== Change batch: #{hosted_zone.name} | #{hosted_zone.id}#{hosted_zone.vpcs.empty? ? '' : ' - private'}#{page}", :bold)
+      batch.each do |operation|
         operation.diff!()
       end
 
@@ -57,7 +68,19 @@ module Roadworker
       log(:info, "", :bold, dry_run: false)
     end
 
-    private
+    # Slice operations to batches, per 32,000 characters in "Value"
+    def slice_operations(ops)
+      total_value_size = 0
+      ops.slice_before do |op|
+        total_value_size += op.value_size
+        if total_value_size > 32000
+          total_value_size = op.value_size
+          true
+        else
+          false
+        end
+      end.to_a
+    end
 
     def add_operation(klass, rrset)
       assert_record_name rrset
@@ -110,6 +133,20 @@ module Roadworker
       # See also Roadworker::Batch::Delete#cname_first?
       def cname_first?
         false
+      end
+
+      # Count total length of RR "Value" included in changes
+      # See also: Batch#slice_operations
+      # @return [Integer]
+      def value_size
+        changes.map do |change|
+          upsert_multiplier = change[:action] == 'UPSERT' ? 2 : 1
+          rrset = change[:resource_record_set]
+          next 0 unless rrset
+          rrs = rrset[:resource_records]
+          next 0 unless rrs
+          (rrs.map { |_| _[:value]&.size || 0 }.sum) * upsert_multiplier
+        end.sum || 0
       end
 
       # @return [Array<Hash>]
