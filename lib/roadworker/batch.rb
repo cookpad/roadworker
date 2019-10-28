@@ -33,6 +33,7 @@ module Roadworker
     end
 
     # @param [Aws::Route53::Client] route53
+    # @return [Boolean] updated
     def request!(route53)
       sorted_operations = operations.sort_by(&:sort_key)
 
@@ -40,6 +41,8 @@ module Roadworker
       batches.each_with_index do |batch, i|
         dispatch_batch!(route53, batch, i, batches.size)
       end
+
+      sorted_operations.any? { |op| !op.changes.empty? }
     end
 
     def inspect

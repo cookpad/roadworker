@@ -20,8 +20,7 @@ module Roadworker
       if dsl.hosted_zones.empty? and not @options.force
         log(:warn, "Nothing is defined (pass `--force` if you want to remove)", :yellow)
       else
-        walk_hosted_zones(dsl)
-        updated = @options.updated
+        updated = walk_hosted_zones(dsl)
       end
 
       if updated and @options.health_check_gc
@@ -63,6 +62,8 @@ module Roadworker
     end
 
     def walk_hosted_zones(dsl)
+      updated = false
+
       expected = collection_to_hash(dsl.hosted_zones) {|i| [i.name, i.vpcs.empty?, normalize_id(i.id)] }
       actual   = collection_to_hash(@route53.hosted_zones) {|i| [i.name, i.vpcs.empty?, normalize_id(i.id)] }
 
@@ -80,20 +81,28 @@ module Roadworker
           actual.delete(actual_keys) if actual_keys
         end
 
-        actual_zone ||= @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
+        unless actual_zone
+          updated = true
+          actual_zone = @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
+        end
 
-        walk_vpcs(expected_zone, actual_zone)
-        walk_rrsets(expected_zone, actual_zone)
+        updated = true if walk_vpcs(expected_zone, actual_zone)
+        updated = true if walk_rrsets(expected_zone, actual_zone)
       end
 
       actual.each do |keys, zone|
         name = keys[0]
         next unless matched_zone?(name)
         zone.delete
+        updated = true
       end
+
+      updated
     end
 
     def walk_vpcs(expected_zone, actual_zone)
+      updated = false
+
       expected_vpcs = expected_zone.vpcs || []
       actual_vpcs = actual_zone.vpcs || []
 
@@ -102,6 +111,7 @@ module Roadworker
       else
         (expected_vpcs - actual_vpcs).each do |vpc|
           actual_zone.associate_vpc(vpc)
+          updated = true
         end
 
         unexpected_vpcs = actual_vpcs - expected_vpcs
@@ -111,9 +121,12 @@ module Roadworker
         else
           unexpected_vpcs.each do |vpc|
             actual_zone.disassociate_vpc(vpc)
+            updated = true
           end
         end
       end
+
+      updated
     end
 
     # @param [OpenStruct] expected_zone Roadworker::DSL::Hostedzone#result
