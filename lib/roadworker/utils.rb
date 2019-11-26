@@ -4,12 +4,16 @@ module Roadworker
       def matched_zone?(name)
         result = true
 
+        # XXX: normalization should be happen on DSL as much as possible, but patterns expect no trailing dot
+        # and to keep backward compatibility, removing then dot when checking patterns.
+        name_for_patterns = name.sub(/\.\z/, '')
+
         if @options.exclude_zone
-          result &&= name !~ @options.exclude_zone
+          result &&= name_for_patterns !~ @options.exclude_zone
         end
 
         if @options.target_zone
-          result &&= name =~ @options.target_zone
+          result &&= name_for_patterns =~ @options.target_zone
         end
 
         result

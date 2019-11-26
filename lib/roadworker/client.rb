@@ -20,8 +20,7 @@ module Roadworker
       if dsl.hosted_zones.empty? and not @options.force
         log(:warn, "Nothing is defined (pass `--force` if you want to remove)", :yellow)
       else
-        walk_hosted_zones(dsl)
-        updated = @options.updated
+        updated = walk_hosted_zones(dsl)
       end
 
       if updated and @options.health_check_gc
@@ -63,8 +62,10 @@ module Roadworker
     end
 
     def walk_hosted_zones(dsl)
-      expected = collection_to_hash(dsl.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.empty?, normalize_id(i.id)] }
-      actual   = collection_to_hash(@route53.hosted_zones) {|i| [normalize_name(i.name), i.vpcs.empty?, normalize_id(i.id)] }
+      updated = false
+
+      expected = collection_to_hash(dsl.hosted_zones) {|i| [i.name, i.vpcs.empty?, normalize_id(i.id)] }
+      actual   = collection_to_hash(@route53.hosted_zones) {|i| [i.name, i.vpcs.empty?, normalize_id(i.id)] }
 
       expected.each do |keys, expected_zone|
         name, private_zone, id = keys
@@ -80,20 +81,28 @@ module Roadworker
           actual.delete(actual_keys) if actual_keys
         end
 
-        actual_zone ||= @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
+        unless actual_zone
+          updated = true
+          actual_zone = @route53.hosted_zones.create(name, :vpc => expected_zone.vpcs.first)
+        end
 
-        walk_vpcs(expected_zone, actual_zone)
-        walk_rrsets(expected_zone, actual_zone)
+        updated = true if walk_vpcs(expected_zone, actual_zone)
+        updated = true if walk_rrsets(expected_zone, actual_zone)
       end
 
       actual.each do |keys, zone|
         name = keys[0]
         next unless matched_zone?(name)
         zone.delete
+        updated = true
       end
+
+      updated
     end
 
     def walk_vpcs(expected_zone, actual_zone)
+      updated = false
+
       expected_vpcs = expected_zone.vpcs || []
       actual_vpcs = actual_zone.vpcs || []
 
@@ -102,6 +111,7 @@ module Roadworker
       else
         (expected_vpcs - actual_vpcs).each do |vpc|
           actual_zone.associate_vpc(vpc)
+          updated = true
         end
 
         unexpected_vpcs = actual_vpcs - expected_vpcs
@@ -111,28 +121,30 @@ module Roadworker
         else
           unexpected_vpcs.each do |vpc|
             actual_zone.disassociate_vpc(vpc)
+            updated = true
           end
         end
       end
+
+      updated
     end
 
+    # @param [OpenStruct] expected_zone Roadworker::DSL::Hostedzone#result
+    # @param [Roadworker::Route53Wrapper::HostedzoneWrapper] actual_zone
     def walk_rrsets(expected_zone, actual_zone)
+      change_batch = Batch.new(actual_zone, health_checks: @options.health_checks, logger: @options.logger, dry_run: @options.dry_run)
+
       expected = collection_to_hash(expected_zone.rrsets, :name, :type, :set_identifier)
-      actual   = collection_to_hash(actual_zone.rrsets, :name, :type, :set_identifier)
+      actual   = actual_zone.rrsets.to_h.dup
 
       expected.each do |keys, expected_record|
-        name = keys[0]
-        type = keys[1]
-        set_identifier = keys[2]
-
+        name, type, set_identifier = keys
         actual_record = actual.delete(keys)
 
-        if not actual_record and %w(A CNAME).include?(type)
-          actual_type = (type == 'A' ? 'CNAME' : 'A')
-          actual_record = actual.delete([name, actual_type, set_identifier])
-        end
-
-        if expected_zone.ignore_patterns.any? { |pattern| pattern === name }
+        # XXX: normalization should be happen on DSL as much as possible, but ignore_patterns expect no trailing dot
+        # and to keep backward compatibility, removing then dot when checking ignored_patterns.
+        name_for_ignore_patterns = name.sub(/\.\z/, '')
+        if expected_zone.ignore_patterns.any? { |pattern| pattern === name_for_ignore_patterns }
           log(:warn, "Ignoring defined record in DSL, because it is ignored record", :yellow) do
             "#{name} #{type}" + (set_identifier ? " (#{set_identifier})" : '')
           end
@@ -141,21 +153,25 @@ module Roadworker
 
         if actual_record
           unless actual_record.eql?(expected_record)
-            actual_record.update(expected_record)
+            change_batch.update(expected_record)
           end
         else
-          actual_record = actual_zone.rrsets.create(name, type, expected_record)
+          change_batch.create(expected_record)
         end
       end
 
-      actual.each do |keys, record|
-        name = keys[0]
+      actual.each do |(name, _type, _set_identifier), record|
+        # XXX: normalization should be happen on DSL as much as possible, but ignore_patterns expect no trailing dot
+        # and to keep backward compatibility, removing then dot when checking ignored_patterns.
+        name = name.sub(/\.\z/, '')
         if expected_zone.ignore_patterns.any? { |pattern| pattern === name }
           next
         end
 
-        record.delete
+        change_batch.delete(record)
       end
+
+      change_batch.request!(@options.route53)
     end
 
     def collection_to_hash(collection, *keys)
@@ -166,8 +182,7 @@ module Roadworker
           key_list = yield(item)
         else
           key_list = keys.map do |k|
-            value = item.send(k)
-            (k == :name && value) ? normalize_name(value) : value
+             item.send(k)
           end
         end
 
@@ -175,10 +190,6 @@ module Roadworker
       end
 
       return hash
-    end
-
-    def normalize_name(name)
-      name.downcase.sub(/\.\z/, '')
     end
 
     def normalize_id(id)

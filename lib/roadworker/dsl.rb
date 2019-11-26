@@ -16,6 +16,12 @@ module Roadworker
       def test(dsl, options)
         Tester.test(dsl, options)
       end
+
+      def normalize_dns_name(name)
+        # Normalize name. AWS always returns name with trailing dot, and stores name always lowercase.
+        # https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/DomainNameFormat.html
+        "#{name.downcase}.".sub(/\.+\z/, '.')
+      end
     end # of class method
 
     attr_reader :result
@@ -60,12 +66,12 @@ module Roadworker
       attr_reader :result
 
       def initialize(context, name, id, rrsets = [], &block)
-        @name = name
-        @context = context.merge(:hosted_zone_name => name)
+        @name = DSL.normalize_dns_name(name)
+        @context = context.merge(:hosted_zone_name => @name)
 
         @result = OpenStruct.new({
           :id => id,
-          :name => name,
+          :name => @name,
           :vpcs => [],
           :resource_record_sets => rrsets,
           :rrsets => rrsets,
@@ -105,7 +111,7 @@ module Roadworker
       end
 
       def ignore_under(rrset_name)
-        ignore /(\A|\.)#{Regexp.escape(rrset_name.to_s.sub(/\.\z/, ''))}\z/
+        ignore(/(\A|\.)#{Regexp.escape(rrset_name.to_s.sub(/\.\z/, ''))}\z/)
       end
 
       def resource_record_set(rrset_name, type, &block)
@@ -123,6 +129,9 @@ module Roadworker
         attr_reader :result
 
         def initialize(context, name, type, &block)
+          name = DSL.normalize_dns_name(name)
+          type = type.upcase
+
           @context = context.merge(
             :rrset_name => name,
             :rrset_type => type
