@@ -79,13 +79,16 @@ module Roadworker
       log(:info, "", :bold, dry_run: false)
     end
 
-    # Slice operations to batches, per 32,000 characters in "Value"
+    # Slice operations to batches, per 32,000 characters in "Value" or per 1,000 operations.
     def slice_operations(ops)
       total_value_size = 0
+      total_ops = 0
       ops.slice_before do |op|
         total_value_size += op.value_size
-        if total_value_size > 32000
+        total_ops += 1
+        if total_value_size > 32000 || total_ops > 1000
           total_value_size = op.value_size
+          total_ops = 1
           true
         else
           false
