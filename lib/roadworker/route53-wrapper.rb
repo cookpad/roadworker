@@ -99,9 +99,12 @@ module Roadworker
         if @options.force
           log(:info, 'Delete Hostedzone', :red, @hosted_zone.name)
 
+          change_batch = Batch.new(self, health_checks: @options.health_checks, logger: @options.logger, dry_run: @options.dry_run)
           self.rrsets.each do |record|
-            record.delete
+            change_batch.delete(record)
           end
+
+          change_batch.request!(@options.route53)
 
           unless @options.dry_run
             @options.route53.delete_hosted_zone(id: @hosted_zone.id)
