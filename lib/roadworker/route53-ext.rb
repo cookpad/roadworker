@@ -155,6 +155,8 @@ module Aws
         elsif name =~ /\.([^.]+)\.vpce\.amazonaws\.com\z/i
           region = $1.downcase
           vpce_dns_name_to_alias_target(name, region, hosted_zone_id)
+        elsif name =~ /\.awsglobalaccelerator\.com\z/i
+          globalaccelerator_dns_name_to_alias_target(name)
         else
           raise "Invalid DNS Name: #{name}"
         end
@@ -261,6 +263,15 @@ module Aws
       def vpce_dns_name_to_alias_target(name, region, hosted_zone_id)
         {
           :hosted_zone_id         => hosted_zone_id,
+          :dns_name               => name,
+          :evaluate_target_health => false, # XXX:
+        }
+      end
+
+      def globalaccelerator_dns_name_to_alias_target(name)
+        # https://docs.aws.amazon.com/ja_jp/general/latest/gr/global_accelerator.html
+        {
+          :hosted_zone_id         => 'Z2BJ6XQ5FK7U4H', # us-west-2
           :dns_name               => name,
           :evaluate_target_health => false, # XXX:
         }
