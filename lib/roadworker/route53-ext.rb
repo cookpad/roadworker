@@ -269,9 +269,9 @@ module Aws
       end
 
       def globalaccelerator_dns_name_to_alias_target(name)
-        # https://docs.aws.amazon.com/ja_jp/general/latest/gr/global_accelerator.html
+        # https://docs.aws.amazon.com/Route53/latest/APIReference/API_AliasTarget.html
         {
-          :hosted_zone_id         => 'Z2BJ6XQ5FK7U4H', # us-west-2
+          :hosted_zone_id         => 'Z2BJ6XQ5FK7U4H',
           :dns_name               => name,
           :evaluate_target_health => false, # XXX:
         }
