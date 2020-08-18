@@ -128,19 +128,19 @@ module Roadworker
       attr_reader :dry_run, :logger
 
       def sort_key
-        # Alias target may be created in the same change batch. Let's do operations for non-alias records first.
-        alias_precedence = if rrset.dns_name
-                             1
-                           else
-                             0
-                           end
         # See Operation#cname_first?
         cname_precedence = if rrset.type == 'CNAME'
                              cname_first? ? 0 : 2
                            else
                              1
                            end
-        [rrset.name, alias_precedence, cname_precedence, rrset.type, rrset.set_identifier]
+        # Alias target may be created in the same change batch. Let's do operations for non-alias records first.
+        alias_precedence = if rrset.dns_name
+                             1
+                           else
+                             0
+                           end
+        [rrset.name, cname_precedence, alias_precedence, rrset.type, rrset.set_identifier]
       end
 
       # CNAME should always be created/updated later, as CNAME doesn't permit other records
