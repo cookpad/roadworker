@@ -31,14 +31,21 @@ Aws.config.update({
 })
 
 RSpec.configure do |config|
-  config.before(:each) {
-    sleep TEST_INTERVAL
-    cleanup_route53
-    @route53 = Aws::Route53::Client.new
+  route53_initialized = false
+
+  config.before(:each) { |example|
+    unless example.metadata[:skip_route53_setup]
+      sleep TEST_INTERVAL
+      cleanup_route53
+      @route53 = Aws::Route53::Client.new
+      route53_initialized = true
+    end
   }
 
   config.after(:all) do
-    routefile(:force => true) { '' }
+    if route53_initialized
+      routefile(:force => true) { '' }
+    end
   end
 end
 
