@@ -30,6 +30,7 @@ module Aws
       'eu-west-1'      => 'Z3NF1Z3NOM5OY2',
       'sa-east-1'      => 'Z2ES78Y61JGQKS',
       'us-east-1'      => 'Z3DZXE0Q79N41H',
+      'us-east-2'      => 'Z3AADJGX6KTTL2',
       'us-west-1'      => 'Z1M58G0W56PQJA',
       'us-west-2'      => 'Z33MTJ483KN6FU',
     }
