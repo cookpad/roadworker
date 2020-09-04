@@ -14,6 +14,7 @@ module Aws
       's3-website-eu-west-1.amazonaws.com'      => 'Z1BKCTXD74EZPE',
       's3-website-sa-east-1.amazonaws.com'      => 'Z7KQH4QJS55SO',
       's3-website-us-east-1.amazonaws.com'      => 'Z3AQBSTGFYJSTF',
+      's3-website-us-east-2.amazonaws.com'      => 'Z2O1EMRO9K5GLX',
       's3-website-us-gov-west-1.amazonaws.com'  => 'Z31GFT0UA1I2HV',
       's3-website-us-west-1.amazonaws.com'      => 'Z2F56UZL2M1ACD',
       's3-website-us-west-2.amazonaws.com'      => 'Z3BJ6K6RIION7M',
