@@ -1,3 +1,11 @@
+## 0.5.14
+- Feature: Support alias record of S3 endpoint and ELB in us-east-2.
+
+## 0.5.13
+- Feature: Submit single change batch per hosted zone on apply.
+- Feature: Support alias record of AWS Global Accelerator.
+- Issue: Fix priority between CNAME change and ALIAS change.
+
 ## 0.5.12
 - Issue: Fix sorting resource\_records with aws-sdk-core v3.44.1 or later.
 
