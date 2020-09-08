@@ -14,6 +14,7 @@ module Aws
       's3-website-eu-west-1.amazonaws.com'      => 'Z1BKCTXD74EZPE',
       's3-website-sa-east-1.amazonaws.com'      => 'Z7KQH4QJS55SO',
       's3-website-us-east-1.amazonaws.com'      => 'Z3AQBSTGFYJSTF',
+      's3-website-us-east-2.amazonaws.com'      => 'Z2O1EMRO9K5GLX',
       's3-website-us-gov-west-1.amazonaws.com'  => 'Z31GFT0UA1I2HV',
       's3-website-us-west-1.amazonaws.com'      => 'Z2F56UZL2M1ACD',
       's3-website-us-west-2.amazonaws.com'      => 'Z3BJ6K6RIION7M',
@@ -30,6 +31,7 @@ module Aws
       'eu-west-1'      => 'Z3NF1Z3NOM5OY2',
       'sa-east-1'      => 'Z2ES78Y61JGQKS',
       'us-east-1'      => 'Z3DZXE0Q79N41H',
+      'us-east-2'      => 'Z3AADJGX6KTTL2',
       'us-west-1'      => 'Z1M58G0W56PQJA',
       'us-west-2'      => 'Z33MTJ483KN6FU',
     }
@@ -44,6 +46,7 @@ module Aws
       'eu-west-1'      => 'Z32O12XQLNTSW2',
       'sa-east-1'      => 'Z2P70J7HTTTPLU',
       'us-east-1'      => 'Z35SXDOTRQ7X7K',
+      'us-east-2'      => 'Z3AADJGX6KTTL2',
       'us-west-1'      => 'Z368ELLRRE2KJ0',
       'us-west-2'      => 'Z1H1FL5HABSF5',
    }
