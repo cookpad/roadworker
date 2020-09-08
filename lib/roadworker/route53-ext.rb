@@ -46,6 +46,7 @@ module Aws
       'eu-west-1'      => 'Z32O12XQLNTSW2',
       'sa-east-1'      => 'Z2P70J7HTTTPLU',
       'us-east-1'      => 'Z35SXDOTRQ7X7K',
+      'us-east-2'      => 'Z3AADJGX6KTTL2',
       'us-west-1'      => 'Z368ELLRRE2KJ0',
       'us-west-2'      => 'Z1H1FL5HABSF5',
    }
