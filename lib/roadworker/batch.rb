@@ -85,10 +85,10 @@ module Roadworker
       total_ops = 0
       ops.slice_before do |op|
         total_value_size += op.value_size
-        total_ops += 1
-        if total_value_size > 32000 || total_ops > 1000
+        total_ops += op.resource_record_set_size
+        if total_value_size >= 32000 || total_ops >= 1000
           total_value_size = op.value_size
-          total_ops = 1
+          total_ops = op.resource_record_set_size
           true
         else
           false
@@ -160,6 +160,20 @@ module Roadworker
           rrs = rrset[:resource_records]
           next 0 unless rrs
           (rrs.map { |_| _[:value]&.size || 0 }.sum) * upsert_multiplier
+        end.sum || 0
+      end
+
+      # Count total size of ResourceRecord element in changes
+      # See also: Batch#slice_operations
+      # @return [Integer]
+      def resource_record_set_size
+        changes.map do |change|
+          upsert_multiplier = change[:action] == 'UPSERT' ? 2 : 1
+          rrset = change[:resource_record_set]
+          next 0 unless rrset
+          rrs = rrset[:resource_records]
+          next 0 unless rrs
+          rrs.length * upsert_multiplier
         end.sum || 0
       end
 
@@ -311,11 +325,7 @@ module Roadworker
       def changes
         [
           {
-            action: 'DELETE',
-            resource_record_set: present_rrset.to_h,
-          },
-          {
-            action: 'CREATE',
+            action: 'UPSERT',
             resource_record_set: desired_rrset.to_h,
           },
         ]
