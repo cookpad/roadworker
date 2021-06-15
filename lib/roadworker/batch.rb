@@ -85,10 +85,10 @@ module Roadworker
       total_ops = 0
       ops.slice_before do |op|
         total_value_size += op.value_size
-        total_ops += 1
+        total_ops += op.op_size
         if total_value_size > 32000 || total_ops > 1000
           total_value_size = op.value_size
-          total_ops = 1
+          total_ops = op.op_size
           true
         else
           false
@@ -150,6 +150,8 @@ module Roadworker
       end
 
       # Count total length of RR "Value" included in changes
+      # https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/DNSLimitations.html#limits-api-requests-changeresourcerecordsets
+      #
       # See also: Batch#slice_operations
       # @return [Integer]
       def value_size
@@ -160,6 +162,17 @@ module Roadworker
           rrs = rrset[:resource_records]
           next 0 unless rrs
           (rrs.map { |_| _[:value]&.size || 0 }.sum) * upsert_multiplier
+        end.sum || 0
+      end
+
+      # Count of operational size
+      # https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/DNSLimitations.html#limits-api-requests-changeresourcerecordsets
+      #
+      # See also: Batch#slice_operations
+      # @return [Integer]
+      def op_size
+        changes.map do |change|
+          change[:action] == 'UPSERT' ? 2 : 1
         end.sum || 0
       end
 
