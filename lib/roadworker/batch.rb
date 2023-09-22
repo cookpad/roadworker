@@ -4,11 +4,12 @@ module Roadworker
 
     # @param [Roadworker::Route53Wrapper::HostedzoneWrapper] hosted_zone
     # @param [Roadworker::HealthCheck] health_checks
-    def initialize(hosted_zone, dry_run:, logger:, health_checks:)
+    def initialize(hosted_zone, dry_run:, logger:, health_checks:, colorized:)
       @hosted_zone = hosted_zone
       @dry_run = dry_run
       @logger = logger
       @health_checks = health_checks
+      @colorized = colorized
 
       @operations = []
     end
@@ -59,21 +60,24 @@ module Roadworker
       changes = batch.flat_map(&:changes)
       return if changes.empty?
 
-      page = total > 1 ? " | #{i+1}/#{total}" : nil
-      log(:info, "=== Change batch: #{hosted_zone.name} | #{hosted_zone.id}#{hosted_zone.vpcs.empty? ? '' : ' - private'}#{page}", :bold)
-      batch.each do |operation|
-        operation.diff!()
-      end
+      page = total > 1 ? " | #{i + 1}/#{total}" : nil
+      log(
+        :info,
+        "=== Change batch: #{hosted_zone.name} | #{hosted_zone.id}#{hosted_zone.vpcs.empty? ? "" : " - private"}#{page}",
+        :bold
+      )
+      batch.each { |operation| operation.diff!() }
 
       if dry_run
         log(:info, "---", :bold, dry_run: false)
       else
-        change = route53.change_resource_record_sets(
-          hosted_zone_id: hosted_zone.id,
-          change_batch: {
-            changes: changes,
-          },
-        )
+        change =
+          route53.change_resource_record_sets(
+            hosted_zone_id: hosted_zone.id,
+            change_batch: {
+              changes: changes
+            }
+          )
         log(:info, "--> Change submitted: #{change.change_info.id}", :bold)
       end
       log(:info, "", :bold, dry_run: false)
@@ -83,28 +87,41 @@ module Roadworker
     def slice_operations(ops)
       total_value_size = 0
       total_ops = 0
-      ops.slice_before do |op|
-        total_value_size += op.value_size
-        total_ops += op.op_size
-        if total_value_size > 32000 || total_ops > 1000
-          total_value_size = op.value_size
-          total_ops = op.op_size
-          true
-        else
-          false
+      ops
+        .slice_before do |op|
+          total_value_size += op.value_size
+          total_ops += op.op_size
+          if total_value_size > 32_000 || total_ops > 1000
+            total_value_size = op.value_size
+            total_ops = op.op_size
+            true
+          else
+            false
+          end
         end
-      end.to_a
+        .to_a
     end
 
     def add_operation(klass, rrset)
       assert_record_name rrset
-      operations << klass.new(hosted_zone, rrset, health_checks: health_checks, dry_run: dry_run, logger: logger)
+      operations << klass.new(
+        hosted_zone,
+        rrset,
+        health_checks: health_checks,
+        dry_run: dry_run,
+        logger: logger
+      )
       self
     end
 
     def assert_record_name(record)
-      unless record.name.downcase.sub(/\.$/,'').end_with?(hosted_zone.name.sub(/\.$/,''))
-        raise ArgumentError, "#{record.name.inspect} isn't under hosted zone name #{hosted_zone.name.inspect}" 
+      unless record
+               .name
+               .downcase
+               .sub(/\.$/, "")
+               .end_with?(hosted_zone.name.sub(/\.$/, ""))
+        raise ArgumentError,
+              "#{record.name.inspect} isn't under hosted zone name #{hosted_zone.name.inspect}"
       end
     end
 
@@ -129,18 +146,21 @@ module Roadworker
 
       def sort_key
         # See Operation#cname_first?
-        cname_precedence = if rrset.type == 'CNAME'
-                             cname_first? ? 0 : 2
-                           else
-                             1
-                           end
+        cname_precedence =
+          if rrset.type == "CNAME"
+            cname_first? ? 0 : 2
+          else
+            1
+          end
         # Alias target may be created in the same change batch. Let's do operations for non-alias records first.
-        alias_precedence = if rrset.dns_name
-                             1
-                           else
-                             0
-                           end
-        [rrset.name, cname_precedence, alias_precedence, rrset.type, rrset.set_identifier]
+        alias_precedence = (rrset.dns_name ? 1 : 0)
+        [
+          rrset.name,
+          cname_precedence,
+          alias_precedence,
+          rrset.type,
+          rrset.set_identifier
+        ]
       end
 
       # CNAME should always be created/updated later, as CNAME doesn't permit other records
@@ -155,14 +175,16 @@ module Roadworker
       # See also: Batch#slice_operations
       # @return [Integer]
       def value_size
-        changes.map do |change|
-          upsert_multiplier = change[:action] == 'UPSERT' ? 2 : 1
-          rrset = change[:resource_record_set]
-          next 0 unless rrset
-          rrs = rrset[:resource_records]
-          next 0 unless rrs
-          (rrs.map { |_| _[:value]&.size || 0 }.sum) * upsert_multiplier
-        end.sum || 0
+        changes
+          .map do |change|
+            upsert_multiplier = change[:action] == "UPSERT" ? 2 : 1
+            rrset = change[:resource_record_set]
+            next 0 unless rrset
+            rrs = rrset[:resource_records]
+            next 0 unless rrs
+            (rrs.map { |_| _[:value]&.size || 0 }.sum) * upsert_multiplier
+          end
+          .sum || 0
       end
 
       # Count of operational size
@@ -171,9 +193,7 @@ module Roadworker
       # See also: Batch#slice_operations
       # @return [Integer]
       def op_size
-        changes.map do |change|
-          change[:action] == 'UPSERT' ? 2 : 1
-        end.sum || 0
+        changes.map { |change| change[:action] == "UPSERT" ? 2 : 1 }.sum || 0
       end
 
       # @return [Array<Hash>]
@@ -188,7 +208,11 @@ module Roadworker
 
       # @return [Roadworker::Route53Wrapper::ResourceRecordSetWrapper]
       def present_rrset
-        hosted_zone.find_resource_record_set(rrset.name, rrset.type, rrset.set_identifier) or raise "record not present"
+        hosted_zone.find_resource_record_set(
+          rrset.name,
+          rrset.type,
+          rrset.set_identifier
+        ) or raise "record not present"
       end
 
       def diff!(dry_run: false)
@@ -209,7 +233,12 @@ module Roadworker
       # @param [Hash] options
       # @return [?]
       def get_alias_target(dns_name, options)
-        Aws::Route53.dns_name_to_alias_target(dns_name, options, hosted_zone.id, hosted_zone.name)
+        Aws::Route53.dns_name_to_alias_target(
+          dns_name,
+          options,
+          hosted_zone.id,
+          hosted_zone.name
+        )
       end
 
       # @param [?] health_check
@@ -217,17 +246,13 @@ module Roadworker
       def get_health_check(check)
         check ? health_checks.find_or_create(check) : nil
       end
-
     end
 
     class Create < Operation
       # @return [Hash]
       def desired_rrset
-        return @new_rrset if defined? @new_rrset 
-        @new_rrset = {
-          name: rrset.name,
-          type: rrset.type,
-        }
+        return @new_rrset if defined?(@new_rrset)
+        @new_rrset = { name: rrset.name, type: rrset.type }
 
         Route53Wrapper::RRSET_ATTRS.each do |attribute|
           value = rrset.send(attribute)
@@ -250,17 +275,12 @@ module Roadworker
       end
 
       def changes
-        [
-          {
-            action: 'CREATE',
-            resource_record_set: desired_rrset.to_h,
-          },
-        ]
+        [{ action: "CREATE", resource_record_set: desired_rrset.to_h }]
       end
 
       def diff!
-        log(:info, 'Create ResourceRecordSet', :cyan) do
-          "#{desired_rrset[:name]} #{desired_rrset[:type]}#{ desired_rrset[:set_identifier] && " (#{desired_rrset[:set_identifier]})" }"
+        log(:info, "Create ResourceRecordSet", :cyan) do
+          "#{desired_rrset[:name]} #{desired_rrset[:type]}#{desired_rrset[:set_identifier] && " (#{desired_rrset[:set_identifier]})"}"
         end
       end
     end
@@ -272,36 +292,29 @@ module Roadworker
       end
 
       def hosted_zone_soa_or_ns?
-        (present_rrset.type == 'SOA' || present_rrset.type == 'NS') && hosted_zone.name == present_rrset.name
+        (present_rrset.type == "SOA" || present_rrset.type == "NS") &&
+          hosted_zone.name == present_rrset.name
       end
 
       def changes
         # Avoid deleting hosted zone SOA/NS
-        if hosted_zone_soa_or_ns?
-          return []
-        end
+        return [] if hosted_zone_soa_or_ns?
 
-        [
-          {
-            action: 'DELETE',
-            resource_record_set: present_rrset.to_h,
-          }
-        ]
+        [{ action: "DELETE", resource_record_set: present_rrset.to_h }]
       end
 
       def diff!
         return if changes.empty?
-        log(:info, 'Delete ResourceRecordSet', :red) do
-          "#{present_rrset.name} #{present_rrset.type}#{ present_rrset.set_identifier && " (#{present_rrset.set_identifier})" }"
+        log(:info, "Delete ResourceRecordSet", :red) do
+          "#{present_rrset.name} #{present_rrset.type}#{present_rrset.set_identifier && " (#{present_rrset.set_identifier})"}"
         end
       end
     end
 
-
     class Update < Operation
       def desired_rrset
-        return @desired_rrset if defined? @desired_rrset
-        @desired_rrset = {name: rrset[:name]}
+        return @desired_rrset if defined?(@desired_rrset)
+        @desired_rrset = { name: rrset[:name] }
 
         Route53Wrapper::RRSET_ATTRS_WITH_TYPE.each do |attribute|
           value = rrset[attribute]
@@ -310,7 +323,10 @@ module Roadworker
           case attribute
           when :dns_name
             dns_name, dns_name_opts = value
-            @desired_rrset[:alias_target] = get_alias_target(dns_name, dns_name_opts)
+            @desired_rrset[:alias_target] = get_alias_target(
+              dns_name,
+              dns_name_opts
+            )
           when :health_check
             @desired_rrset[:health_check_id] = get_health_check(value)
           else
@@ -323,20 +339,14 @@ module Roadworker
 
       def changes
         [
-          {
-            action: 'DELETE',
-            resource_record_set: present_rrset.to_h,
-          },
-          {
-            action: 'CREATE',
-            resource_record_set: desired_rrset.to_h,
-          },
+          { action: "DELETE", resource_record_set: present_rrset.to_h },
+          { action: "CREATE", resource_record_set: desired_rrset.to_h }
         ]
       end
 
       def diff!
-        log(:info, 'Update ResourceRecordSet', :green) do
-          "#{present_rrset.name} #{present_rrset.type}#{ present_rrset.set_identifier && " (#{present_rrset.set_identifier})" }"
+        log(:info, "Update ResourceRecordSet", :green) do
+          "#{present_rrset.name} #{present_rrset.type}#{present_rrset.set_identifier && " (#{present_rrset.set_identifier})"}"
         end
 
         # Note that desired_rrset is directly for Route 53, and present_record is also from Route 53
@@ -344,19 +354,48 @@ module Roadworker
         Route53Wrapper::RRSET_ATTRS_WITH_TYPE.each do |attribute|
           case attribute
           when :dns_name
-            present = normalize_attribute_for_diff(attribute, present_rrset[:alias_target] && present_rrset[:alias_target][:dns_name])
-            desired = normalize_attribute_for_diff(attribute, desired_rrset[:alias_target] && desired_rrset[:alias_target][:dns_name])
+            present =
+              normalize_attribute_for_diff(
+                attribute,
+                present_rrset[:alias_target] &&
+                  present_rrset[:alias_target][:dns_name]
+              )
+            desired =
+              normalize_attribute_for_diff(
+                attribute,
+                desired_rrset[:alias_target] &&
+                  desired_rrset[:alias_target][:dns_name]
+              )
           when :health_check
-            present = normalize_attribute_for_diff(attribute, present_rrset[:health_check_id])
-            desired = normalize_attribute_for_diff(attribute, desired_rrset[:health_check_id])
+            present =
+              normalize_attribute_for_diff(
+                attribute,
+                present_rrset[:health_check_id]
+              )
+            desired =
+              normalize_attribute_for_diff(
+                attribute,
+                desired_rrset[:health_check_id]
+              )
           else
-            present = normalize_attribute_for_diff(attribute, present_rrset[attribute])
-            desired = normalize_attribute_for_diff(attribute, desired_rrset[attribute])
+            present =
+              normalize_attribute_for_diff(attribute, present_rrset[attribute])
+            desired =
+              normalize_attribute_for_diff(attribute, desired_rrset[attribute])
           end
 
           if desired != present
-            color = String.colorize # XXX:
-            log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(present, desired, color: color, indent: '    '), false)
+            log(
+              :info,
+              "  #{attribute}:\n".green +
+                Roadworker::Utils.diff(
+                  present,
+                  desired,
+                  color: @colorized,
+                  indent: "    "
+                ),
+              false
+            )
           end
         end
       end
