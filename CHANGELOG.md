@@ -1,3 +1,6 @@
+## 0.6.0
+- Issue: Fix Ruby 3.2 problems.
+
 ## 0.5.14
 - Feature: Support alias record of S3 endpoint and ELB in us-east-2.
 
