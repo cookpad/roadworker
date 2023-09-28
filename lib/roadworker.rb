@@ -8,7 +8,7 @@ require 'uuid'
 require 'diffy'
 require 'hashie'
 
-require 'roadworker/string-ext'
+require 'roadworker/string_helper'
 require 'roadworker/struct-ext'
 require 'roadworker/route53-ext'
 

@@ -323,11 +323,11 @@ module Roadworker
       end
 
       def print_success
-        print '.'.intense_green unless @options.debug
+        print Roadworker::StringHelper.intense_green('.') unless @options.debug
       end
 
       def print_failure
-        print 'F'.intense_red unless @options.debug
+        print Roadworker::StringHelper.intense_red('F') unless @options.debug
       end
 
       def fetch_dns_name(dns_name)

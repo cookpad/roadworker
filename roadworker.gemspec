@@ -32,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec-instafail", ">= 1.0.0"
   spec.add_development_dependency "rubydns", "~> 0.8.5"
   spec.add_development_dependency "coveralls"
+  spec.add_development_dependency "nokogiri"
 end
