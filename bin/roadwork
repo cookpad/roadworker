@@ -164,9 +164,9 @@ begin
     result_message = [examples_message, failures_message].join(', ')
 
     if failures.zero?
-      logger.info(result_message.green)
+      logger.info(Roadworker::StringHelper.green(result_message))
     else
-      logger.info(result_message.red)
+      logger.info(Roadworker::StringHelper.red(result_message))
       exit 1
     end
   when :apply
@@ -180,7 +180,7 @@ begin
 
     updated = client.apply(file)
 
-    logger.info('No change'.intense_blue) unless updated
+    logger.info(Roadworker::StringHelper.intense_blue('No change')) unless updated
   else
     raise 'must not happen'
   end
@@ -188,7 +188,7 @@ rescue => e
   if options[:debug]
     raise e
   else
-    $stderr.puts("[ERROR] #{e.class}: #{e.message}".red)
+    $stderr.puts(Roadworker::StringHelper.red("[ERROR] #{e.class}: #{e.message}"))
     exit 1
   end
 end

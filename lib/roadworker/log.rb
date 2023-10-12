@@ -5,7 +5,7 @@ module Roadworker
       log_id = yield if block_given?
       message = "#{message}: #{log_id}" if log_id
       message << ' (dry-run)' if dry_run
-      message = message.send(color) if color
+      message = Roadworker::StringHelper.public_send(color, message) if color
       logger.send(level, message)
     end
 

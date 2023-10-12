@@ -355,8 +355,8 @@ module Roadworker
           end
 
           if desired != present
-            color = String.colorize # XXX:
-            log(:info, "  #{attribute}:\n".green + Roadworker::Utils.diff(present, desired, color: color, indent: '    '), false)
+            color = Roadworker::StringHelper.colorize # XXX:
+            log(:info, Roadworker::StringHelper.green("  #{attribute}:\n") + Roadworker::Utils.diff(present, desired, color: color, indent: '    '), false)
           end
         end
       end
