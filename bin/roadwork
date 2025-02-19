@@ -80,9 +80,6 @@ ARGV.options do |opt|
     end
     aws_opts[:region] = region
     Aws.config.update(aws_opts)
-  rescue => e
-    $stderr.puts e
-    exit 1
   end
 end
 
@@ -183,12 +180,5 @@ begin
     logger.info(Roadworker::StringHelper.intense_blue('No change')) unless updated
   else
     raise 'must not happen'
-  end
-rescue => e
-  if options[:debug]
-    raise e
-  else
-    $stderr.puts(Roadworker::StringHelper.red("[ERROR] #{e.class}: #{e.message}"))
-    exit 1
   end
 end
