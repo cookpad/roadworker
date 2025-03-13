@@ -142,7 +142,7 @@ module Aws
           # NLB
           region = $1.downcase
           alias_target = nlb_dns_name_to_alias_target(name, region, options)
-        elsif (s3_hosted_zone_id = S3_WEBSITE_ENDPOINTS[name.downcase]) and name =~ /\As3-website-([^.]+)\.amazonaws\.com\z/i
+        elsif (s3_hosted_zone_id = S3_WEBSITE_ENDPOINTS[name.downcase]) and name =~ /\As3-website[.-]([^.]+)\.amazonaws\.com\z/i
           region = $1.downcase
           s3_dns_name_to_alias_target(name, region, s3_hosted_zone_id)
         elsif name =~ /\.cloudfront\.net\z/i
