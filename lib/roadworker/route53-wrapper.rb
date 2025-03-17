@@ -214,6 +214,10 @@ module Roadworker
 
                 actual[0].sub!(/\Adualstack\./i, '')
               end
+            when :resource_records
+              if self.type == 'AAAA'
+                return expected.map { |v| IPAddr.new(v.value, Socket::AF_INET6) } == actual.map { |v| IPAddr.new(v.value, Socket::AF_INET6) }
+              end
             end
 
             (expected == actual)

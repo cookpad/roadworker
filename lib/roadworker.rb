@@ -7,6 +7,7 @@ require 'uri'
 require 'uuid'
 require 'diffy'
 require 'hashie'
+require 'ipaddr'
 
 require 'roadworker/string_helper'
 require 'roadworker/struct-ext'
