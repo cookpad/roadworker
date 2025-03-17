@@ -6,17 +6,15 @@ require 'roadworker/version'
 Gem::Specification.new do |spec|
   spec.name          = "roadworker"
   spec.version       = Roadworker::VERSION
-  spec.authors       = "winebarrel"
-  spec.email         = "sgwr_dts@yahoo.co.jp"
+  spec.authors       = ["winebarrel", "Cookpad Inc."]
+  spec.email         = ["sgwr_dts@yahoo.co.jp", "kaihatsu@cookpad.com"]
   spec.description   = "Roadworker is a tool to manage Route53. It defines the state of Route53 using DSL, and updates Route53 according to DSL."
   spec.summary       = "Roadworker is a tool to manage Route53."
-  spec.homepage      = "https://github.com/winebarrel/roadworker"
+  spec.homepage      = "https://github.com/cookpad/roadworker"
   spec.license       = "MIT"
   spec.files         = %w(README.md) + Dir.glob('bin/**/*') + Dir.glob('lib/**/*')
 
-  #spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  #spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
   spec.add_dependency "aws-sdk-route53", ">= 1.22.0"
@@ -27,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "diffy"
   spec.add_dependency "hashie"
   spec.add_dependency "ipaddr"
+  spec.add_dependency "ostruct"
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", ">= 3.0.0"

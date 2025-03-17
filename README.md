@@ -1,5 +1,7 @@
 # Roadworker
 
+__Note:__ This software is just transferred from https://github.com/codenize-tools (maintained by [@winebarrel](https://github.com/winebarrel]) which was archived. [Cookpad](https://github.com/cookpad) and [@sorah](https://github.com/sorah) asked @winebarrel for inheriting this project and took its ownership as a new maintainer.
+
 Roadworker is a tool to manage Route53.
 
 It defines the state of Route53 using DSL, and updates Route53 according to DSL.
