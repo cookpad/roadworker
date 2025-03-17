@@ -1,3 +1,16 @@
+## 0.6.0
+- Enhancement: AAAA resource records are compared using actual numeric values, instead of string representation
+- Enhancement: ostruct gem is now listed as a explicit dependency
+
+## 0.5.17
+- Enhancement: Show backtrace on error
+
+## 0.5.16
+- Bug: Avoid overwriting String methods for Ruby 3.2 
+
+## 0.5.15
+- Bug: UPSERT was counted twice when calculating number of changes in a batch
+
 ## 0.5.14
 - Feature: Support alias record of S3 endpoint and ELB in us-east-2.
 
