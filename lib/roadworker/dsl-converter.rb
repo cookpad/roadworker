@@ -32,6 +32,8 @@ module Roadworker
                 "#{key}(\n      #{value}\n    )"
               end
             when :health_check_id
+              return if @health_checks.empty?
+
               config = HealthCheck.config_to_hash(@health_checks[value])
 
               if config[:calculated]
