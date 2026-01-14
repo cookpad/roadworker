@@ -23,6 +23,8 @@ Aws.config.update({
 })
 
 RSpec.configure do |config|
+  config.filter_run_including(skip_route53_setup: true) if ENV['TEST_WITHOUT_ROUTE53_SETUP'] == '1'
+
   route53_initialized = false
 
   config.before(:each) { |example|
