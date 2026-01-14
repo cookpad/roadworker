@@ -101,10 +101,9 @@ end
 
 def routefile(options = {})
   updated = false
-  tempfile = `mktemp /tmp/#{File.basename(__FILE__)}.XXXXXX`.strip
 
-  begin
-    open(tempfile, 'wb') {|f| f.puts(yield) }
+  Tempfile.create do |f|
+    f.puts(yield)
 
     options = {
       :logger => Logger.new(debug? ? $stdout : '/dev/null'),
@@ -112,10 +111,8 @@ def routefile(options = {})
     }.merge(options)
 
     client = Roadworker::Client.new(options)
-    updated = client.apply(tempfile)
+    updated = client.apply(f.path)
     sleep ENV['TEST_DELAY'].to_f
-  ensure
-    FileUtils.rm_f(tempfile)
   end
 
   return updated
