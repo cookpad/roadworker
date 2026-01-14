@@ -58,7 +58,7 @@ describe Roadworker::Client do
         a = rrsets["\\052.winebarrel.jp.", 'A']
         expect(a.name).to eq("\\052.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
       }
     end
 
@@ -92,7 +92,7 @@ describe Roadworker::Client do
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
       }
     end
 
@@ -122,9 +122,9 @@ describe Roadworker::Client do
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z14GRHDCWA56QT",
-          :dns_name => "dualstack." + TEST_ELB,
-          :evaluate_target_health => false,
+          hosted_zone_id: "Z14GRHDCWA56QT",
+          dns_name: "dualstack." + TEST_ELB,
+          evaluate_target_health: false,
         ))
       }
     end
@@ -155,9 +155,9 @@ describe Roadworker::Client do
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z14GRHDCWA56QT",
-          :dns_name => "dualstack." + TEST_ELB,
-          :evaluate_target_health => true,
+          hosted_zone_id: "Z14GRHDCWA56QT",
+          dns_name: "dualstack." + TEST_ELB,
+          evaluate_target_health: true,
         ))
       }
     end
@@ -188,9 +188,9 @@ describe Roadworker::Client do
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z14GRHDCWA56QT",
-          :dns_name => "dualstack." + TEST_ELB,
-          :evaluate_target_health => false,
+          hosted_zone_id: "Z14GRHDCWA56QT",
+          dns_name: "dualstack." + TEST_ELB,
+          evaluate_target_health: false,
         ))
       }
     end
@@ -221,9 +221,9 @@ describe Roadworker::Client do
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2M4EHUR26P7ZW",
-          :dns_name => "s3-website-ap-northeast-1.amazonaws.com.",
-          :evaluate_target_health => false,
+          hosted_zone_id: "Z2M4EHUR26P7ZW",
+          dns_name: "s3-website-ap-northeast-1.amazonaws.com.",
+          evaluate_target_health: false,
         ))
       }
     end
@@ -254,9 +254,9 @@ describe Roadworker::Client do
         a = rrsets['cf.winebarrel.jp.', 'A']
         expect(a.name).to eq("cf.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z2FDTNDATAQYW2",
-          :dns_name => TEST_CF,
-          :evaluate_target_health => false,
+          hosted_zone_id: "Z2FDTNDATAQYW2",
+          dns_name: TEST_CF,
+          evaluate_target_health: false,
         ))
       }
     end
@@ -287,9 +287,9 @@ describe Roadworker::Client do
         a = rrsets['apigw.winebarrel.jp.', 'A']
         expect(a.name).to eq("apigw.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => "Z1YSHQZHG15GKL",
-          :dns_name => TEST_APIGW,
-          :evaluate_target_health => false,
+          hosted_zone_id: "Z1YSHQZHG15GKL",
+          dns_name: TEST_APIGW,
+          evaluate_target_health: false,
         ))
       }
     end
@@ -338,27 +338,27 @@ describe Roadworker::Client do
         a = rrsets['winebarrel.jp.', 'A']
         expect(a.name).to eq("winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["10.0.0.1", "10.0.0.2"])
+        expect(rrs_list(a.resource_records.sort_by { |i| i.to_s })).to eq(["10.0.0.1", "10.0.0.2"])
 
         a = rrsets['alias.winebarrel.jp.', 'A']
         expect(a.name).to eq("alias.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => zone.id.sub(%r!^/hostedzone/!, ''),
-          :dns_name => 'winebarrel.jp.',
-          :evaluate_target_health => false,
+          hosted_zone_id: zone.id.sub(%r!^/hostedzone/!, ''),
+          dns_name: 'winebarrel.jp.',
+          evaluate_target_health: false,
         ))
 
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(456)
-        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
         a = rrsets['www2.winebarrel.jp.', 'A']
         expect(a.name).to eq("www2.winebarrel.jp.")
         expect(a.alias_target).to eq(Aws::Route53::Types::AliasTarget.new(
-          :hosted_zone_id => zone.id.sub(%r!^/hostedzone/!, ''),
-          :dns_name => 'www.winebarrel.jp.',
-          :evaluate_target_health => false,
+          hosted_zone_id: zone.id.sub(%r!^/hostedzone/!, ''),
+          dns_name: 'www.winebarrel.jp.',
+          evaluate_target_health: false,
         ))
       }
     end
@@ -407,14 +407,14 @@ describe Roadworker::Client do
         expect(a1.set_identifier).to eq('web server 1')
         expect(a1.weight).to eq(100)
         expect(a1.ttl).to eq(456)
-        expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
         a2 = rrsets['www.winebarrel.jp.', 'A', "web server 2"]
         expect(a2.name).to eq("www.winebarrel.jp.")
         expect(a2.set_identifier).to eq('web server 2')
         expect(a2.weight).to eq(50)
         expect(a2.ttl).to eq(456)
-        expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
       }
     end
 
@@ -462,14 +462,14 @@ describe Roadworker::Client do
         expect(a1.set_identifier).to eq('web server 1')
         expect(a1.ttl).to eq(456)
         expect(a1.region).to eq("us-west-1")
-        expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
         a2 = rrsets['www.winebarrel.jp.', 'A', "web server 2"]
         expect(a2.name).to eq("www.winebarrel.jp.")
         expect(a2.set_identifier).to eq('web server 2')
         expect(a2.ttl).to eq(456)
         expect(a2.region).to eq("us-west-2")
-        expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
       }
     end
 
@@ -504,7 +504,7 @@ describe Roadworker::Client do
         txt = rrsets['www.winebarrel.jp.', 'TXT']
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(123)
-        expect(rrs_list(txt.resource_records.sort_by {|i| i.to_s })).to eq([
+        expect(rrs_list(txt.resource_records.sort_by { |i| i.to_s })).to eq([
           "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
           "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
           "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
@@ -539,7 +539,7 @@ describe Roadworker::Client do
         cname = rrsets['www.winebarrel.jp.', 'CNAME']
         expect(cname.name).to eq("www.winebarrel.jp.")
         expect(cname.ttl).to eq(123)
-        expect(rrs_list(cname.resource_records.sort_by {|i| i.to_s })).to eq(["www2.winebarrel.jp"])
+        expect(rrs_list(cname.resource_records.sort_by { |i| i.to_s })).to eq(["www2.winebarrel.jp"])
       }
     end
 
@@ -573,7 +573,7 @@ describe Roadworker::Client do
         mx = rrsets['www.winebarrel.jp.', 'MX']
         expect(mx.name).to eq("www.winebarrel.jp.")
         expect(mx.ttl).to eq(123)
-        expect(rrs_list(mx.resource_records.sort_by {|i| i.to_s })).to eq(["10 mail.winebarrel.jp", "20 mail2.winebarrel.jp"])
+        expect(rrs_list(mx.resource_records.sort_by { |i| i.to_s })).to eq(["10 mail.winebarrel.jp", "20 mail2.winebarrel.jp"])
       }
     end
 
@@ -604,7 +604,7 @@ describe Roadworker::Client do
         ptr = rrsets['444.333.222.111.in-addr.arpa.', 'PTR']
         expect(ptr.name).to eq("444.333.222.111.in-addr.arpa.")
         expect(ptr.ttl).to eq(123)
-        expect(rrs_list(ptr.resource_records.sort_by {|i| i.to_s })).to eq(["www.winebarrel.jp"])
+        expect(rrs_list(ptr.resource_records.sort_by { |i| i.to_s })).to eq(["www.winebarrel.jp"])
       }
     end
 
@@ -638,7 +638,7 @@ describe Roadworker::Client do
         srv = rrsets['ftp.winebarrel.jp.', 'SRV']
         expect(srv.name).to eq("ftp.winebarrel.jp.")
         expect(srv.ttl).to eq(123)
-        expect(rrs_list(srv.resource_records.sort_by {|i| i.to_s })).to eq([
+        expect(rrs_list(srv.resource_records.sort_by { |i| i.to_s })).to eq([
           "1   0   21  server01.example.jp",
           "2   0   21  server02.example.jp",
         ])
@@ -672,7 +672,7 @@ describe Roadworker::Client do
         aaaa = rrsets['www.winebarrel.jp.', 'AAAA']
         expect(aaaa.name).to eq("www.winebarrel.jp.")
         expect(aaaa.ttl).to eq(123)
-        expect(rrs_list(aaaa.resource_records.sort_by {|i| i.to_s })).to eq(["::1"])
+        expect(rrs_list(aaaa.resource_records.sort_by { |i| i.to_s })).to eq(["::1"])
       }
     end
 
@@ -707,7 +707,7 @@ describe Roadworker::Client do
         txt = rrsets['www.winebarrel.jp.', 'SPF']
         expect(txt.name).to eq("www.winebarrel.jp.")
         expect(txt.ttl).to eq(123)
-        expect(rrs_list(txt.resource_records.sort_by {|i| i.to_s })).to eq([
+        expect(rrs_list(txt.resource_records.sort_by { |i| i.to_s })).to eq([
           "\"spf2.0/mfrom +ip4:192.168.100.0/24 ~all\"",
           "\"spf2.0/pra +ip4:192.168.100.0/24 ~all\"",
           "\"v=spf1 +ip4:192.168.100.0/24 ~all\"",
@@ -745,7 +745,7 @@ describe Roadworker::Client do
         ns = rrsets['www.winebarrel.jp.', 'NS']
         expect(ns.name).to eq("www.winebarrel.jp.")
         expect(ns.ttl).to eq(123)
-        expect(rrs_list(ns.resource_records.sort_by {|i| i.to_s })).to eq(["ns.winebarrel.jp", "ns2.winebarrel.jp"])
+        expect(rrs_list(ns.resource_records.sort_by { |i| i.to_s })).to eq(["ns.winebarrel.jp", "ns2.winebarrel.jp"])
       }
     end
 
@@ -794,17 +794,17 @@ describe Roadworker::Client do
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(123)
-        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
         a2 = rrsets['www2.winebarrel.jp.', 'A']
         expect(a2.name).to eq("www2.winebarrel.jp.")
         expect(a2.ttl).to eq(100)
-        expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
         a3 = rrsets['www3.winebarrel.jp.', 'A']
         expect(a3.name).to eq("www3.winebarrel.jp.")
         expect(a3.ttl).to eq(100)
-        expect(rrs_list(a3.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a3.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
       }
     end
 

@@ -66,14 +66,14 @@ describe Roadworker::Client do
       www1 = rrsets["www.winebarrel.jp.", 'A', 'www1']
       expect(www1.name).to eq("www.winebarrel.jp.")
       expect(www1.ttl).to eq(300)
-      expect(www1.resource_records).to eq [Aws::Route53::Types::ResourceRecord.new(:value=>"127.0.0.1")]
-      expect(www1.geo_location).to eq(Aws::Route53::Types::GeoLocation.new(:continent_code=>"AS"))
+      expect(www1.resource_records).to eq [Aws::Route53::Types::ResourceRecord.new(value: "127.0.0.1")]
+      expect(www1.geo_location).to eq(Aws::Route53::Types::GeoLocation.new(continent_code: "AS"))
 
       www2 = rrsets["www.winebarrel.jp.", 'A', 'www2']
       expect(www2.name).to eq("www.winebarrel.jp.")
       expect(www2.ttl).to eq(300)
-      expect(www2.resource_records).to eq [Aws::Route53::Types::ResourceRecord.new(:value=>"127.0.0.2")]
-      expect(www2.geo_location).to eq(Aws::Route53::Types::GeoLocation.new(:continent_code=>"EU"))
+      expect(www2.resource_records).to eq [Aws::Route53::Types::ResourceRecord.new(value: "127.0.0.2")]
+      expect(www2.geo_location).to eq(Aws::Route53::Types::GeoLocation.new(continent_code: "EU"))
     }
   end
 end

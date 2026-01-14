@@ -21,8 +21,8 @@ RSpec.describe Roadworker::Batch, skip_route53_setup: true do
       )
       sorted_operations = batch.operations.sort_by(&:sort_key)
       expect(sorted_operations.flat_map(&:changes)).to match([
-        {action: 'DELETE', resource_record_set: hash_including(type: 'CNAME')},
-        {action: 'CREATE', resource_record_set: hash_including(type: 'A')},
+        { action: 'DELETE', resource_record_set: hash_including(type: 'CNAME') },
+        { action: 'CREATE', resource_record_set: hash_including(type: 'A') },
       ])
     end
 
@@ -41,8 +41,8 @@ RSpec.describe Roadworker::Batch, skip_route53_setup: true do
       )
       sorted_operations = batch.operations.sort_by(&:sort_key)
       expect(sorted_operations.flat_map(&:changes)).to match([
-        {action: 'DELETE', resource_record_set: hash_including(type: 'CNAME')},
-        {action: 'CREATE', resource_record_set: hash_including(type: 'A')},
+        { action: 'DELETE', resource_record_set: hash_including(type: 'CNAME') },
+        { action: 'CREATE', resource_record_set: hash_including(type: 'A') },
       ])
     end
 
@@ -61,8 +61,8 @@ RSpec.describe Roadworker::Batch, skip_route53_setup: true do
       )
       sorted_operations = batch.operations.sort_by(&:sort_key)
       expect(sorted_operations.flat_map(&:changes)).to match([
-        {action: 'DELETE', resource_record_set: hash_including(type: 'A')},
-        {action: 'CREATE', resource_record_set: hash_including(type: 'CNAME')},
+        { action: 'DELETE', resource_record_set: hash_including(type: 'A') },
+        { action: 'CREATE', resource_record_set: hash_including(type: 'CNAME') },
       ])
     end
 
@@ -81,8 +81,8 @@ RSpec.describe Roadworker::Batch, skip_route53_setup: true do
       )
       sorted_operations = batch.operations.sort_by(&:sort_key)
       expect(sorted_operations.flat_map(&:changes)).to match([
-        {action: 'DELETE', resource_record_set: hash_including(type: 'A')},
-        {action: 'CREATE', resource_record_set: hash_including(type: 'CNAME')},
+        { action: 'DELETE', resource_record_set: hash_including(type: 'A') },
+        { action: 'CREATE', resource_record_set: hash_including(type: 'CNAME') },
       ])
     end
   end

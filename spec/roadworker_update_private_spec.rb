@@ -49,14 +49,14 @@ describe Roadworker::Client do
         expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
         expect(zone.vp_cs).to match_array [
-          Aws::Route53::Types::VPC.new(:vpc_region => TEST_VPC_REGION, :vpc_id => TEST_VPC1),
-          Aws::Route53::Types::VPC.new(:vpc_region => TEST_VPC_REGION, :vpc_id => TEST_VPC2),
+          Aws::Route53::Types::VPC.new(vpc_region: TEST_VPC_REGION, vpc_id: TEST_VPC1),
+          Aws::Route53::Types::VPC.new(vpc_region: TEST_VPC_REGION, vpc_id: TEST_VPC2),
         ]
 
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(456)
-        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
       }
     end
 
@@ -109,13 +109,13 @@ describe Roadworker::Client do
         expect(rrsets['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
         expect(zone.vp_cs).to match_array [
-          Aws::Route53::Types::VPC.new(:vpc_region => TEST_VPC_REGION, :vpc_id => TEST_VPC1),
+          Aws::Route53::Types::VPC.new(vpc_region: TEST_VPC_REGION, vpc_id: TEST_VPC1),
         ]
 
         a = rrsets['www.winebarrel.jp.', 'A']
         expect(a.name).to eq("www.winebarrel.jp.")
         expect(a.ttl).to eq(456)
-        expect(rrs_list(a.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
       }
     end
 
@@ -153,7 +153,7 @@ describe Roadworker::Client do
           EOS
         end
 
-        zones = fetch_hosted_zones(@route53).map { |z| @route53.get_hosted_zone(id: z.id) }.sort_by {|i| i.vp_cs.length }
+        zones = fetch_hosted_zones(@route53).map { |z| @route53.get_hosted_zone(id: z.id) }.sort_by { |i| i.vp_cs.length }
         expect(zones.length).to eq(2)
 
         # Public
@@ -170,7 +170,7 @@ describe Roadworker::Client do
         a1 = rrsets1['www.winebarrel.jp.', 'A']
         expect(a1.name).to eq("www.winebarrel.jp.")
         expect(a1.ttl).to eq(123)
-        expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
         # Private
         zone2 = zones[1]
@@ -186,7 +186,7 @@ describe Roadworker::Client do
         a2 = rrsets2['www.winebarrel.jp.', 'A']
         expect(a2.name).to eq("www.winebarrel.jp.")
         expect(a2.ttl).to eq(456)
-        expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
       }
     end
 
@@ -224,7 +224,7 @@ describe Roadworker::Client do
           EOS
         end
 
-        zones = fetch_hosted_zones(@route53).map { |z| @route53.get_hosted_zone(id: z.id) }.sort_by {|i| i.vp_cs.length }
+        zones = fetch_hosted_zones(@route53).map { |z| @route53.get_hosted_zone(id: z.id) }.sort_by { |i| i.vp_cs.length }
         expect(zones.length).to eq(2)
 
         # Public
@@ -241,7 +241,7 @@ describe Roadworker::Client do
         a1 = rrsets1['www.winebarrel.jp.', 'A']
         expect(a1.name).to eq("www.winebarrel.jp.")
         expect(a1.ttl).to eq(456)
-        expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+        expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
 
         # Private
         zone2 = zones[1]
@@ -253,13 +253,13 @@ describe Roadworker::Client do
         expect(rrsets2['winebarrel.jp.', 'SOA'].ttl).to eq(900)
 
         expect(zone2.vp_cs).to match_array [
-          Aws::Route53::Types::VPC.new(:vpc_region => TEST_VPC_REGION, :vpc_id => TEST_VPC1),
+          Aws::Route53::Types::VPC.new(vpc_region: TEST_VPC_REGION, vpc_id: TEST_VPC1),
         ]
 
         a2 = rrsets2['www.winebarrel.jp.', 'A']
         expect(a2.name).to eq("www.winebarrel.jp.")
         expect(a2.ttl).to eq(123)
-        expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+        expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
       }
     end
   end

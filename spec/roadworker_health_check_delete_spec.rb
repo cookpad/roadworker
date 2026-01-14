@@ -80,7 +80,7 @@ describe Roadworker::Client do
           info = rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(1)
@@ -90,18 +90,18 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 3306,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 3306,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -185,7 +185,7 @@ describe Roadworker::Client do
           info = rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(1)
@@ -195,18 +195,18 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 3306,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 3306,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -290,7 +290,7 @@ describe Roadworker::Client do
           info = rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(1)
@@ -300,19 +300,19 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/path',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/path',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -385,7 +385,7 @@ describe Roadworker::Client do
           info = rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(0)
@@ -432,7 +432,7 @@ describe Roadworker::Client do
         }
 
         it {
-          routefile(:health_check_gc => false) do
+          routefile(health_check_gc: false) do
             <<~EOS
               hosted_zone "winebarrel.jp" do
                 rrset "info.winebarrel.jp", "A" do
@@ -460,7 +460,7 @@ describe Roadworker::Client do
           info = rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(2)
@@ -535,7 +535,7 @@ describe Roadworker::Client do
           info = rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(0)
@@ -610,7 +610,7 @@ describe Roadworker::Client do
           info = rrsets['info.winebarrel.jp.', 'A']
           expect(info.name).to eq("info.winebarrel.jp.")
           expect(info.ttl).to eq(123)
-          expect(rrs_list(info.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(info.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
 
           check_list = fetch_health_checks(@route53)
           expect(check_list.length).to eq(0)

@@ -50,21 +50,21 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP_STR_MATCH',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :search_string => '123',
-            :request_interval => 10,
-            :failure_threshold => 5,
-            :measure_latency => true,
-            :inverted => true,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP_STR_MATCH',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            search_string: '123',
+            request_interval: 10,
+            failure_threshold: 5,
+            measure_latency: true,
+            inverted: true,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -72,21 +72,21 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP_STR_MATCH',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :search_string => '123',
-            :request_interval => 10,
-            :failure_threshold => 10,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP_STR_MATCH',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            search_string: '123',
+            request_interval: 10,
+            failure_threshold: 10,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -139,21 +139,21 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTPS_STR_MATCH',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :search_string => '123',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTPS_STR_MATCH',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            search_string: '123',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -161,21 +161,21 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 443,
-            :type => 'HTTPS_STR_MATCH',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :search_string => '123',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 443,
+            type: 'HTTPS_STR_MATCH',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            search_string: '123',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -228,20 +228,20 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :port => 80,
-            :type => 'HTTP_STR_MATCH',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :search_string => '123',
-            :request_interval => 10,
-            :failure_threshold => 5,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            port: 80,
+            type: 'HTTP_STR_MATCH',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            search_string: '123',
+            request_interval: 10,
+            failure_threshold: 5,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -249,20 +249,20 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :port => 80,
-            :type => 'HTTP_STR_MATCH',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :search_string => '123',
-            :request_interval => 10,
-            :failure_threshold => 10,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            port: 80,
+            type: 'HTTP_STR_MATCH',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            search_string: '123',
+            request_interval: 10,
+            failure_threshold: 10,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -315,19 +315,19 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/path',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/path',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -335,19 +335,19 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/path',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/path',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -400,18 +400,18 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -419,18 +419,18 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -483,18 +483,18 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :fully_qualified_domain_name => 'example.com',
-            :port => 80,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            fully_qualified_domain_name: 'example.com',
+            port: 80,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -502,18 +502,18 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :fully_qualified_domain_name => 'example.com',
-            :port => 80,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            fully_qualified_domain_name: 'example.com',
+            port: 80,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -565,19 +565,19 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -585,7 +585,7 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(a2.health_check_id).to be_nil
         }
       end
@@ -638,20 +638,20 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -659,18 +659,18 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 3306,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 3306,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -709,7 +709,7 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Secondary')
           expect(a1.failover).to eq('SECONDARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(a1.health_check_id).to be_nil
         }
       end
@@ -717,7 +717,7 @@ describe Roadworker::Client do
       context 'Weighted' do
         it {
           routefile do
-          <<~EOS
+            <<~EOS
             hosted_zone "winebarrel.jp" do
               rrset "www.winebarrel.jp", "A" do
                 set_identifier "w100"
@@ -762,20 +762,20 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('w100')
           expect(a1.weight).to eq(100)
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "w50"]
@@ -783,18 +783,18 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('w50')
           expect(a2.weight).to eq(50)
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 3306,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 3306,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -847,20 +847,20 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('jp')
           expect(a1.region).to eq('ap-northeast-1')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/path',
-            :fully_qualified_domain_name => 'example.com',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/path',
+            fully_qualified_domain_name: 'example.com',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "us"]
@@ -868,18 +868,18 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('us')
           expect(a2.region).to eq('us-east-1')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 3306,
-            :type => 'TCP',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 3306,
+            type: 'TCP',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
         }
       end
@@ -978,19 +978,19 @@ describe Roadworker::Client do
           expect(a1.set_identifier).to eq('Primary')
           expect(a1.failover).to eq('PRIMARY')
           expect(a1.ttl).to eq(456)
-          expect(rrs_list(a1.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
+          expect(rrs_list(a1.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.1", "127.0.0.2"])
           expect(check_list[a1.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/path',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/path',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a2 = rrsets['www.winebarrel.jp.', 'A', "Secondary"]
@@ -998,19 +998,19 @@ describe Roadworker::Client do
           expect(a2.set_identifier).to eq('Secondary')
           expect(a2.failover).to eq('SECONDARY')
           expect(a2.ttl).to eq(456)
-          expect(rrs_list(a2.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
+          expect(rrs_list(a2.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.3", "127.0.0.4"])
           expect(check_list[a2.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => '192.0.43.10',
-            :port => 80,
-            :type => 'HTTP',
-            :resource_path => '/path',
-            :request_interval => 30,
-            :failure_threshold => 3,
-            :measure_latency => false,
-            :inverted => false,
-            :child_health_checks => [],
-            :enable_sni => false,
-            :regions => [],
+            ip_address: '192.0.43.10',
+            port: 80,
+            type: 'HTTP',
+            resource_path: '/path',
+            request_interval: 30,
+            failure_threshold: 3,
+            measure_latency: false,
+            inverted: false,
+            child_health_checks: [],
+            enable_sni: false,
+            regions: [],
           ))
 
           a3 = rrsets['www2.winebarrel.jp.', 'A', "Primary"]
@@ -1018,19 +1018,19 @@ describe Roadworker::Client do
           expect(a3.set_identifier).to eq('Primary')
           expect(a3.failover).to eq('PRIMARY')
           expect(a3.ttl).to eq(500)
-          expect(rrs_list(a3.resource_records.sort_by {|i| i.to_s })).to eq(["127.0.0.5", "127.0.0.6"])
+          expect(rrs_list(a3.resource_records.sort_by { |i| i.to_s })).to eq(["127.0.0.5", "127.0.0.6"])
           expect(check_list[a3.health_check_id]).to eq(Aws::Route53::Types::HealthCheckConfig.new(
-            :ip_address => nil,
-            :port => nil,
-            :type => 'CALCULATED',
-            :resource_path => nil,
-            :request_interval => nil,
-            :failure_threshold => nil,
-            :health_threshold => 1,
-            :measure_latency => nil,
-            :inverted => false,
-            :child_health_checks => health_check_ids,
-            :regions => [],
+            ip_address: nil,
+            port: nil,
+            type: 'CALCULATED',
+            resource_path: nil,
+            request_interval: nil,
+            failure_threshold: nil,
+            health_threshold: 1,
+            measure_latency: nil,
+            inverted: false,
+            child_health_checks: health_check_ids,
+            regions: [],
           ))
         }
       end

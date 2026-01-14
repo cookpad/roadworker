@@ -18,8 +18,8 @@ require 'rubydns'
 require 'tempfile'
 
 Aws.config.update({
-  :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
-  :secret_access_key => (ENV['TEST_AWS_SECRET_ACCESS_KEY'] || 'tiger'),
+  access_key_id: (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
+  secret_access_key: (ENV['TEST_AWS_SECRET_ACCESS_KEY'] || 'tiger'),
 })
 
 RSpec.configure do |config|
@@ -36,7 +36,7 @@ RSpec.configure do |config|
 
   config.after(:all) do
     if route53_initialized
-      routefile(:force => true) { '' }
+      routefile(force: true) { '' }
     end
   end
 end
@@ -45,9 +45,9 @@ def run_dns(dsl, options)
   handler = options.fetch(:handler)
 
   options = {
-    :logger      => Logger.new(debug? ? $stdout : '/dev/null'),
-    :nameservers => "127.0.0.1",
-    :port        => DNS_PORT,
+    logger: Logger.new(debug? ? $stdout : '/dev/null'),
+    nameservers: "127.0.0.1",
+    port: DNS_PORT,
   }.merge(options)
 
   # RubyDNS uses Console for its logger.
@@ -106,8 +106,8 @@ def routefile(options = {})
     f.puts(yield)
 
     options = {
-      :logger => Logger.new(debug? ? $stdout : '/dev/null'),
-      :health_check_gc => true
+      logger: Logger.new(debug? ? $stdout : '/dev/null'),
+      health_check_gc: true,
     }.merge(options)
 
     client = Roadworker::Client.new(options)
@@ -119,7 +119,7 @@ def routefile(options = {})
 end
 
 def rrs_list(rrs)
-  rrs.map {|i| i[:value] }
+  rrs.map { |i| i[:value] }
 end
 
 def fetch_health_checks(route53)
@@ -129,7 +129,7 @@ def fetch_health_checks(route53)
   next_marker = nil
 
   while is_truncated
-    opts = next_marker ? {:marker => next_marker} : {}
+    opts = next_marker ? { marker: next_marker } : {}
     response = @route53.list_health_checks(opts)
 
     response[:health_checks].each do |check|
@@ -189,7 +189,7 @@ def cleanup_route53
       page.resource_record_sets.each do |rrset|
         rrset_name = rrset.name.sub(/\.\z/, '')
 
-        unless rrset_name == hz_name and %w(NS SOA).include?(rrset.type)
+        unless (rrset_name == hz_name) && %w(NS SOA).include?(rrset.type)
           changes << { action: 'DELETE', resource_record_set: rrset }
         end
       end
