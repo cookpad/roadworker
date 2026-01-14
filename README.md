@@ -8,7 +8,6 @@ It defines the state of Route53 using DSL, and updates Route53 according to DSL.
 
 [![Gem Version](https://badge.fury.io/rb/roadworker.svg)](http://badge.fury.io/rb/roadworker)
 [![Build Status](https://travis-ci.org/codenize-tools/roadworker.svg?branch=master)](https://travis-ci.org/codenize-tools/roadworker)
-[![Coverage Status](https://coveralls.io/repos/winebarrel/roadworker/badge.svg?branch=master&service=github)](https://coveralls.io/github/winebarrel/roadworker?branch=master)
 
 **Notice**
 
