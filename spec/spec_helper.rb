@@ -9,11 +9,13 @@ TEST_VPC2 = ENV['TEST_VPC2']
 TEST_INTERVAL = ENV['TEST_INTERVAL'].to_i
 DNS_PORT = 5300
 
-require 'rubygems'
 require 'roadworker'
+require 'async'
+require 'console'
 require 'fileutils'
 require 'logger'
 require 'rubydns'
+require 'tempfile'
 
 Aws.config.update({
   :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
@@ -40,7 +42,6 @@ RSpec.configure do |config|
 end
 
 def run_dns(dsl, options)
-  server = nil
   handler = options.fetch(:handler)
 
   options = {
@@ -49,34 +50,33 @@ def run_dns(dsl, options)
     :port        => DNS_PORT,
   }.merge(options)
 
-  begin
-    server = RubyDNS::RuleBasedServer.new(:logger => Logger.new(debug? ? $stdout : '/dev/null'), &handler)
+  # RubyDNS uses Console for its logger.
+  original_logger = Console.logger
+  unless debug?
+    Console.logger = Console::Logger.new(Console::Output::Null.new)
+  end
 
-    Thread.new {
-      EventMachine.run do
-        server.run(
-          :listen => [:udp, :tcp].map {|i| [i, "0.0.0.0", DNS_PORT] },
-        )
-      end
-    }
+  endpoint = Async::DNS::Endpoint.for("127.0.0.1", port: DNS_PORT)
 
-    sleep 0.1 until EventMachine.reactor_running?
-    tempfile = `mktemp /tmp/#{File.basename(__FILE__)}.XXXXXX`.strip
-    records_length, failures = nil
+  failures = nil
+  Async do
+    task = RubyDNS.run(endpoint, &handler)
+    task.wait
 
-    begin
-      open(tempfile, 'wb') {|f| f.puts(dsl) }
+    Tempfile.create do |f|
+      f.puts(dsl)
+
       client = Roadworker::Client.new(options)
 
       quiet do
-        records_length, failures = client.test(tempfile)
+        _records_length, failures = client.test(f.path)
       end
-    ensure
-      FileUtils.rm_f(tempfile)
     end
   ensure
-    EventMachine.stop if server
+    task.stop
   end
+
+  Console.logger = original_logger
 
   return failures
 end

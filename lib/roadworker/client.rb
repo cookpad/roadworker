@@ -7,7 +7,7 @@ module Roadworker
       @options = OpenStruct.new(options)
       @options.logger ||= Logger.new($stdout)
       Roadworker::StringHelper.colorize = @options.color
-      @options.route53 = Aws::Route53::Client.new
+      @options.route53 ||= Aws::Route53::Client.new
       @health_checks = HealthCheck.health_checks(@options.route53, :extended => true)
       @options.health_checks = @health_checks
       @route53 = Route53Wrapper.new(@options)

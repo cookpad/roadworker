@@ -1,4 +1,6 @@
-describe Roadworker::DSL::Tester do
+describe Roadworker::DSL::Tester, skip_route53_setup: true do
+  let(:route53) { Aws::Route53::Client.new(stub_responses: true) }
+
   it 'checks A record' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::A) do |tx|
@@ -6,7 +8,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "A" do
           ttl 300
@@ -27,7 +29,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "0.0.10.in-addr.arpa." do
         rrset "80.0.0.10.in-addr.arpa.", "PTR" do
           ttl 300
@@ -48,7 +50,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "TXT" do
           ttl 300
@@ -69,7 +71,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "CNAME" do
           ttl 300
@@ -90,7 +92,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "MX" do
           ttl 300
@@ -111,7 +113,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "SRV" do
           ttl 300
@@ -132,7 +134,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "SRV" do
           ttl 300
@@ -153,7 +155,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "SRV" do
           ttl 300
@@ -174,7 +176,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "AAAA" do
           ttl 300
@@ -197,7 +199,7 @@ describe Roadworker::DSL::Tester do
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, :handler => handler, :route53 => route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "NS" do
           ttl 300
