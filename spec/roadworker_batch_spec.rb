@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Roadworker::Batch, skip_route53_setup: true do
   let(:hosted_zone) { double(Roadworker::Route53Wrapper::HostedzoneWrapper, name: 'winebarrel.jp.', id: nil) }
   let(:batch) do
