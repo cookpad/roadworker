@@ -3,38 +3,38 @@ describe Roadworker::Client do
     context 'associate' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  vpc TEST_VPC_REGION, TEST_VPC1
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              vpc TEST_VPC_REGION, TEST_VPC1
 
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  vpc TEST_VPC_REGION, TEST_VPC1
-  vpc TEST_VPC_REGION, TEST_VPC2
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              vpc TEST_VPC_REGION, TEST_VPC1
+              vpc TEST_VPC_REGION, TEST_VPC2
 
-  rrset "www.winebarrel.jp", "A" do
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -63,38 +63,38 @@ EOS
     context 'disassociate' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  vpc TEST_VPC_REGION, TEST_VPC1
-  vpc TEST_VPC_REGION, TEST_VPC2
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              vpc TEST_VPC_REGION, TEST_VPC1
+              vpc TEST_VPC_REGION, TEST_VPC2
 
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  vpc TEST_VPC_REGION, TEST_VPC1
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              vpc TEST_VPC_REGION, TEST_VPC1
 
-  rrset "www.winebarrel.jp", "A" do
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -122,35 +122,35 @@ EOS
     context 'both public/private' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  vpc TEST_VPC_REGION, TEST_VPC1
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              vpc TEST_VPC_REGION, TEST_VPC1
 
-  rrset "www.winebarrel.jp", "A" do
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53).map { |z| @route53.get_hosted_zone(id: z.id) }.sort_by {|i| i.vp_cs.length }
@@ -193,35 +193,35 @@ EOS
     context 'both private/public' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  vpc TEST_VPC_REGION, TEST_VPC1
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              vpc TEST_VPC_REGION, TEST_VPC1
 
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53).map { |z| @route53.get_hosted_zone(id: z.id) }.sort_by {|i| i.vp_cs.length }

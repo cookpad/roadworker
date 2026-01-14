@@ -2,140 +2,140 @@ describe Roadworker::Client do
   context 'Mix' do
     before(:each) {
       routefile do
-<<EOS
-hosted_zone "info.winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
+        <<~EOS
+          hosted_zone "info.winebarrel.jp" do
+            rrset "info.winebarrel.jp", "A" do
+              ttl 123
+              resource_records(
+                "127.0.0.3",
+                "127.0.0.4"
+              )
+            end
+          end
 
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          hosted_zone "winebarrel.jp" do
+            rrset "www.winebarrel.jp", "A" do
+              ttl 123
+              resource_records(
+                "127.0.0.1",
+                "127.0.0.2"
+              )
+            end
 
-  rrset "elb.winebarrel.jp", "A" do
-    dns_name TEST_ELB
-  end
+            rrset "elb.winebarrel.jp", "A" do
+              dns_name TEST_ELB
+            end
 
-  rrset "www.winebarrel.jp", "TXT" do
-    ttl 123
-    resource_records(
-      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
-    )
-  end
+            rrset "www.winebarrel.jp", "TXT" do
+              ttl 123
+              resource_records(
+                '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+                '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
+                '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+              )
+            end
 
-  rrset "www.winebarrel.jp", "MX" do
-    ttl 123
-    resource_records(
-      "10 mail.winebarrel.jp",
-      "20 mail2.winebarrel.jp"
-    )
-  end
+            rrset "www.winebarrel.jp", "MX" do
+              ttl 123
+              resource_records(
+                "10 mail.winebarrel.jp",
+                "20 mail2.winebarrel.jp"
+              )
+            end
 
-  rrset "fo.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.5",
-      "127.0.0.6"
-    )
-  end
+            rrset "fo.winebarrel.jp", "A" do
+              set_identifier "Primary"
+              failover "PRIMARY"
+              health_check "tcp://192.0.43.10:3306"
+              ttl 456
+              resource_records(
+                "127.0.0.5",
+                "127.0.0.6"
+              )
+            end
 
-  rrset "fo.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    ttl 456
-    health_check "http://192.0.43.10:80/path", :host => 'example.com'
-    resource_records(
-      "127.0.0.7",
-      "127.0.0.8"
-    )
-  end
-end
-EOS
+            rrset "fo.winebarrel.jp", "A" do
+              set_identifier "Secondary"
+              failover "SECONDARY"
+              ttl 456
+              health_check "http://192.0.43.10:80/path", :host => 'example.com'
+              resource_records(
+                "127.0.0.7",
+                "127.0.0.8"
+              )
+            end
+          end
+        EOS
       end
     }
 
     context 'No change' do
       it {
         updated = routefile do
-<<EOS
-hosted_zone "info.winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
+          <<~EOS
+            hosted_zone "info.winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
 
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "elb.winebarrel.jp", "A" do
-    dns_name TEST_ELB
-  end
+              rrset "elb.winebarrel.jp", "A" do
+                dns_name TEST_ELB
+              end
 
-  rrset "www.winebarrel.jp", "TXT" do
-    ttl 123
-    resource_records(
-      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
-    )
-  end
+              rrset "www.winebarrel.jp", "TXT" do
+                ttl 123
+                resource_records(
+                  '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+                )
+              end
 
-  rrset "www.winebarrel.jp", "MX" do
-    ttl 123
-    resource_records(
-      "10 mail.winebarrel.jp",
-      "20 mail2.winebarrel.jp"
-    )
-  end
+              rrset "www.winebarrel.jp", "MX" do
+                ttl 123
+                resource_records(
+                  "10 mail.winebarrel.jp",
+                  "20 mail2.winebarrel.jp"
+                )
+              end
 
-  rrset "fo.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.5",
-      "127.0.0.6"
-    )
-  end
+              rrset "fo.winebarrel.jp", "A" do
+                set_identifier "Primary"
+                failover "PRIMARY"
+                health_check "tcp://192.0.43.10:3306"
+                ttl 456
+                resource_records(
+                  "127.0.0.5",
+                  "127.0.0.6"
+                )
+              end
 
-  rrset "fo.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    ttl 456
-    health_check "http://192.0.43.10:80/path", :host => 'example.com'
-    resource_records(
-      "127.0.0.7",
-      "127.0.0.8"
-    )
-  end
-end
-EOS
+              rrset "fo.winebarrel.jp", "A" do
+                set_identifier "Secondary"
+                failover "SECONDARY"
+                ttl 456
+                health_check "http://192.0.43.10:80/path", :host => 'example.com'
+                resource_records(
+                  "127.0.0.7",
+                  "127.0.0.8"
+                )
+              end
+            end
+          EOS
         end
 
         expect(updated).to be_falsey
@@ -239,70 +239,70 @@ EOS
     context 'Normalization' do
       it {
         updated = routefile do
-<<EOS
-hosted_zone "info.winebarrel.jp." do
-  rrset "INFO.WINEBARREL.JP", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
+          <<~EOS
+            hosted_zone "info.winebarrel.jp." do
+              rrset "INFO.WINEBARREL.JP", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
 
-hosted_zone "WINEBARREL.JP" do
-  rrset "www.winebarrel.jp.", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            hosted_zone "WINEBARREL.JP" do
+              rrset "www.winebarrel.jp.", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "ELB.WINEBARREL.JP.", "A" do
-    dns_name TEST_ELB
-  end
+              rrset "ELB.WINEBARREL.JP.", "A" do
+                dns_name TEST_ELB
+              end
 
-  rrset "www.winebarrel.jp.", "TXT" do
-    ttl 123
-    resource_records(
-      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
-    )
-  end
+              rrset "www.winebarrel.jp.", "TXT" do
+                ttl 123
+                resource_records(
+                  '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+                )
+              end
 
-  rrset "WWW.WINEBARREL.JP", "MX" do
-    ttl 123
-    resource_records(
-      "10 mail.winebarrel.jp",
-      "20 mail2.winebarrel.jp"
-    )
-  end
+              rrset "WWW.WINEBARREL.JP", "MX" do
+                ttl 123
+                resource_records(
+                  "10 mail.winebarrel.jp",
+                  "20 mail2.winebarrel.jp"
+                )
+              end
 
-  rrset "fo.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.5",
-      "127.0.0.6"
-    )
-  end
+              rrset "fo.winebarrel.jp", "A" do
+                set_identifier "Primary"
+                failover "PRIMARY"
+                health_check "tcp://192.0.43.10:3306"
+                ttl 456
+                resource_records(
+                  "127.0.0.5",
+                  "127.0.0.6"
+                )
+              end
 
-  rrset "FO.WINEBARREL.JP", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    ttl 456
-    health_check "http://192.0.43.10:80/path", :host => 'example.com'
-    resource_records(
-      "127.0.0.7",
-      "127.0.0.8"
-    )
-  end
-end
-EOS
+              rrset "FO.WINEBARREL.JP", "A" do
+                set_identifier "Secondary"
+                failover "SECONDARY"
+                ttl 456
+                health_check "http://192.0.43.10:80/path", :host => 'example.com'
+                resource_records(
+                  "127.0.0.7",
+                  "127.0.0.8"
+                )
+              end
+            end
+          EOS
         end
 
         expect(updated).to be_falsey
@@ -406,71 +406,71 @@ EOS
     context 'Change' do
       it {
         updated = routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                )
+              end
 
-  rrset "elb.winebarrel.jp", "A" do
-    dns_name TEST_ELB
-  end
+              rrset "elb.winebarrel.jp", "A" do
+                dns_name TEST_ELB
+              end
 
-  rrset "www.winebarrel.jp", "TXT" do
-    ttl 456
-    resource_records(
-      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
-    )
-  end
+              rrset "www.winebarrel.jp", "TXT" do
+                ttl 456
+                resource_records(
+                  '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+                )
+              end
 
-  rrset "ftp.winebarrel.jp", "SRV" do
-    ttl 123
-    resource_records(
-      "1   0   21  server01.example.jp",
-      "2   0   21  server02.example.jp"
-    )
-  end
+              rrset "ftp.winebarrel.jp", "SRV" do
+                ttl 123
+                resource_records(
+                  "1   0   21  server01.example.jp",
+                  "2   0   21  server02.example.jp"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "AAAA" do
-    ttl 123
-    resource_records("::1")
-  end
+              rrset "www.winebarrel.jp", "AAAA" do
+                ttl 123
+                resource_records("::1")
+              end
 
-  rrset "fo.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path", :host => 'example.com'
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+              rrset "fo.winebarrel.jp", "A" do
+                set_identifier "Primary"
+                failover "PRIMARY"
+                health_check "http://192.0.43.10:80/path", :host => 'example.com'
+                ttl 456
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "fo.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
+              rrset "fo.winebarrel.jp", "A" do
+                set_identifier "Secondary"
+                failover "SECONDARY"
+                health_check "tcp://192.0.43.10:3306"
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
 
-hosted_zone "333.222.111.in-addr.arpa" do
-  rrset "444.333.222.111.in-addr.arpa", "PTR" do
-    ttl 123
-    resource_records("www.winebarrel.jp")
-  end
-end
-EOS
+            hosted_zone "333.222.111.in-addr.arpa" do
+              rrset "444.333.222.111.in-addr.arpa", "PTR" do
+                ttl 123
+                resource_records("www.winebarrel.jp")
+              end
+            end
+          EOS
         end
 
         expect(updated).to be_truthy
@@ -594,49 +594,49 @@ EOS
     context 'Change (force)' do
       it {
         updated = routefile(:force => true) do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                )
+              end
 
-  rrset "elb.winebarrel.jp", "A" do
-    dns_name TEST_ELB
-  end
+              rrset "elb.winebarrel.jp", "A" do
+                dns_name TEST_ELB
+              end
 
-  rrset "www.winebarrel.jp", "TXT" do
-    ttl 456
-    resource_records(
-      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
-    )
-  end
+              rrset "www.winebarrel.jp", "TXT" do
+                ttl 456
+                resource_records(
+                  '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+                )
+              end
 
-  rrset "ftp.winebarrel.jp", "SRV" do
-    ttl 123
-    resource_records(
-      "1   0   21  server01.example.jp",
-      "2   0   21  server02.example.jp"
-    )
-  end
+              rrset "ftp.winebarrel.jp", "SRV" do
+                ttl 123
+                resource_records(
+                  "1   0   21  server01.example.jp",
+                  "2   0   21  server02.example.jp"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "AAAA" do
-    ttl 123
-    resource_records("::1")
-  end
-end
+              rrset "www.winebarrel.jp", "AAAA" do
+                ttl 123
+                resource_records("::1")
+              end
+            end
 
-hosted_zone "333.222.111.in-addr.arpa" do
-  rrset "444.333.222.111.in-addr.arpa", "PTR" do
-    ttl 123
-    resource_records("www.winebarrel.jp")
-  end
-end
-EOS
+            hosted_zone "333.222.111.in-addr.arpa" do
+              rrset "444.333.222.111.in-addr.arpa", "PTR" do
+                ttl 123
+                resource_records("www.winebarrel.jp")
+              end
+            end
+          EOS
         end
 
         expect(updated).to be_truthy

@@ -4,66 +4,66 @@ describe Roadworker::Client do
       context 'HTTP_STR_MATCH' do
         before {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path", :host => 'example.com', :search_string => '123', :request_interval => 10, :failure_threshold => 10
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Primary"
+                  failover "PRIMARY"
+                  health_check "http://192.0.43.10:80/path", :host => 'example.com', :search_string => '123', :request_interval => 10, :failure_threshold => 10
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Secondary"
+                  failover "SECONDARY"
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
         }
 
         it {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Secondary"
+                  failover "SECONDARY"
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
 
           zones = fetch_hosted_zones(@route53)
@@ -109,66 +109,66 @@ EOS
       context 'Primary' do
         before {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path"
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Primary"
+                  failover "PRIMARY"
+                  health_check "http://192.0.43.10:80/path"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Secondary"
+                  failover "SECONDARY"
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
         }
 
         it {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Secondary"
+                  failover "SECONDARY"
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
 
           zones = fetch_hosted_zones(@route53)
@@ -214,66 +214,66 @@ EOS
       context 'Secondary' do
         before {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path"
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Primary"
+                  failover "PRIMARY"
+                  health_check "http://192.0.43.10:80/path"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Secondary"
+                  failover "SECONDARY"
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
         }
 
         it {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path"
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Primary"
+                  failover "PRIMARY"
+                  health_check "http://192.0.43.10:80/path"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
+              end
+            EOS
           end
 
           zones = fetch_hosted_zones(@route53)
@@ -320,55 +320,55 @@ EOS
       context 'Both' do
         before {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path"
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Primary"
+                  failover "PRIMARY"
+                  health_check "http://192.0.43.10:80/path"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Secondary"
+                  failover "SECONDARY"
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
         }
 
         it {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
+              end
+            EOS
           end
 
           zones = fetch_hosted_zones(@route53)
@@ -395,55 +395,55 @@ EOS
       context 'No HealthCheck GC' do
         before {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Primary"
-    failover "PRIMARY"
-    health_check "http://192.0.43.10:80/path"
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Primary"
+                  failover "PRIMARY"
+                  health_check "http://192.0.43.10:80/path"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "Secondary"
-    failover "SECONDARY"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "Secondary"
+                  failover "SECONDARY"
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
         }
 
         it {
           routefile(:health_check_gc => false) do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
+              end
+            EOS
           end
 
           zones = fetch_hosted_zones(@route53)
@@ -470,55 +470,55 @@ EOS
       context 'Weighted' do
         before {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "w100"
-    weight 100
-    health_check "http://192.0.43.10:80/path"
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "w100"
+                  weight 100
+                  health_check "http://192.0.43.10:80/path"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "w50"
-    weight 50
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "w50"
+                  weight 50
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
         }
 
         it {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
+              end
+            EOS
           end
 
           zones = fetch_hosted_zones(@route53)
@@ -545,55 +545,55 @@ EOS
       context 'Latency' do
         before {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "jp"
-    region "ap-northeast-1"
-    health_check "http://192.0.43.10:80/path"
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "jp"
+                  region "ap-northeast-1"
+                  health_check "http://192.0.43.10:80/path"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "us"
-    region "us-east-1"
-    health_check "tcp://192.0.43.10:3306"
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "us"
+                  region "us-east-1"
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
+              end
+            EOS
           end
         }
 
         it {
           routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+            <<~EOS
+              hosted_zone "winebarrel.jp" do
+                rrset "info.winebarrel.jp", "A" do
+                  ttl 123
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
+              end
+            EOS
           end
 
           zones = fetch_hosted_zones(@route53)

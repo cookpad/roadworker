@@ -2,53 +2,53 @@ describe Roadworker::Client do
   context 'when update A record with geo location' do
     before {
       routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp.", "A" do
-    set_identifier "www1"
-    ttl 300
-    geo_location :continent_code=>"AS"
-    resource_records(
-      "127.0.0.1"
-    )
-  end
+        <<~EOS
+          hosted_zone "winebarrel.jp" do
+            rrset "www.winebarrel.jp.", "A" do
+              set_identifier "www1"
+              ttl 300
+              geo_location :continent_code=>"AS"
+              resource_records(
+                "127.0.0.1"
+              )
+            end
 
-  rrset "www.winebarrel.jp.", "A" do
-    set_identifier "www2"
-    ttl 300
-    geo_location :continent_code=>"OC"
-    resource_records(
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+            rrset "www.winebarrel.jp.", "A" do
+              set_identifier "www2"
+              ttl 300
+              geo_location :continent_code=>"OC"
+              resource_records(
+                "127.0.0.2"
+              )
+            end
+          end
+        EOS
       end
     }
 
     it {
       routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp.", "A" do
-    set_identifier "www1"
-    ttl 300
-    geo_location :continent_code=>"AS"
-    resource_records(
-      "127.0.0.1"
-    )
-  end
+        <<~EOS
+          hosted_zone "winebarrel.jp" do
+            rrset "www.winebarrel.jp.", "A" do
+              set_identifier "www1"
+              ttl 300
+              geo_location :continent_code=>"AS"
+              resource_records(
+                "127.0.0.1"
+              )
+            end
 
-  rrset "www.winebarrel.jp.", "A" do
-    set_identifier "www2"
-    ttl 300
-    geo_location :continent_code=>"EU"
-    resource_records(
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+            rrset "www.winebarrel.jp.", "A" do
+              set_identifier "www2"
+              ttl 300
+              geo_location :continent_code=>"EU"
+              resource_records(
+                "127.0.0.2"
+              )
+            end
+          end
+        EOS
       end
 
       zones = fetch_hosted_zones(@route53)

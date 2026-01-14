@@ -3,29 +3,29 @@ describe Roadworker::Client do
     context 'target' do
       it {
         routefile(:target_zone => /winebarrel/) do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 1"
-    weight 100
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 1"
+                weight 100
+                ttl 456
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 2"
-    weight 50
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 2"
+                weight 50
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -58,29 +58,29 @@ EOS
     context 'non target' do
       it {
         routefile(:target_zone => /xwinebarrelx/) do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 1"
-    weight 100
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 1"
+                weight 100
+                ttl 456
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 2"
-    weight 50
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 2"
+                weight 50
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
 
         expect(fetch_hosted_zones(@route53)).to be_empty
@@ -90,29 +90,29 @@ EOS
     context 'exclude' do
       it {
         routefile(:exclude_zone => /winebarrel/) do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 1"
-    weight 100
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 1"
+                weight 100
+                ttl 456
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 2"
-    weight 50
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 2"
+                weight 50
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
 
         expect(fetch_hosted_zones(@route53)).to be_empty

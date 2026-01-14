@@ -3,17 +3,17 @@ describe Roadworker::Client do
     context 'HostedZone' do
       before do
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
       end
 
@@ -41,17 +41,17 @@ EOS
     context 'HostedZone (force)' do
       before do
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
       end
 
@@ -66,41 +66,41 @@ EOS
     context 'A(Wildcard) record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "*.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+              rrset "*.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -124,41 +124,41 @@ EOS
     context 'A record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -182,37 +182,37 @@ EOS
     context 'A(Alias) record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    dns_name TEST_ELB
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                dns_name TEST_ELB
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -236,37 +236,37 @@ EOS
     context 'A(Alias) record (S3)' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    dns_name "s3-website-us-west-1.amazonaws.com"
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                dns_name "s3-website-us-west-1.amazonaws.com"
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -290,37 +290,37 @@ EOS
     context 'A(Alias) record (CF)' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    dns_name TEST_CF
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                dns_name TEST_CF
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -344,37 +344,37 @@ EOS
     context 'A(Alias) record (API Gateway)' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "apigw.winebarrel.jp", "A" do
-    dns_name TEST_APIGW
-  end
-end
-EOS
+              rrset "apigw.winebarrel.jp", "A" do
+                dns_name TEST_APIGW
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -399,37 +399,37 @@ EOS
     context 'A(Alias) record (This HostedZone)' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "info2.winebarrel.jp", "A" do
-    dns_name "info.winebarrel.jp."
-  end
-end
-EOS
+              rrset "info2.winebarrel.jp", "A" do
+                dns_name "info.winebarrel.jp."
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -453,63 +453,63 @@ EOS
     context 'A1 A2' do
       before {
         routefile do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 1"
-    weight 100
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 1"
+                weight 100
+                ttl 456
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 2"
-    weight 50
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 2"
+                weight 50
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 2"
-    weight 50
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 2"
+                weight 50
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -540,53 +540,53 @@ EOS
     context 'A1 A2 (both)' do
       before {
         routefile do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 1"
-    weight 100
-    ttl 456
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 1"
+                weight 100
+                ttl 456
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 2"
-    weight 50
-    ttl 456
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 2"
+                weight 50
+                ttl 456
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -610,63 +610,63 @@ EOS
     context 'A1 A2 (Latency)' do
       before {
         routefile do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 1"
-    ttl 456
-    region "us-west-1"
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 1"
+                ttl 456
+                region "us-west-1"
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 2"
-    ttl 456
-    region "us-west-2"
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 2"
+                ttl 456
+                region "us-west-2"
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 1"
-    ttl 456
-    region "us-west-1"
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 1"
+                ttl 456
+                region "us-west-1"
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -698,53 +698,53 @@ EOS
     context 'A1 A2 (Latency) (both)' do
       before {
         routefile do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 1"
-    ttl 456
-    region "us-west-1"
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 1"
+                ttl 456
+                region "us-west-1"
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "A" do
-    set_identifier "web server 2"
-    ttl 456
-    region "us-west-2"
-    resource_records(
-      "127.0.0.3",
-      "127.0.0.4"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "A" do
+                set_identifier "web server 2"
+                ttl 456
+                region "us-west-2"
+                resource_records(
+                  "127.0.0.3",
+                  "127.0.0.4"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<-EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -768,42 +768,42 @@ EOS
     context 'TXT record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "TXT" do
-    ttl 123
-    resource_records(
-      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "TXT" do
+                ttl 123
+                resource_records(
+                  '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -827,38 +827,38 @@ EOS
     context 'CNAME record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "CNAME" do
-    ttl 123
-    resource_records("www2.winebarrel.jp")
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "CNAME" do
+                ttl 123
+                resource_records("www2.winebarrel.jp")
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -882,41 +882,41 @@ EOS
     context 'MX record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "MX" do
-    ttl 123
-    resource_records(
-      "10 mail.winebarrel.jp",
-      "20 mail2.winebarrel.jp"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "MX" do
+                ttl 123
+                resource_records(
+                  "10 mail.winebarrel.jp",
+                  "20 mail2.winebarrel.jp"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -940,32 +940,32 @@ EOS
     context 'PTR record' do
       before {
         routefile do
-<<EOS
-hosted_zone "333.222.111.in-addr.arpa" do
-  rrset "444.333.222.111.in-addr.arpa", "PTR" do
-    ttl 123
-    resource_records("www.winebarrel.jp")
-  end
+          <<~EOS
+            hosted_zone "333.222.111.in-addr.arpa" do
+              rrset "444.333.222.111.in-addr.arpa", "PTR" do
+                ttl 123
+                resource_records("www.winebarrel.jp")
+              end
 
-  rrset "555.333.222.111.in-addr.arpa", "PTR" do
-    ttl 123
-    resource_records("www2.winebarrel.jp")
-  end
-end
-EOS
+              rrset "555.333.222.111.in-addr.arpa", "PTR" do
+                ttl 123
+                resource_records("www2.winebarrel.jp")
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "333.222.111.in-addr.arpa" do
-  rrset "555.333.222.111.in-addr.arpa", "PTR" do
-    ttl 123
-    resource_records("www2.winebarrel.jp")
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "333.222.111.in-addr.arpa" do
+              rrset "555.333.222.111.in-addr.arpa", "PTR" do
+                ttl 123
+                resource_records("www2.winebarrel.jp")
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -989,41 +989,41 @@ EOS
     context 'SRV record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "ftp.winebarrel.jp", "SRV" do
-    ttl 123
-    resource_records(
-      "1   0   21  server01.example.jp",
-      "2   0   21  server02.example.jp"
-    )
-  end
-end
-EOS
+              rrset "ftp.winebarrel.jp", "SRV" do
+                ttl 123
+                resource_records(
+                  "1   0   21  server01.example.jp",
+                  "2   0   21  server02.example.jp"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -1047,38 +1047,38 @@ EOS
     context 'AAAA record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "AAAA" do
-    ttl 123
-    resource_records("::1")
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "AAAA" do
+                ttl 123
+                resource_records("::1")
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -1102,42 +1102,42 @@ EOS
     context 'SPF record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "SPF" do
-    ttl 123
-    resource_records(
-      '"v=spf1 +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
-      '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "SPF" do
+                ttl 123
+                resource_records(
+                  '"v=spf1 +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/pra +ip4:192.168.100.0/24 ~all"',
+                  '"spf2.0/mfrom +ip4:192.168.100.0/24 ~all"'
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -1161,41 +1161,41 @@ EOS
     context 'NS record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
 
-  rrset "www.winebarrel.jp", "NS" do
-    ttl 123
-    resource_records(
-      "ns.winebarrel.jp",
-      "ns2.winebarrel.jp"
-    )
-  end
-end
-EOS
+              rrset "www.winebarrel.jp", "NS" do
+                ttl 123
+                resource_records(
+                  "ns.winebarrel.jp",
+                  "ns2.winebarrel.jp"
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "info.winebarrel.jp", "A" do
-    ttl 123
-    resource_records(
-      "127.0.0.1",
-      "127.0.0.2"
-    )
-  end
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "info.winebarrel.jp", "A" do
+                ttl 123
+                resource_records(
+                  "127.0.0.1",
+                  "127.0.0.2"
+                )
+              end
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -1219,40 +1219,40 @@ EOS
     context 'ignored record' do
       before {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  rrset "ignore.winebarrel.jp", "A" do
-    ttl 60
-    resource_records(
-      "127.0.0.1",
-    )
-  end
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              rrset "ignore.winebarrel.jp", "A" do
+                ttl 60
+                resource_records(
+                  "127.0.0.1",
+                )
+              end
 
-  rrset "test.ignore.winebarrel.jp", "A" do
-    ttl 60
-    resource_records(
-      "127.0.0.1",
-    )
-  end
+              rrset "test.ignore.winebarrel.jp", "A" do
+                ttl 60
+                resource_records(
+                  "127.0.0.1",
+                )
+              end
 
-  rrset "not-ignore.winebarrel.jp", "A" do
-    ttl 60
-    resource_records(
-      "127.0.0.1",
-    )
-  end
-end
-EOS
+              rrset "not-ignore.winebarrel.jp", "A" do
+                ttl 60
+                resource_records(
+                  "127.0.0.1",
+                )
+              end
+            end
+          EOS
         end
       }
 
       it {
         routefile do
-<<EOS
-hosted_zone "winebarrel.jp" do
-  ignore_under "ignore.winebarrel.jp"
-end
-EOS
+          <<~EOS
+            hosted_zone "winebarrel.jp" do
+              ignore_under "ignore.winebarrel.jp"
+            end
+          EOS
         end
 
         zones = fetch_hosted_zones(@route53)
@@ -1268,7 +1268,5 @@ EOS
         expect(rrsets['not-ignore.winebarrel.jp.', 'A']).to be_nil
       }
     end
-
-
   end
 end
