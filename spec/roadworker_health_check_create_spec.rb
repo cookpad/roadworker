@@ -718,30 +718,30 @@ describe Roadworker::Client do
         it {
           routefile do
             <<~EOS
-            hosted_zone "winebarrel.jp" do
-              rrset "www.winebarrel.jp", "A" do
-                set_identifier "w100"
-                weight 100
-                health_check "http://192.0.43.10:80/path", :host => 'example.com'
-                ttl 456
-                resource_records(
-                  "127.0.0.1",
-                  "127.0.0.2"
-                )
-              end
+              hosted_zone "winebarrel.jp" do
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "w100"
+                  weight 100
+                  health_check "http://192.0.43.10:80/path", :host => 'example.com'
+                  ttl 456
+                  resource_records(
+                    "127.0.0.1",
+                    "127.0.0.2"
+                  )
+                end
 
-              rrset "www.winebarrel.jp", "A" do
-                set_identifier "w50"
-                weight 50
-                health_check "tcp://192.0.43.10:3306"
-                ttl 456
-                resource_records(
-                  "127.0.0.3",
-                  "127.0.0.4"
-                )
+                rrset "www.winebarrel.jp", "A" do
+                  set_identifier "w50"
+                  weight 50
+                  health_check "tcp://192.0.43.10:3306"
+                  ttl 456
+                  resource_records(
+                    "127.0.0.3",
+                    "127.0.0.4"
+                  )
+                end
               end
-            end
-          EOS
+            EOS
           end
 
           zones = fetch_hosted_zones(@route53)
