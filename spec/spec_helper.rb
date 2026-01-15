@@ -1,15 +1,5 @@
 $: << File.expand_path("#{File.dirname __FILE__}/../lib")
 
-if ENV['TRAVIS']
-  require 'simplecov'
-  require 'coveralls'
-
-  SimpleCov.formatter = Coveralls::SimpleCov::Formatter
-  SimpleCov.start do
-    add_filter "spec/"
-  end
-end
-
 TEST_ELB = ENV['TEST_ELB']
 TEST_CF = ENV['TEST_CF']
 TEST_APIGW = ENV['TEST_APIGW']
@@ -19,18 +9,22 @@ TEST_VPC2 = ENV['TEST_VPC2']
 TEST_INTERVAL = ENV['TEST_INTERVAL'].to_i
 DNS_PORT = 5300
 
-require 'rubygems'
 require 'roadworker'
+require 'async'
+require 'console'
 require 'fileutils'
 require 'logger'
 require 'rubydns'
+require 'tempfile'
 
 Aws.config.update({
-  :access_key_id => (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
-  :secret_access_key => (ENV['TEST_AWS_SECRET_ACCESS_KEY'] || 'tiger'),
+  access_key_id: (ENV['TEST_AWS_ACCESS_KEY_ID'] || 'scott'),
+  secret_access_key: (ENV['TEST_AWS_SECRET_ACCESS_KEY'] || 'tiger'),
 })
 
 RSpec.configure do |config|
+  config.filter_run_including(skip_route53_setup: true) if ENV['TEST_WITHOUT_ROUTE53_SETUP'] == '1'
+
   route53_initialized = false
 
   config.before(:each) { |example|
@@ -44,49 +38,47 @@ RSpec.configure do |config|
 
   config.after(:all) do
     if route53_initialized
-      routefile(:force => true) { '' }
+      routefile(force: true) { '' }
     end
   end
 end
 
 def run_dns(dsl, options)
-  server = nil
   handler = options.fetch(:handler)
 
   options = {
-    :logger      => Logger.new(debug? ? $stdout : '/dev/null'),
-    :nameservers => "127.0.0.1",
-    :port        => DNS_PORT,
+    logger: Logger.new(debug? ? $stdout : '/dev/null'),
+    nameservers: "127.0.0.1",
+    port: DNS_PORT,
   }.merge(options)
 
-  begin
-    server = RubyDNS::RuleBasedServer.new(:logger => Logger.new(debug? ? $stdout : '/dev/null'), &handler)
+  # RubyDNS uses Console for its logger.
+  original_logger = Console.logger
+  unless debug?
+    Console.logger = Console::Logger.new(Console::Output::Null.new)
+  end
 
-    Thread.new {
-      EventMachine.run do
-        server.run(
-          :listen => [:udp, :tcp].map {|i| [i, "0.0.0.0", DNS_PORT] },
-        )
-      end
-    }
+  endpoint = Async::DNS::Endpoint.for("127.0.0.1", port: DNS_PORT)
 
-    sleep 0.1 until EventMachine.reactor_running?
-    tempfile = `mktemp /tmp/#{File.basename(__FILE__)}.XXXXXX`.strip
-    records_length, failures = nil
+  failures = nil
+  Async do
+    task = RubyDNS.run(endpoint, &handler)
+    task.wait
 
-    begin
-      open(tempfile, 'wb') {|f| f.puts(dsl) }
+    Tempfile.create do |f|
+      f.puts(dsl)
+
       client = Roadworker::Client.new(options)
 
       quiet do
-        records_length, failures = client.test(tempfile)
+        _records_length, failures = client.test(f.path)
       end
-    ensure
-      FileUtils.rm_f(tempfile)
     end
   ensure
-    EventMachine.stop if server
+    task.stop
   end
+
+  Console.logger = original_logger
 
   return failures
 end
@@ -111,28 +103,25 @@ end
 
 def routefile(options = {})
   updated = false
-  tempfile = `mktemp /tmp/#{File.basename(__FILE__)}.XXXXXX`.strip
 
-  begin
-    open(tempfile, 'wb') {|f| f.puts(yield) }
+  Tempfile.create do |f|
+    f.puts(yield)
 
     options = {
-      :logger => Logger.new(debug? ? $stdout : '/dev/null'),
-      :health_check_gc => true
+      logger: Logger.new(debug? ? $stdout : '/dev/null'),
+      health_check_gc: true,
     }.merge(options)
 
     client = Roadworker::Client.new(options)
-    updated = client.apply(tempfile)
+    updated = client.apply(f.path)
     sleep ENV['TEST_DELAY'].to_f
-  ensure
-    FileUtils.rm_f(tempfile)
   end
 
   return updated
 end
 
 def rrs_list(rrs)
-  rrs.map {|i| i[:value] }
+  rrs.map { |i| i[:value] }
 end
 
 def fetch_health_checks(route53)
@@ -142,7 +131,7 @@ def fetch_health_checks(route53)
   next_marker = nil
 
   while is_truncated
-    opts = next_marker ? {:marker => next_marker} : {}
+    opts = next_marker ? { marker: next_marker } : {}
     response = @route53.list_health_checks(opts)
 
     response[:health_checks].each do |check|
@@ -202,7 +191,7 @@ def cleanup_route53
       page.resource_record_sets.each do |rrset|
         rrset_name = rrset.name.sub(/\.\z/, '')
 
-        unless rrset_name == hz_name and %w(NS SOA).include?(rrset.type)
+        unless (rrset_name == hz_name) && %w(NS SOA).include?(rrset.type)
           changes << { action: 'DELETE', resource_record_set: rrset }
         end
       end

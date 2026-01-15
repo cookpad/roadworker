@@ -1,12 +1,14 @@
-describe Roadworker::DSL::Tester do
+describe Roadworker::DSL::Tester, skip_route53_setup: true do
+  let(:route53) { Aws::Route53::Client.new(stub_responses: true) }
+
   it 'checks A record' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::A) do |tx|
-        tx.respond!("10.0.0.80", :ttl => 300)
+        tx.respond!("10.0.0.80", ttl: 300)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "A" do
           ttl 300
@@ -23,11 +25,11 @@ describe Roadworker::DSL::Tester do
   it 'checks PTR record' do
     handler = proc do
       match('80.0.0.10.in-addr.arpa', Resolv::DNS::Resource::IN::PTR) do |tx|
-        tx.respond!(Resolv::DNS::Name.create('test.mydomain.org.'), :ttl => 300)
+        tx.respond!(Resolv::DNS::Name.create('test.mydomain.org.'), ttl: 300)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "0.0.10.in-addr.arpa." do
         rrset "80.0.0.10.in-addr.arpa.", "PTR" do
           ttl 300
@@ -44,11 +46,11 @@ describe Roadworker::DSL::Tester do
   it 'checks TXT record' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::TXT) do |tx|
-        tx.respond!('v=spf1 +ip4:192.168.100.0/24 ~all', :ttl => 300)
+        tx.respond!('v=spf1 +ip4:192.168.100.0/24 ~all', ttl: 300)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "TXT" do
           ttl 300
@@ -65,11 +67,11 @@ describe Roadworker::DSL::Tester do
   it 'checks CNAME record' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::CNAME) do |tx|
-        tx.respond!(Resolv::DNS::Name.create('test2.mydomain.org.'), :ttl => 300)
+        tx.respond!(Resolv::DNS::Name.create('test2.mydomain.org.'), ttl: 300)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "CNAME" do
           ttl 300
@@ -86,11 +88,11 @@ describe Roadworker::DSL::Tester do
   it 'checks MX record' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::MX) do |tx|
-        tx.respond!(10, Resolv::DNS::Name.create('mail.mydomain.org.'), :ttl => 300)
+        tx.respond!(10, Resolv::DNS::Name.create('mail.mydomain.org.'), ttl: 300)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "MX" do
           ttl 300
@@ -107,11 +109,11 @@ describe Roadworker::DSL::Tester do
   it 'checks SRV record (1)' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::SRV) do |tx|
-        tx.respond!(1, 0, 21, 'test.mydomain.org', :ttl => 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
+        tx.respond!(1, 0, 21, 'test.mydomain.org', ttl: 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "SRV" do
           ttl 300
@@ -128,11 +130,11 @@ describe Roadworker::DSL::Tester do
   it 'checks SRV record (2)' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::SRV) do |tx|
-        tx.respond!(1, 0, 21, 'test2.mydomain2.org', :ttl => 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
+        tx.respond!(1, 0, 21, 'test2.mydomain2.org', ttl: 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "SRV" do
           ttl 300
@@ -149,11 +151,11 @@ describe Roadworker::DSL::Tester do
   it 'checks SRV record (3)' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::SRV) do |tx|
-        tx.respond!(1, 0, 21, 'test2.mydomain2.org2', :ttl => 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
+        tx.respond!(1, 0, 21, 'test2.mydomain2.org2', ttl: 300) #, :resource_class => Resolv::DNS::Resource::IN::SRV)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "SRV" do
           ttl 300
@@ -170,11 +172,11 @@ describe Roadworker::DSL::Tester do
   it 'checks AAAA record' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::AAAA) do |tx|
-        tx.respond!('::1', :ttl => 300)
+        tx.respond!('::1', ttl: 300)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "AAAA" do
           ttl 300
@@ -193,11 +195,11 @@ describe Roadworker::DSL::Tester do
   it 'checks NS record' do
     handler = proc do
       match('test.mydomain.org', Resolv::DNS::Resource::IN::NS) do |tx|
-        tx.respond!(Resolv::DNS::Name.create('ns.mydomain.org.'), :ttl => 300)
+        tx.respond!(Resolv::DNS::Name.create('ns.mydomain.org.'), ttl: 300)
       end
     end
 
-    failures = run_dns(<<-RUBY, :handler => handler)
+    failures = run_dns(<<-RUBY, handler: handler, route53: route53)
       hosted_zone "mydomain.org." do
         rrset "test.mydomain.org.", "NS" do
           ttl 300
